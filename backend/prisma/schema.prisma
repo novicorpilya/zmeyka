@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  name          String?
+  role          Role           @default(STUDENT)
+  courses       Course[]       @relation("UserCourses")
+  homeworks     Homework[]
+  subscriptions Subscription[]
+  certificates  Certificate[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Course {
+  id           String        @id @default(uuid())
+  title        String
+  description  String?
+  videoUrls    String // Stored as JSON string or comma-separated
+  quizzes      String // Stored as JSON string
+  teacher      User          @relation("UserCourses", fields: [teacherId], references: [id])
+  teacherId    String
+  homeworks    Homework[]
+  certificates Certificate[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Homework {
+  id        String   @id @default(uuid())
+  status    String // PENDING, CHECKING, COMPLETED, REJECTED
+  score     Int?
+  feedback  String?
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  String
+  student   User     @relation(fields: [studentId], references: [id])
+  studentId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  plan      String // FREE, PRO, PREMIUM
+  startDate DateTime @default(now())
+  endDate   DateTime
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+}
+
+model Certificate {
+  id          String   @id @default(uuid())
+  url         String
+  generatedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    String
+}

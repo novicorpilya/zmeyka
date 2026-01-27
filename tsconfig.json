@@ -1,0 +1,40 @@
+{
+    "extends": "./.nuxt/tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ],
+            "~/*": [
+                "./src/*"
+            ],
+            "@app/*": [
+                "./src/app/*"
+            ],
+            "@pages/*": [
+                "./src/pages/*"
+            ],
+            "@widgets/*": [
+                "./src/widgets/*"
+            ],
+            "@features/*": [
+                "./src/features/*"
+            ],
+            "@entities/*": [
+                "./src/entities/*"
+            ],
+            "@shared/*": [
+                "./src/shared/*"
+            ],
+            "@services/*": [
+                "./src/services/*"
+            ]
+        }
+    },
+    "include": [
+        "nuxt.config.ts",
+        "src/**/*",
+        ".nuxt/nuxt.d.ts"
+    ]
+}
