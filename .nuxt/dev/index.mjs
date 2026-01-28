@@ -634,16 +634,6 @@ const _inlineRuntimeConfig = {
     "routeRules": {
       "/__nuxt_error": {
         "cache": false
-      },
-      "/_nuxt/builds/meta/**": {
-        "headers": {
-          "cache-control": "public, max-age=31536000, immutable"
-        }
-      },
-      "/_nuxt/builds/**": {
-        "headers": {
-          "cache-control": "public, max-age=1, immutable"
-        }
       }
     }
   },
@@ -2120,7 +2110,7 @@ function readAsset (id) {
   return promises.readFile(resolve$1(serverDir, assets[id].path))
 }
 
-const publicAssetBases = {"/_nuxt/builds/meta/":{"maxAge":31536000},"/_nuxt/builds/":{"maxAge":1}};
+const publicAssetBases = {};
 
 function isPublicAssetURL(id = '') {
   if (assets[id]) {
@@ -3044,18 +3034,6 @@ const renderer = defineRenderHandler(async (event) => {
 			crossorigin: "anonymous",
 			href: payloadURL
 		} ] }, headEntryOptions);
-	}
-	if (ssrContext["~preloadManifest"] && !NO_SCRIPTS) {
-		ssrContext.head.push({ link: [{
-			rel: "preload",
-			as: "fetch",
-			fetchpriority: "low",
-			crossorigin: "anonymous",
-			href: buildAssetsURL(`builds/meta/${ssrContext.runtimeConfig.app.buildId}.json`)
-		}] }, {
-			...headEntryOptions,
-			tagPriority: "low"
-		});
 	}
 	// 2. Styles
 	if (inlinedStyles.length) {

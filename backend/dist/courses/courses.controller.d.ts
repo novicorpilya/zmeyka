@@ -36,7 +36,8 @@ export declare class CoursesController {
             createdAt: Date;
             updatedAt: Date;
             email: string;
-            role: import("@prisma/client").$Enums.Role;
+            password: string;
+            role: import(".prisma/client").$Enums.Role;
         };
         homeworks: {
             id: string;

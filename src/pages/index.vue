@@ -1,15 +1,7 @@
 <template>
-  <main id="main-content" class="w-full cursor-none-container selection:bg-brand-green/30">
+  <main id="main-content" class="w-full selection:bg-brand-green/30">
     <!-- Skip to content for Accessibility -->
     <a href="#features" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-[10000] bg-brand-green text-white px-6 py-3 rounded-xl font-bold">Перейти к контенту</a>
-
-    <!-- Custom Snake-Sense Cursor -->
-    <div class="snake-cursor pointer-events-none fixed inset-0 z-[9999] hidden lg:block" aria-hidden="true">
-        <div v-for="i in 10" :key="i" class="cursor-dot absolute w-2 h-2 bg-brand-green/40 rounded-full blur-[2px]"></div>
-        <div class="cursor-main absolute w-6 h-6 border-2 border-brand-green rounded-full shadow-[0_0_20px_#22c55e] flex items-center justify-center mix-blend-difference">
-            <div class="w-1.5 h-1.5 bg-brand-green rounded-full shadow-[0_0_10px_#22c55e]"></div>
-        </div>
-    </div>
 
     <!-- Hero Section -->
     <section ref="heroRef" class="relative pt-32 pb-40 px-6 overflow-hidden" @mousemove="handleHeroParallax">
@@ -47,7 +39,7 @@
           </p>
           
           <div class="hero-cta flex flex-wrap gap-5 pt-4">
-            <NuxtLink to="/dashboard" aria-label="Начать бесплатное обучение" class="btn-magnetic bg-brand-green px-10 py-5 rounded-3xl font-black text-white text-xl shadow-[0_8px_0_0_#166534] hover:shadow-[0_4px_0_0_#166534] transition-all btn-bouncy flex items-center gap-3 text-decoration-none focus:ring-4 focus:ring-brand-green/30 outline-none">
+            <NuxtLink :to="startRoute" aria-label="Начать бесплатное обучение" class="btn-magnetic bg-brand-green px-10 py-5 rounded-3xl font-black text-white text-xl shadow-[0_8px_0_0_#166534] hover:shadow-[0_4px_0_0_#166534] transition-all btn-bouncy flex items-center gap-3 text-decoration-none focus:ring-4 focus:ring-brand-green/30 outline-none">
               <span aria-hidden="true">🚀</span> Начать бесплатно
             </NuxtLink>
             <button aria-label="Смотреть демо урок" class="btn-magnetic bg-white px-10 py-5 rounded-3xl font-black text-slate-600 text-xl border-4 border-slate-100 hover:bg-slate-50 hover:border-slate-200 transition-all flex items-center gap-3 shadow-sm focus:ring-4 focus:ring-slate-100 outline-none">
@@ -275,9 +267,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useUserStore } from '@entities/user/model/store'
+
+const userStore = useUserStore()
+const startRoute = computed(() => userStore.isLoggedIn ? '/dashboard' : '/auth/register')
 
 // SEO Meta management
 useHead({
@@ -346,32 +342,7 @@ const initHeroAnimations = () => {
   return onMouseMove
 }
 
-const initSnakeCursor = () => {
-  const dots = document.querySelectorAll('.cursor-dot')
-  const main = document.querySelector('.cursor-main')
-  if (!dots.length || !main) return
-  const onMouseMove = (e: MouseEvent) => {
-    gsap.to(dots, { x: e.clientX, y: e.clientY, stagger: 0.04, duration: 0.5, ease: 'power2.out' })
-    gsap.to(main, { x: e.clientX, y: e.clientY, duration: 0.1 })
-  }
-  window.addEventListener('mousemove', onMouseMove)
-  return onMouseMove
-}
-
-const initMagneticButtons = () => {
-  document.querySelectorAll('.btn-magnetic').forEach(btn => {
-    btn.addEventListener('mouseenter', () => gsap.to('.cursor-main', { scale: 3, duration: 0.3 }))
-    btn.addEventListener('mousemove', (e: any) => {
-      const rect = btn.getBoundingClientRect()
-      gsap.to(btn, { x: (e.clientX - rect.left - rect.width / 2) * 0.3, y: (e.clientY - rect.top - rect.height / 2) * 0.3, duration: 0.5 })
-    })
-    btn.addEventListener('mouseleave', () => {
-      gsap.to('.cursor-main', { scale: 1, duration: 0.3 })
-      gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out' })
-    })
-  })
-}
-
+// Hero Mouse interactions are kept local if specific to this page
 const handleHeroParallax = (e: MouseEvent) => {
   if (!heroRef.value) return
   const mx = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2)
@@ -477,7 +448,7 @@ const handleFeatureLeave = (e: MouseEvent) => {
 }
 
 let heroMouseMove: any = null
-let cursorMouseMove: any = null
+let cursorCleanup: (() => void) | null = null
 
 const isTouchDevice = () => {
   if (typeof window === 'undefined') return false
@@ -486,11 +457,11 @@ const isTouchDevice = () => {
 
 onMounted(() => {
   gsap.registerPlugin(ScrollTrigger)
-  initMagneticButtons()
+  // initMagneticButtons() // Now handled by layout mutation observer
 
   // Only init mouse-heavy animations on fine-pointer devices (Desktop)
   if (!isTouchDevice()) {
-    cursorMouseMove = initSnakeCursor()
+    // cursorMouseMove = initSnakeCursor() // Now handled by layout
     heroMouseMove = initHeroAnimations()
   }
 
@@ -589,7 +560,7 @@ onMounted(() => {
 onUnmounted(() => {
   ScrollTrigger.getAll().forEach(t => t.kill())
   gsap.killTweensOf('*')
-  if (cursorMouseMove) window.removeEventListener('mousemove', cursorMouseMove)
+  // if (cursorMouseMove) window.removeEventListener('mousemove', cursorMouseMove) // Cleaned up in layout
   if (heroMouseMove) window.removeEventListener('mousemove', heroMouseMove)
 })
 </script>

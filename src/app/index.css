@@ -146,11 +146,7 @@ body {
 
 /* Hide default cursor only if mouse-based */
 @media (pointer: fine) {
-
-  html,
-  body,
-  .cursor-none-container,
-  .cursor-none-container * {
+  html, body, a, button, input, select, textarea, [role="button"], .btn-magnetic {
     cursor: none !important;
   }
 }

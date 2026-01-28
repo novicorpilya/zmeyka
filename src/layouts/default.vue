@@ -1,5 +1,5 @@
 <template>
-  <div class="selection:bg-brand-green/30 relative">
+  <div class="selection:bg-brand-green/30 relative min-h-screen flex flex-col">
     <!-- Navbar -->
     <nav 
       class="sticky top-0 z-50 transition-all duration-700 ease-in-out px-4 py-4 pointer-events-none"
@@ -35,8 +35,11 @@
 
         <!-- Auth Buttons -->
         <div class="flex items-center gap-4">
-          <NuxtLink to="/dashboard" class="bg-brand-green px-6 py-2.5 rounded-2xl font-black text-white text-sm shadow-[0_5px_0_0_#166534] hover:translate-y-0.5 hover:shadow-none transition-all btn-bouncy text-decoration-none">
-            Войти
+          <NuxtLink 
+            :to="userStore.isLoggedIn ? '/dashboard' : '/auth/login'" 
+            class="bg-brand-green px-6 py-2.5 rounded-2xl font-black text-white text-sm shadow-[0_5px_0_0_#166534] hover:translate-y-0.5 hover:shadow-none transition-all btn-bouncy text-decoration-none"
+          >
+            {{ userStore.isLoggedIn ? 'В кабинет' : 'Войти' }}
           </NuxtLink>
         </div>
       </div>
@@ -136,6 +139,9 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
+import { useUserStore } from '@entities/user/model/store'
+
+const userStore = useUserStore()
 
 // Scroll detection for navbar styling
 const scrolled = ref(false)
