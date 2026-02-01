@@ -11,46 +11,64 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateCourseDto = exports.CreateCourseDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
+const class_validator_1 = require("class-validator");
 class CreateCourseDto {
 }
 exports.CreateCourseDto = CreateCourseDto;
 __decorate([
     (0, swagger_1.ApiProperty)({ example: 'Advanced AI with Gemini' }),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateCourseDto.prototype, "title", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ example: 'Learn how to build agents with Gemini API', required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateCourseDto.prototype, "description", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: '["https://video.url/1"]' }),
+    (0, swagger_1.ApiProperty)({ example: 'Python', required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateCourseDto.prototype, "videoUrls", void 0);
+], CreateCourseDto.prototype, "category", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: '[]' }),
+    (0, swagger_1.ApiProperty)({ example: 'Новичок', required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateCourseDto.prototype, "quizzes", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'user-uuid-here' }),
-    __metadata("design:type", String)
-], CreateCourseDto.prototype, "teacherId", void 0);
+], CreateCourseDto.prototype, "level", void 0);
 class UpdateCourseDto {
 }
 exports.UpdateCourseDto = UpdateCourseDto;
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateCourseDto.prototype, "title", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateCourseDto.prototype, "description", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateCourseDto.prototype, "videoUrls", void 0);
+], UpdateCourseDto.prototype, "category", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateCourseDto.prototype, "quizzes", void 0);
+], UpdateCourseDto.prototype, "level", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], UpdateCourseDto.prototype, "isPublished", void 0);
 //# sourceMappingURL=course.dto.js.map

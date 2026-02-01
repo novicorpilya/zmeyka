@@ -18,13 +18,19 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         public: {
-            apiBase: (process.env.NUXT_PUBLIC_API_BASE as string) || 'https://api.zmeyka.io'
+            apiBase: (process.env.NUXT_PUBLIC_API_BASE as string) || 'http://localhost:3001/api'
         }
     },
 
     modules: [
-        '@pinia/nuxt'
+        '@pinia/nuxt',
+        '@nuxtjs/supabase'
     ],
+
+    supabase: {
+        types: '~/types/database.types.ts',
+        redirect: false // Disabling auto-redirect to login for now to avoid conflicts with custom auth middleware
+    },
 
     vite: {
         plugins: [
@@ -57,4 +63,4 @@ export default defineNuxtConfig({
             ]
         }
     }
-} as any)
+})

@@ -1,82 +1,47 @@
-import { CoursesService } from './courses.service';
+import { CoursesService, CourseWithCalculatedProgress } from './courses.service';
 import { CreateCourseDto, UpdateCourseDto } from './dto/course.dto';
+import { Course } from '@prisma/client';
+import { AuthenticatedRequest } from '../shared/interfaces/request.interface';
 export declare class CoursesController {
     private readonly coursesService;
     constructor(coursesService: CoursesService);
-    create(createCourseDto: CreateCourseDto): Promise<{
+    create(createCourseDto: CreateCourseDto, req: AuthenticatedRequest): Promise<{
         description: string | null;
         title: string;
-        videoUrls: string;
-        quizzes: string;
-        teacherId: string;
+        category: string | null;
+        level: string | null;
+        isPublished: boolean;
         id: string;
+        thumbnail: string | null;
         createdAt: Date;
         updatedAt: Date;
+        teacherId: string;
     }>;
-    findAll(): Promise<({
-        teacher: {
-            name: string;
-            id: string;
-            email: string;
-        };
-    } & {
+    findAll(req: AuthenticatedRequest): Promise<Course[]>;
+    findOne(id: string, req: AuthenticatedRequest): Promise<CourseWithCalculatedProgress>;
+    update(id: string, updateCourseDto: UpdateCourseDto, req: AuthenticatedRequest): Promise<{
         description: string | null;
         title: string;
-        videoUrls: string;
-        quizzes: string;
-        teacherId: string;
+        category: string | null;
+        level: string | null;
+        isPublished: boolean;
         id: string;
+        thumbnail: string | null;
         createdAt: Date;
         updatedAt: Date;
-    })[]>;
-    findOne(id: string): Promise<{
-        teacher: {
-            name: string | null;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            email: string;
-            password: string;
-            role: import(".prisma/client").$Enums.Role;
-        };
-        homeworks: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            status: string;
-            score: number | null;
-            feedback: string | null;
-            courseId: string;
-            studentId: string;
-        }[];
-    } & {
-        description: string | null;
-        title: string;
-        videoUrls: string;
-        quizzes: string;
         teacherId: string;
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
-    update(id: string, updateCourseDto: UpdateCourseDto): Promise<{
+    remove(id: string, req: AuthenticatedRequest): Promise<{
         description: string | null;
         title: string;
-        videoUrls: string;
-        quizzes: string;
-        teacherId: string;
+        category: string | null;
+        level: string | null;
+        isPublished: boolean;
         id: string;
+        thumbnail: string | null;
         createdAt: Date;
         updatedAt: Date;
-    }>;
-    remove(id: string): Promise<{
-        description: string | null;
-        title: string;
-        videoUrls: string;
-        quizzes: string;
         teacherId: string;
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
+    private checkOwnership;
 }

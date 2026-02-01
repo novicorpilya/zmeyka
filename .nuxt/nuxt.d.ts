@@ -1,4 +1,5 @@
 /// <reference types="@pinia/nuxt" />
+/// <reference types="@nuxtjs/supabase" />
 /// <reference types="@nuxt/telemetry" />
 /// <reference path="types/nitro-layouts.d.ts" />
 /// <reference path="types/builder-env.d.ts" />
@@ -10,6 +11,7 @@
 /// <reference path="types/app.config.d.ts" />
 /// <reference types="C:/Users/novik/OneDrive/Рабочий стол/zmeyka/node_modules/@nuxt/nitro-server/dist/index.mjs" />
 /// <reference types="@pinia/nuxt" />
+/// <reference path="types/supabase.d.ts" />
 /// <reference types="vue-router" />
 /// <reference path="types/middleware.d.ts" />
 /// <reference path="types/nitro-middleware.d.ts" />

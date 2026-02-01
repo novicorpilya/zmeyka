@@ -1,41 +1,87 @@
 import { defineStore } from 'pinia'
 
-export const useUserStore = defineStore('user', {
-    state: () => ({
-        user: null as any,
-        token: null as string | null,
-        isLoggedIn: false
-    }),
-    actions: {
-        init() {
-            if (process.client) {
-                const token = localStorage.getItem('token')
-                const user = localStorage.getItem('user')
-                if (token && user) {
-                    this.token = token
-                    this.user = JSON.parse(user)
-                    this.isLoggedIn = true
-                }
-            }
-        },
-        setUser(user: any, token: string) {
-            this.user = user
-            this.token = token
-            this.isLoggedIn = !!user
+import type { User } from '~/shared/types'
 
-            if (process.client) {
-                localStorage.setItem('token', token)
-                localStorage.setItem('user', JSON.stringify(user))
-            }
-        },
-        logout() {
-            this.user = null
-            this.token = null
-            this.isLoggedIn = false
-            if (process.client) {
-                localStorage.removeItem('token')
-                localStorage.removeItem('user')
-            }
+export const useUserStore = defineStore('user', {
+  state: () => ({
+    user: null as User | null,
+    isInitialized: false,
+  }),
+
+  getters: {
+    isAuthenticated: (state) => !!state.user,
+    userRole: (state) => state.user?.role || 'STUDENT',
+    userName: (state) => state.user?.name || 'Друг',
+  },
+
+  actions: {
+    /**
+     * Set user and sync with cookies
+     */
+    setUser(user: User | null, accessToken: string | null = null, remember: boolean = true) {
+      this.user = user
+
+      const userCookie = useCookie<string | null>('user_data', {
+        path: '/',
+        maxAge: remember ? 60 * 60 * 24 * 7 : undefined,
+        sameSite: 'strict',
+      })
+
+      const tokenCookie = useCookie<string | null>('access_token', {
+        path: '/',
+        maxAge: remember ? 60 * 60 * 24 * 7 : undefined,
+        sameSite: 'strict',
+      })
+
+      if (user) {
+        userCookie.value = JSON.stringify(user)
+      } else {
+        userCookie.value = null
+      }
+
+      if (accessToken) {
+        tokenCookie.value = accessToken
+      } else if (user === null) {
+        tokenCookie.value = null
+      }
+    },
+
+    /**
+     * Clear all session data
+     */
+    clearUser() {
+      this.user = null
+      const accessToken = useCookie('access_token')
+      const userData = useCookie('user_data')
+      accessToken.value = null
+      userData.value = null
+    },
+
+    /**
+     * Hydrate store from secure cookie
+     */
+    initStore() {
+      if (this.isInitialized) return
+
+      const userCookie = useCookie<unknown>('user_data')
+
+      if (userCookie.value) {
+        try {
+          const rawData =
+            typeof userCookie.value === 'string' ? JSON.parse(userCookie.value) : userCookie.value
+
+          if (rawData && typeof rawData === 'object') {
+            // Crucial: JSON.parse(JSON.stringify()) ensures we have a plain JS object
+            // and strips any symbols/prototypes that break Nuxt serialization
+            this.user = JSON.parse(JSON.stringify(rawData))
+          }
+        } catch (e) {
+          console.error('Store init error:', e)
+          this.clearUser()
         }
-    }
+      }
+
+      this.isInitialized = true
+    },
+  },
 })

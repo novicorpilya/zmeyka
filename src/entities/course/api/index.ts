@@ -1,13 +1,16 @@
-import { useApi } from '@shared/api'
+import { useApi } from '~/shared/api'
+import type { Course } from '~/shared/types'
 
 export const useCourseApi = () => {
-    const { fetchApi } = useApi()
+  const api = useApi()
 
-    return {
-        getCourses: () => fetchApi('/courses'),
-        getCourse: (id: string) => fetchApi(`/courses/${id}`),
-        createCourse: (data: any) => fetchApi('/courses', { method: 'POST', body: data }),
-        updateCourse: (id: string, data: any) => fetchApi(`/courses/${id}`, { method: 'PATCH', body: data }),
-        deleteCourse: (id: string) => fetchApi(`/courses/${id}`, { method: 'DELETE' }),
-    }
+  return {
+    getCourses: (): Promise<Course[]> => api('/courses'),
+    getCourse: (id: string): Promise<Course> => api(`/courses/${id}`),
+    createCourse: (data: Partial<Course>): Promise<Course> =>
+      api('/courses', { method: 'POST', body: data }),
+    updateCourse: (id: string, data: Partial<Course>): Promise<Course> =>
+      api(`/courses/${id}`, { method: 'PATCH', body: data }),
+    deleteCourse: (id: string): Promise<void> => api(`/courses/${id}`, { method: 'DELETE' }),
+  }
 }

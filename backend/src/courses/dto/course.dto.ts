@@ -1,32 +1,50 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
+import { IsOptional, IsString, IsBoolean } from 'class-validator'
 
 export class CreateCourseDto {
-    @ApiProperty({ example: 'Advanced AI with Gemini' })
-    title: string;
+  @ApiProperty({ example: 'Advanced AI with Gemini' })
+  @IsString()
+  title!: string
 
-    @ApiProperty({ example: 'Learn how to build agents with Gemini API', required: false })
-    description?: string;
+  @ApiProperty({ example: 'Learn how to build agents with Gemini API', required: false })
+  @IsOptional()
+  @IsString()
+  description?: string
 
-    @ApiProperty({ example: '["https://video.url/1"]' })
-    videoUrls: string;
+  @ApiProperty({ example: 'Python', required: false })
+  @IsOptional()
+  @IsString()
+  category?: string
 
-    @ApiProperty({ example: '[]' })
-    quizzes: string;
-
-    @ApiProperty({ example: 'user-uuid-here' })
-    teacherId: string;
+  @ApiProperty({ example: 'Новичок', required: false })
+  @IsOptional()
+  @IsString()
+  level?: string
 }
 
 export class UpdateCourseDto {
-    @ApiProperty({ required: false })
-    title?: string;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  title?: string
 
-    @ApiProperty({ required: false })
-    description?: string;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  description?: string
 
-    @ApiProperty({ required: false })
-    videoUrls?: string;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  category?: string
 
-    @ApiProperty({ required: false })
-    quizzes?: string;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  level?: string
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsBoolean()
+  isPublished?: boolean
 }

@@ -1,40 +1,54 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core'
+import { AppModule } from './app.module'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { ValidationPipe, Logger } from '@nestjs/common'
+import * as cookieParser from 'cookie-parser'
+import { GlobalExceptionFilter } from './shared/filters/global-exception.filter'
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap')
+  const app = await NestFactory.create(AppModule)
 
-    // Prefix all routes with /api
-    app.setGlobalPrefix('api');
+  app.use(cookieParser())
 
-    // Global validation pipe
-    app.useGlobalPipes(new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-    }));
+  // Security: Global Prefix
+  app.setGlobalPrefix('api')
 
-    // Enable CORS for frontend
-    app.enableCors();
+  // Global Validation: Senior configuration
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  )
 
-    // Swagger Setup
-    const config = new DocumentBuilder()
-        .setTitle('Senior AI Course Platform API')
-        .setDescription('The API documentation for the AI Course Platform')
-        .setVersion('1.0')
-        .addTag('courses', 'Operations related to courses')
-        .addTag('default', 'General operations')
-        .build();
+  // Global Exception Filter for standardized errors
+  app.useGlobalFilters(new GlobalExceptionFilter())
 
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('docs', app, document);
+  // Strict CORS: Don't use origin: true in production
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000']
+  app.enableCors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  })
 
-    const port = process.env.PORT || 3001;
-    await app.listen(port);
+  // Swagger Setup
+  const config = new DocumentBuilder()
+    .setTitle('Senior AI Course Platform API')
+    .setDescription('High-performance API for AI education')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build()
 
-    console.log(`\n🚀 Backend is running on: http://localhost:${port}/api`);
-    console.log(`📝 Swagger docs: http://localhost:${port}/docs\n`);
+  const document = SwaggerModule.createDocument(app, config)
+  SwaggerModule.setup('docs', app, document)
+
+  const port = process.env.PORT || 3001
+  await app.listen(port)
+
+  logger.log(`🚀 Backend is running on: http://localhost:${port}/api`)
+  logger.log(`📝 Swagger docs: http://localhost:${port}/docs`)
 }
-bootstrap();
+bootstrap()

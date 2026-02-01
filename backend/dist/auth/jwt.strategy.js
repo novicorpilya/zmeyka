@@ -18,9 +18,18 @@ const prisma_service_1 = require("../prisma/prisma.service");
 let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
     constructor(prisma, config) {
         super({
-            jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest: passport_jwt_1.ExtractJwt.fromExtractors([
+                passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
+                (req) => {
+                    let token = null;
+                    if (req && req.cookies) {
+                        token = req.cookies['access_token'];
+                    }
+                    return token;
+                },
+            ]),
             ignoreExpiration: false,
-            secretOrKey: config.get('JWT_SECRET'),
+            secretOrKey: config.get('JWT_SECRET') || 'fallback_secret_change_me',
         });
         this.prisma = prisma;
         this.config = config;
@@ -32,7 +41,7 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         if (!user) {
             throw new common_1.UnauthorizedException();
         }
-        const { password, ...result } = user;
+        const { password, refreshToken: _, ...result } = user;
         return result;
     }
 };

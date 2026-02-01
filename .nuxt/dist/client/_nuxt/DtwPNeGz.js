@@ -1,1 +1,0 @@
-import{Q as e}from"./DMsiIHZ4.js";const r=()=>{const o=e().public.apiBase||"http://localhost:3001";return{register:async t=>await $fetch(`${o}/auth/register`,{method:"POST",body:t}),login:async t=>await $fetch(`${o}/auth/login`,{method:"POST",body:t})}};export{r as u};

@@ -638,7 +638,32 @@ const _inlineRuntimeConfig = {
     }
   },
   "public": {
-    "apiBase": "https://api.zmeyka.io"
+    "apiBase": "http://localhost:3001/api",
+    "supabase": {
+      "url": "https://vjaddelexrzcbzghgngv.supabase.co",
+      "key": "sb_publishable_zTsUrz-byb06-jelWlmeeA_FSxzao_p",
+      "redirect": false,
+      "redirectOptions": {
+        "login": "/login",
+        "callback": "/confirm",
+        "exclude": [],
+        "cookieRedirect": false,
+        "saveRedirectToCookie": false
+      },
+      "cookieName": "sb",
+      "cookiePrefix": "sb-vjaddelexrzcbzghgngv-auth-token",
+      "useSsrCookies": true,
+      "cookieOptions": {
+        "maxAge": 28800,
+        "sameSite": "lax",
+        "secure": true
+      },
+      "clientOptions": {}
+    }
+  },
+  "supabase": {
+    "serviceKey": "",
+    "secretKey": ""
   }
 };
 const envOptions = {

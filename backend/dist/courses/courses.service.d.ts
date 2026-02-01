@@ -1,82 +1,95 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCourseDto, UpdateCourseDto } from './dto/course.dto';
+export interface LessonWithProgress {
+    id: string;
+    title: string;
+    order: number;
+    progress?: Array<{
+        isCompleted: boolean;
+    }>;
+}
+export interface ModuleWithLessons {
+    id: string;
+    title: string;
+    order: number;
+    lessons: LessonWithProgress[];
+}
+export interface CourseWithCalculatedProgress {
+    id: string;
+    title: string;
+    description: string | null;
+    thumbnail: string | null;
+    teacherId: string;
+    progress: number;
+    xp: number;
+    calculatedProgress: number;
+    calculatedXp: number;
+    isPublished: boolean;
+    modules: ModuleWithLessons[];
+    teacher: {
+        name: string | null;
+        avatar: string | null;
+    };
+}
 export declare class CoursesService {
     private prisma;
     constructor(prisma: PrismaService);
-    create(createCourseDto: CreateCourseDto): Promise<{
+    create(createCourseDto: CreateCourseDto & {
+        teacherId: string;
+    }): Promise<{
         description: string | null;
         title: string;
-        videoUrls: string;
-        quizzes: string;
-        teacherId: string;
+        category: string | null;
+        level: string | null;
+        isPublished: boolean;
         id: string;
+        thumbnail: string | null;
         createdAt: Date;
         updatedAt: Date;
+        teacherId: string;
     }>;
-    findAll(): Promise<({
-        teacher: {
-            name: string;
-            id: string;
-            email: string;
-        };
-    } & {
-        description: string | null;
-        title: string;
-        videoUrls: string;
-        quizzes: string;
-        teacherId: string;
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-    })[]>;
-    findOne(id: string): Promise<{
+    findAll(onlyPublished?: boolean): Promise<({
         teacher: {
             name: string | null;
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
             email: string;
-            password: string;
-            role: import(".prisma/client").$Enums.Role;
+            avatar: string | null;
         };
-        homeworks: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            status: string;
-            score: number | null;
-            feedback: string | null;
-            courseId: string;
-            studentId: string;
-        }[];
     } & {
         description: string | null;
         title: string;
-        videoUrls: string;
-        quizzes: string;
-        teacherId: string;
+        category: string | null;
+        level: string | null;
+        isPublished: boolean;
         id: string;
+        thumbnail: string | null;
         createdAt: Date;
         updatedAt: Date;
-    }>;
+        teacherId: string;
+    })[]>;
+    findOne(id: string, userId?: string, checkVisibility?: boolean): Promise<CourseWithCalculatedProgress>;
     update(id: string, updateCourseDto: UpdateCourseDto): Promise<{
         description: string | null;
         title: string;
-        videoUrls: string;
-        quizzes: string;
-        teacherId: string;
+        category: string | null;
+        level: string | null;
+        isPublished: boolean;
         id: string;
+        thumbnail: string | null;
         createdAt: Date;
         updatedAt: Date;
+        teacherId: string;
     }>;
     remove(id: string): Promise<{
         description: string | null;
         title: string;
-        videoUrls: string;
-        quizzes: string;
-        teacherId: string;
+        category: string | null;
+        level: string | null;
+        isPublished: boolean;
         id: string;
+        thumbnail: string | null;
         createdAt: Date;
         updatedAt: Date;
+        teacherId: string;
     }>;
 }
