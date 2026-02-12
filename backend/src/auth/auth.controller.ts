@@ -28,7 +28,7 @@ type SafeUser = Omit<User, 'password' | 'refreshToken'>
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Public()
   @Post('register')
@@ -120,26 +120,24 @@ export class AuthController {
     refreshToken: string,
     remember: boolean = true,
   ): void {
-    const commonOptions: CookieOptions = {
+    const maxAge = remember ? 7 * 24 * 60 * 60 * 1000 : undefined
+
+    const baseOptions: CookieOptions = {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-    }
-
-    if (remember) {
-      commonOptions.maxAge = 7 * 24 * 60 * 60 * 1000 // 7 days
+      maxAge,
     }
 
     // Refresh token: MUST be httpOnly for security
     res.cookie('refresh_token', refreshToken, {
-      ...commonOptions,
+      ...baseOptions,
       httpOnly: true,
     })
 
-    // Access token: httpOnly: false allows frontend API client to read it and put into Authorization header
-    // This prevents unnecessary 401 errors during token rotation
+    // Access token: httpOnly: false allows frontend API client to read it
     res.cookie('access_token', accessToken, {
-      ...commonOptions,
+      ...baseOptions,
       httpOnly: false,
     })
   }
