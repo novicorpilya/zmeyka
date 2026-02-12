@@ -45,3 +45,27 @@ lerna-debug.log*
 backend/dist
 backend/uploads/*
 !backend/uploads/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+
+# Logs supplementary
+*.log.txt
+*_log.txt
+server_log.txt
+push_log*.txt
+
+# Testing
+coverage/
+
+# OS
+Thumbs.db
+
+# Agents
+.agent/
+.agents/

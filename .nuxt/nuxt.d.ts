@@ -1,6 +1,6 @@
 /// <reference types="@pinia/nuxt" />
-/// <reference types="@sentry/nuxt" />
 /// <reference types="@nuxt/telemetry" />
+/// <reference types="@sentry/nuxt" />
 /// <reference path="types/nitro-layouts.d.ts" />
 /// <reference path="types/builder-env.d.ts" />
 /// <reference types="nuxt" />
