@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { useCookie } from '#app'
+
 
 import type { User } from '~/shared/types'
 
@@ -12,10 +12,12 @@ export const useUserStore = defineStore('user', () => {
   const userCookie = useCookie<string | null>('user_data', {
     path: '/',
     sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 7, // 7 days default
   })
   const tokenCookie = useCookie<string | null>('access_token', {
     path: '/',
     sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 7, // 7 days default
   })
 
   // Getters
@@ -27,13 +29,11 @@ export const useUserStore = defineStore('user', () => {
   const setUser = (
     newUser: User | null,
     accessToken: string | null = null,
-    remember: boolean = true,
+    _remember: boolean = true,
   ): void => {
     user.value = newUser
+    // Removed invalid .options mutation
 
-    const maxAge = remember ? 60 * 60 * 24 * 7 : undefined
-    userCookie.options.maxAge = maxAge
-    tokenCookie.options.maxAge = maxAge
 
     if (newUser) {
       const { id, email, name, avatar, role, createdAt, updatedAt } = newUser

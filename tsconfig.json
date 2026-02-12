@@ -1,39 +1,60 @@
 {
     "extends": "./.nuxt/tsconfig.json",
     "compilerOptions": {
-        "baseUrl": ".",
         "strict": true,
         "noImplicitAny": true,
         "strictNullChecks": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
+        "baseUrl": ".",
         "paths": {
-            "@/*": [
-                "./src/*"
+            "~": [
+                "src"
             ],
             "~/*": [
-                "./src/*"
+                "src/*"
             ],
-            "@app/*": [
-                "./src/app/*"
+            "@": [
+                "src"
             ],
-            "@pages/*": [
-                "./src/pages/*"
+            "@/*": [
+                "src/*"
             ],
-            "@widgets/*": [
-                "./src/widgets/*"
+            "#app": [
+                "node_modules/nuxt/dist/app"
             ],
-            "@features/*": [
-                "./src/features/*"
+            "#app/*": [
+                "node_modules/nuxt/dist/app/*"
+            ],
+            "#imports": [
+                ".nuxt/imports"
+            ],
+            "#build": [
+                ".nuxt"
+            ],
+            "#build/*": [
+                ".nuxt/*"
             ],
             "@entities/*": [
-                "./src/entities/*"
+                "src/entities/*"
             ],
             "@shared/*": [
-                "./src/shared/*"
+                "src/shared/*"
+            ],
+            "@features/*": [
+                "src/features/*"
+            ],
+            "@widgets/*": [
+                "src/widgets/*"
+            ],
+            "@pages/*": [
+                "src/pages/*"
+            ],
+            "@app/*": [
+                "src/app/*"
             ],
             "@services/*": [
-                "./src/services/*"
+                "src/services/*"
             ]
         }
     },

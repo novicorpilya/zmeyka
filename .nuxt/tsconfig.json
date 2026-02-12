@@ -127,9 +127,6 @@
       "vue-demi": [
         "../node_modules/nuxt/dist/app/compat/vue-demi"
       ],
-      "@opentelemetry/resources": [
-        "../node_modules/@opentelemetry/resources/build/src/index"
-      ],
       "#vue-router": [
         "../node_modules/vue-router"
       ],
@@ -140,7 +137,7 @@
         "./imports"
       ],
       "#app-manifest": [
-        "./manifest/meta/dev.json"
+        "./manifest/meta/b480afa0-d4db-41f2-a40c-ed9904bf7d26.json"
       ],
       "#components": [
         "./components"
@@ -200,6 +197,6 @@
     "../node_modules/@nuxt/telemetry/node_modules",
     "../node_modules/runtime/server",
     "../node_modules/dist/runtime/server",
-    "dev"
+    "../.output"
   ]
 }

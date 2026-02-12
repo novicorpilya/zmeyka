@@ -131,9 +131,6 @@
       "@services": [
         "./~/services"
       ],
-      "@opentelemetry/resources": [
-        "./@opentelemetry/resources/build/src/index.js"
-      ],
       "#unhead/composables": [
         "../node_modules/nuxt/dist/head/runtime/composables/v3"
       ]
