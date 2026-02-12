@@ -1,23 +1,33 @@
 <template>
-  <div class="min-h-screen font-nunito flex flex-col overflow-x-hidden">
+  <ErrorBoundary>
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
-  </div>
+
+    <TheToasts />
+    <TheModals />
+    <TheCommandPalette />
+  </ErrorBoundary>
 </template>
 
 <script setup lang="ts">
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { onMounted } from 'vue'
 
 import { useUserStore } from '~/entities/user/model/store'
+import ErrorBoundary from '~/shared/ui/ErrorBoundary.vue'
+import TheCommandPalette from '~/shared/ui/TheCommandPalette.vue'
+import TheModals from '~/shared/ui/TheModals.vue'
+import TheToasts from '~/shared/ui/TheToasts.vue'
 
-if (process.client) {
+// GSAP setup
+if (import.meta.client) {
   gsap.registerPlugin(ScrollTrigger)
 }
 
 const userStore = useUserStore()
+// Initialize store once globally to enable SSR hydration of user state
+userStore.initStore()
 
 useHead({
   link: [
@@ -29,15 +39,8 @@ useHead({
     },
   ],
 })
-
-onMounted(() => {
-  userStore.initStore()
-})
 </script>
 
 <style>
-/* Clean system behavior */
-html {
-  scroll-behavior: smooth;
-}
+/* Global styles are in app/index.css */
 </style>

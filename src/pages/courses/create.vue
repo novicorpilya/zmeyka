@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen bg-[#020617] flex flex-col items-center justify-center p-4 md:p-6 relative overflow-x-hidden overflow-y-auto"
+    class="min-h-screen bg-[#020617] flex flex-col items-center justify-center p-4 md:p-6 relative"
   >
     <!-- Ambient Background Elements -->
     <div
@@ -23,10 +23,10 @@
           <h1
             class="text-3xl sm:text-4xl md:text-7xl font-black text-white tracking-tighter uppercase italic leading-none"
           >
-            New <span class="text-brand-green">Chapter</span>
+            Новая <span class="text-brand-green">Глава</span>
           </h1>
           <p class="text-slate-500 font-bold uppercase tracking-[0.2em] text-[8px] md:text-xs">
-            Architecting the future of AI Education
+            Проектируем будущее ИИ-образования
           </p>
         </div>
       </div>

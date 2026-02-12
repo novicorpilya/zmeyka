@@ -1,5 +1,10 @@
-import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common'
-import { extname, join } from 'path'
+import {
+  Injectable,
+  BadRequestException,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common'
+import { extname, join, basename } from 'path'
 import * as fs from 'fs'
 import * as fsPromises from 'fs/promises'
 import { PrismaService } from '../prisma/prisma.service'
@@ -18,10 +23,12 @@ export abstract class StorageService {
     type: 'video' | 'static',
   ): Promise<StorageResult>
   abstract getFilePath(filename: string, type: 'video' | 'static'): string
+  abstract delete(filename: string, type: 'video' | 'static'): Promise<void>
 }
 
 @Injectable()
 export class LocalStorageService extends StorageService {
+  private readonly logger = new Logger(LocalStorageService.name)
   private readonly baseDir = join(process.cwd(), 'uploads')
   private readonly directories = {
     video: 'videos',
@@ -35,7 +42,7 @@ export class LocalStorageService extends StorageService {
     this.ensureDirectories()
   }
 
-  private ensureDirectories() {
+  private ensureDirectories(): void {
     Object.values(this.directories).forEach((dir) => {
       const fullPath = join(this.baseDir, dir)
       if (!fs.existsSync(fullPath)) {
@@ -70,8 +77,9 @@ export class LocalStorageService extends StorageService {
       } else {
         throw new InternalServerErrorException('Invalid file upload state')
       }
-    } catch (error) {
-      console.error('File save error:', error)
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error)
+      this.logger.error(`File save error: ${message}`)
       throw new InternalServerErrorException('Failed to save file')
     }
 
@@ -101,7 +109,14 @@ export class LocalStorageService extends StorageService {
   }
 
   getFilePath(filename: string, type: 'video' | 'static'): string {
-    const safeName = filename.replace(/(\.\.[\/\\])+/g, '')
+    const safeName = basename(filename)
     return join(this.baseDir, this.directories[type], safeName)
+  }
+
+  async delete(filename: string, type: 'video' | 'static'): Promise<void> {
+    const path = this.getFilePath(filename, type)
+    if (fs.existsSync(path)) {
+      await fsPromises.unlink(path)
+    }
   }
 }

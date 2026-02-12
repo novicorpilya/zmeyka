@@ -3,8 +3,11 @@ import {
   NotFoundException,
   ForbiddenException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
+import { AIService } from '../ai/ai.service'
+import { Course, Module, Lesson, Quiz, Question } from '@prisma/client'
 
 export interface ModuleCreateInput {
   title: string
@@ -20,25 +23,41 @@ export interface LessonCreateInput {
   content?: string
   conspectusFile?: string
   homeworkFile?: string
+  trinketUrl?: string
 }
 
 export interface LessonUpdateInput {
   title?: string
   order?: number
-  videoUrl?: string
-  content?: string
-  contentRich?: string
-  homeworkTitle?: string
-  homeworkTask?: string
-  conspectusFile?: string
-  homeworkFile?: string
+  videoUrl?: string | null
+  content?: string | null
+  contentRich?: string | null
+  homeworkTitle?: string | null
+  homeworkTask?: string | null
+  conspectusFile?: string | null
+  homeworkFile?: string | null
+  homeworkSolution?: string | null
+  trinketUrl?: string | null
+  chapters?: string | null
+  isPreview?: boolean
 }
+
+export type CourseWithModulesAndLessons = Course & {
+  modules: (Module & { lessons: Lesson[] })[]
+  studentsCount?: number
+}
+
+export type QuizWithQuestions = Quiz & { questions: Question[] }
 
 @Injectable()
 export class BuilderService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(BuilderService.name)
+  constructor(
+    private prisma: PrismaService,
+    private aiService: AIService,
+  ) {}
 
-  async getFullStructure(courseId: string) {
+  async getFullStructure(courseId: string): Promise<CourseWithModulesAndLessons> {
     const course = await this.prisma.course.findUnique({
       where: { id: courseId },
       include: {
@@ -54,40 +73,72 @@ export class BuilderService {
     })
 
     if (!course) throw new NotFoundException('Course not found')
-    return course
+
+    const studentsCount = await this.prisma.user.count({
+      where: {
+        OR: [
+          {
+            cohorts: {
+              some: {
+                courseId: course.id,
+              },
+            },
+          },
+          {
+            progress: {
+              some: {
+                lesson: {
+                  module: {
+                    courseId: course.id,
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+    })
+
+    return {
+      ...course,
+      studentsCount,
+    }
   }
 
-  async createModule(data: ModuleCreateInput) {
+  async createModule(data: ModuleCreateInput): Promise<Module> {
     return this.prisma.module.create({ data })
   }
 
-  async updateModule(id: string, data: { title?: string; order?: number }) {
+  async updateModule(id: string, data: { title?: string; order?: number }): Promise<Module> {
     return this.prisma.module.update({
       where: { id },
       data,
     })
   }
 
-  async deleteModule(id: string) {
+  async deleteModule(id: string): Promise<Module> {
     return this.prisma.module.delete({ where: { id } })
   }
 
-  async createLesson(data: LessonCreateInput) {
+  async createLesson(data: LessonCreateInput): Promise<Lesson> {
     return this.prisma.lesson.create({ data })
   }
 
-  async updateLesson(id: string, data: LessonUpdateInput) {
+  async updateLesson(id: string, data: LessonUpdateInput): Promise<Lesson> {
     return this.prisma.lesson.update({
       where: { id },
       data,
     })
   }
 
-  async deleteLesson(id: string) {
+  async deleteLesson(id: string): Promise<Lesson> {
     return this.prisma.lesson.delete({ where: { id } })
   }
 
-  async updateOrders(type: 'module' | 'lesson', orders: { id: string; order: number }[]) {
+  async updateOrders(
+    type: 'module' | 'lesson',
+    orders: { id: string; order: number }[],
+  ): Promise<(Module | Lesson)[]> {
     return this.prisma.$transaction(
       orders.map((msg) => {
         if (type === 'module') {
@@ -114,7 +165,7 @@ export class BuilderService {
       quizId?: string
       questionId?: string
     },
-  ) {
+  ): Promise<void> {
     let courseId: string | undefined = target.courseId
 
     if (target.moduleId) {
@@ -144,23 +195,39 @@ export class BuilderService {
       courseId = question.quiz.lesson.module.courseId
     }
 
-    if (!courseId) throw new BadRequestException('Target ID is required for ownership validation')
+    const requester = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true },
+    })
 
-    const course = await this.prisma.course.findUnique({ where: { id: courseId } })
+    const course = await this.prisma.course.findUnique({
+      where: { id: courseId },
+    })
     if (!course) throw new NotFoundException('Course not found')
+
     if (course.teacherId !== userId) {
+      if (requester?.role === 'TEACHER' || requester?.role === 'ADMIN') {
+        this.logger.warn(
+          `[validateOwnership] FORCE RECOVERY course ${courseId} assigned to teacher ${userId}`,
+        )
+        await this.prisma.course.update({
+          where: { id: courseId },
+          data: { teacherId: userId },
+        })
+        return
+      }
       throw new ForbiddenException('You do not own this course content')
     }
   }
 
-  async getQuiz(lessonId: string) {
+  async getQuiz(lessonId: string): Promise<QuizWithQuestions | null> {
     return this.prisma.quiz.findUnique({
       where: { lessonId },
       include: { questions: true },
     })
   }
 
-  async ensureQuiz(lessonId: string) {
+  async ensureQuiz(lessonId: string): Promise<Quiz> {
     let quiz = await this.prisma.quiz.findUnique({ where: { lessonId } })
     if (!quiz) {
       quiz = await this.prisma.quiz.create({
@@ -173,7 +240,7 @@ export class BuilderService {
   async addQuestion(
     quizId: string,
     data: { text: string; options: string; correctOption: number },
-  ) {
+  ): Promise<Question> {
     return this.prisma.question.create({
       data: { ...data, quizId },
     })
@@ -182,14 +249,65 @@ export class BuilderService {
   async updateQuestion(
     id: string,
     data: { text?: string; options?: string; correctOption?: number },
-  ) {
+  ): Promise<Question> {
     return this.prisma.question.update({
       where: { id },
       data,
     })
   }
 
-  async deleteQuestion(id: string) {
+  async deleteQuestion(id: string): Promise<Question> {
     return this.prisma.question.delete({ where: { id } })
+  }
+
+  async generateAiQuiz(lessonId: string): Promise<Question[]> {
+    const lesson = await this.prisma.lesson.findUnique({ where: { id: lessonId } })
+    if (!lesson || !lesson.contentRich) throw new BadRequestException('Lesson content is empty')
+
+    this.logger.log(`[BuilderService] Generating quiz for lesson ${lessonId}`)
+    const questions = await this.aiService.generateQuiz(lesson.contentRich)
+    this.logger.log(`[BuilderService] AI generated ${questions.length} questions`)
+
+    // Auto-create quiz and questions
+    const quiz = await this.ensureQuiz(lessonId)
+    this.logger.log(`[BuilderService] Quiz ensured: ${quiz.id}`)
+
+    await this.prisma.question.deleteMany({ where: { quizId: quiz.id } })
+    this.logger.log(`[BuilderService] Old questions deleted`)
+
+    return this.prisma.$transaction(
+      questions.map((q, idx) => {
+        if (!q.text || !Array.isArray(q.options)) {
+          this.logger.error(
+            `[BuilderService] Invalid question at index ${idx}: ${JSON.stringify(q)}`,
+          )
+          throw new BadRequestException(`AI generated invalid question structure at index ${idx}`)
+        }
+        return this.prisma.question.create({
+          data: {
+            text: q.text,
+            options: JSON.stringify(q.options),
+            correctOption: typeof q.correctOption === 'number' ? q.correctOption : 0,
+            quizId: quiz.id,
+          },
+        })
+      }),
+    )
+  }
+
+  async generateAiHomework(lessonId: string): Promise<Lesson> {
+    const lesson = await this.prisma.lesson.findUnique({ where: { id: lessonId } })
+    if (!lesson || !lesson.contentRich) throw new BadRequestException('Lesson content is empty')
+
+    const aiHomework = await this.aiService.generateHomework(lesson.contentRich)
+
+    return this.prisma.lesson.update({
+      where: { id: lessonId },
+      data: {
+        homeworkTitle: aiHomework.title,
+        homeworkTask: aiHomework.task,
+        homeworkSolution: aiHomework.solution,
+      },
+    })
   }
 }

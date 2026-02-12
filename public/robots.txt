@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /homework/
+
+Sitemap: https://zmeyka.io/sitemap.xml

@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, Req } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  Req,
+  Logger,
+} from '@nestjs/common'
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
-import { BuilderService } from './builder.service'
+import { BuilderService, CourseWithModulesAndLessons, QuizWithQuestions } from './builder.service'
 import { Roles } from '../auth/roles.decorator'
 import { RolesGuard } from '../auth/roles.guard'
-import { Role } from '@prisma/client'
+import { Role, Module, Lesson, Quiz, Question } from '@prisma/client'
 import {
   CreateModuleDto,
   UpdateModuleDto,
@@ -21,11 +32,15 @@ import { AuthenticatedRequest } from '../shared/interfaces/request.interface'
 @UseGuards(RolesGuard)
 @Roles(Role.TEACHER, Role.ADMIN)
 export class BuilderController {
+  private readonly logger = new Logger(BuilderController.name)
   constructor(private readonly builderService: BuilderService) {}
 
   @Get('course/:id')
   @ApiOperation({ summary: 'Get full course structure for builder' })
-  async getStructure(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+  async getStructure(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<CourseWithModulesAndLessons> {
     await this.builderService.validateOwnership(req.user.id, { courseId: id })
     return this.builderService.getFullStructure(id)
   }
@@ -33,7 +48,10 @@ export class BuilderController {
   // --- MODULES ---
   @Post('modules')
   @ApiOperation({ summary: 'Create a new module' })
-  async createModule(@Body() data: CreateModuleDto, @Req() req: AuthenticatedRequest) {
+  async createModule(
+    @Body() data: CreateModuleDto,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<Module> {
     await this.builderService.validateOwnership(req.user.id, { courseId: data.courseId })
     return this.builderService.createModule(data)
   }
@@ -44,14 +62,14 @@ export class BuilderController {
     @Param('id') id: string,
     @Body() data: UpdateModuleDto,
     @Req() req: AuthenticatedRequest,
-  ) {
+  ): Promise<Module> {
     await this.builderService.validateOwnership(req.user.id, { moduleId: id })
     return this.builderService.updateModule(id, data)
   }
 
   @Delete('modules/:id')
   @ApiOperation({ summary: 'Remove module' })
-  async deleteModule(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+  async deleteModule(@Param('id') id: string, @Req() req: AuthenticatedRequest): Promise<Module> {
     await this.builderService.validateOwnership(req.user.id, { moduleId: id })
     return this.builderService.deleteModule(id)
   }
@@ -59,7 +77,10 @@ export class BuilderController {
   // --- LESSONS ---
   @Post('lessons')
   @ApiOperation({ summary: 'Create a new lesson' })
-  async createLesson(@Body() data: CreateLessonDto, @Req() req: AuthenticatedRequest) {
+  async createLesson(
+    @Body() data: CreateLessonDto,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<Lesson> {
     await this.builderService.validateOwnership(req.user.id, { moduleId: data.moduleId })
     return this.builderService.createLesson(data)
   }
@@ -70,14 +91,15 @@ export class BuilderController {
     @Param('id') id: string,
     @Body() data: UpdateLessonDto,
     @Req() req: AuthenticatedRequest,
-  ) {
+  ): Promise<Lesson> {
+    this.logger.log(`[V2] Updating lesson ${id} with data: ${JSON.stringify(data)}`)
     await this.builderService.validateOwnership(req.user.id, { lessonId: id })
     return this.builderService.updateLesson(id, data)
   }
 
   @Delete('lessons/:id')
   @ApiOperation({ summary: 'Remove lesson' })
-  async deleteLesson(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+  async deleteLesson(@Param('id') id: string, @Req() req: AuthenticatedRequest): Promise<Lesson> {
     await this.builderService.validateOwnership(req.user.id, { lessonId: id })
     return this.builderService.deleteLesson(id)
   }
@@ -88,7 +110,7 @@ export class BuilderController {
     @Param('type') type: 'module' | 'lesson',
     @Body() orders: ReorderItemDto[],
     @Req() req: AuthenticatedRequest,
-  ) {
+  ): Promise<(Module | Lesson)[]> {
     if (orders.length > 0) {
       const firstId = orders[0].id
       await this.builderService.validateOwnership(
@@ -102,14 +124,20 @@ export class BuilderController {
   // --- QUIZ ---
   @Get('quiz/:lessonId')
   @ApiOperation({ summary: 'Get quiz and questions' })
-  async getQuiz(@Param('lessonId') lessonId: string, @Req() req: AuthenticatedRequest) {
+  async getQuiz(
+    @Param('lessonId') lessonId: string,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<QuizWithQuestions | null> {
     await this.builderService.validateOwnership(req.user.id, { lessonId })
     return this.builderService.getQuiz(lessonId)
   }
 
   @Post('quiz/:lessonId/ensure')
   @ApiOperation({ summary: 'Ensure quiz exists' })
-  async ensureQuiz(@Param('lessonId') lessonId: string, @Req() req: AuthenticatedRequest) {
+  async ensureQuiz(
+    @Param('lessonId') lessonId: string,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<Quiz> {
     await this.builderService.validateOwnership(req.user.id, { lessonId })
     return this.builderService.ensureQuiz(lessonId)
   }
@@ -120,7 +148,7 @@ export class BuilderController {
     @Param('quizId') quizId: string,
     @Body() data: CreateQuestionDto,
     @Req() req: AuthenticatedRequest,
-  ) {
+  ): Promise<Question> {
     await this.builderService.validateOwnership(req.user.id, { quizId })
     return this.builderService.addQuestion(quizId, data)
   }
@@ -131,15 +159,39 @@ export class BuilderController {
     @Param('id') id: string,
     @Body() data: UpdateQuestionDto,
     @Req() req: AuthenticatedRequest,
-  ) {
+  ): Promise<Question> {
     await this.builderService.validateOwnership(req.user.id, { questionId: id })
     return this.builderService.updateQuestion(id, data)
   }
 
   @Delete('questions/:id')
   @ApiOperation({ summary: 'Remove question' })
-  async deleteQuestion(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+  async deleteQuestion(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<Question> {
     await this.builderService.validateOwnership(req.user.id, { questionId: id })
     return this.builderService.deleteQuestion(id)
+  }
+
+  // --- AI ---
+  @Post('ai/generate-quiz/:lessonId')
+  @ApiOperation({ summary: 'Generate quiz using AI' })
+  async generateQuiz(
+    @Param('lessonId') lessonId: string,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<Question[]> {
+    await this.builderService.validateOwnership(req.user.id, { lessonId })
+    return this.builderService.generateAiQuiz(lessonId)
+  }
+
+  @Post('ai/generate-homework/:lessonId')
+  @ApiOperation({ summary: 'Generate homework using AI' })
+  async generateHomework(
+    @Param('lessonId') lessonId: string,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<Lesson> {
+    await this.builderService.validateOwnership(req.user.id, { lessonId })
+    return this.builderService.generateAiHomework(lessonId)
   }
 }

@@ -88,13 +88,15 @@
           <div class="space-y-2 md:space-y-3">
             <label
               class="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest ml-4 md:ml-4"
-              >Инструктор</label
+              >Количество уроков (план)</label
             >
-            <div
-              class="px-5 md:px-6 py-4 md:py-5 bg-slate-100 rounded-xl md:rounded-2xl font-black text-slate-400 flex items-center gap-3 text-sm md:text-base"
-            >
-              <span class="text-lg">👨‍🏫</span> {{ userStore.user?.name || 'Загрузка...' }}
-            </div>
+            <input
+              v-model.number="form.plannedLessonsCount"
+              type="number"
+              min="1"
+              max="100"
+              class="w-full px-5 md:px-6 py-4 md:py-5 bg-slate-50 border-4 border-slate-50 rounded-xl md:rounded-2xl font-bold focus:border-brand-blue focus:bg-white outline-none transition-all text-sm md:text-base text-slate-700 placeholder:text-slate-300"
+            />
           </div>
         </div>
       </div>
@@ -140,10 +142,7 @@
 
 <script setup lang="ts">
 import { useCourseApi } from '~/entities/course/api'
-import { useUserStore } from '~/entities/user/model/store'
 import type { Course } from '~/shared/types'
-
-const userStore = useUserStore()
 const { createCourse } = useCourseApi()
 const router = useRouter()
 
@@ -156,6 +155,7 @@ const form = reactive({
   description: '',
   category: 'Python',
   level: 'Новичок',
+  plannedLessonsCount: 12,
 })
 
 const handleSubmit = async () => {

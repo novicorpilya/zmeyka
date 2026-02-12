@@ -25,8 +25,35 @@ let UsersService = class UsersService {
                 password: hashedPassword,
             },
         });
-        const { password: _, ...result } = user;
+        const { password: _pw, refreshToken: _rt, ...result } = user;
         return result;
+    }
+    async findByEmail(email) {
+        return this.prisma.user.findUnique({
+            where: { email },
+        });
+    }
+    async findById(id) {
+        return this.prisma.user.findUnique({
+            where: { id },
+        });
+    }
+    async update(id, data) {
+        if (data.password && typeof data.password === 'string') {
+            data.password = await bcrypt.hash(data.password, 12);
+        }
+        return this.prisma.user.update({
+            where: { id },
+            data,
+        });
+    }
+    async findByResetToken(tokenHash) {
+        return this.prisma.user.findFirst({
+            where: {
+                resetToken: tokenHash,
+                resetTokenExpires: { gt: new Date() },
+            },
+        });
     }
     async findAll() {
         return this.prisma.user.findMany({

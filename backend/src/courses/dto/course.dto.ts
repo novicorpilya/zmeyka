@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsOptional, IsString, IsBoolean } from 'class-validator'
+import { IsOptional, IsString, IsBoolean, IsInt } from 'class-validator'
 
 export class CreateCourseDto {
   @ApiProperty({ example: 'Advanced AI with Gemini' })
@@ -20,6 +20,26 @@ export class CreateCourseDto {
   @IsOptional()
   @IsString()
   level?: string
+
+  @ApiProperty({ example: 10, required: false })
+  @IsOptional()
+  @IsInt()
+  plannedLessonsCount?: number
+
+  @ApiProperty({ example: 5000, required: false })
+  @IsOptional()
+  @IsInt()
+  price?: number
+
+  @ApiProperty({ example: 1500, required: false })
+  @IsOptional()
+  @IsInt()
+  mentoringPrice?: number
+
+  @ApiProperty({ example: 'https://youtube.com/watch?v=...', required: false })
+  @IsOptional()
+  @IsString()
+  introVideoUrl?: string
 }
 
 export class UpdateCourseDto {
@@ -47,4 +67,24 @@ export class UpdateCourseDto {
   @IsOptional()
   @IsBoolean()
   isPublished?: boolean
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  plannedLessonsCount?: number
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  price?: number
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  mentoringPrice?: number
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  introVideoUrl?: string
 }

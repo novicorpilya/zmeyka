@@ -69,6 +69,14 @@ export const useBuilderApi = () => {
     })
   }
 
+  const deleteVideo = async (filename: string): Promise<void> => {
+    return await api(`/upload/video/${filename}`, { method: 'DELETE' })
+  }
+
+  const deleteFile = async (filename: string): Promise<void> => {
+    return await api(`/upload/file/${filename}`, { method: 'DELETE' })
+  }
+
   const getQuiz = async (lessonId: string): Promise<Quiz> => {
     return await api(`/builder/quiz/${lessonId}`)
   }
@@ -95,6 +103,14 @@ export const useBuilderApi = () => {
     return await api(`/builder/questions/${id}`, { method: 'DELETE' })
   }
 
+  const generateAiQuiz = async (lessonId: string): Promise<Question[]> => {
+    return await api(`/builder/ai/generate-quiz/${lessonId}`, { method: 'POST' })
+  }
+
+  const generateAiHomework = async (lessonId: string): Promise<Lesson> => {
+    return await api(`/builder/ai/generate-homework/${lessonId}`, { method: 'POST' })
+  }
+
   return {
     getStructure,
     updateCourse,
@@ -107,10 +123,14 @@ export const useBuilderApi = () => {
     reorder,
     uploadVideo,
     uploadFile,
+    deleteVideo,
+    deleteFile,
     getQuiz,
     ensureQuiz,
     addQuestion,
     updateQuestion,
     deleteQuestion,
+    generateAiQuiz,
+    generateAiHomework,
   }
 }

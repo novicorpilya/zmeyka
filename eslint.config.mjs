@@ -40,6 +40,7 @@ export default [
                 defineNuxtConfig: 'readonly',
                 defineNuxtPlugin: 'readonly',
                 useRuntimeConfig: 'readonly',
+                useState: 'readonly',
                 useFetch: 'readonly',
                 useAsyncData: 'readonly',
                 useLazyFetch: 'readonly',
@@ -53,11 +54,23 @@ export default [
                 reactive: 'readonly',
                 ref: 'readonly',
                 onMounted: 'readonly',
+                onUnmounted: 'readonly',
+                onBeforeUnmount: 'readonly',
+                onBeforeMount: 'readonly',
+                onUpdated: 'readonly',
+                nextTick: 'readonly',
                 watch: 'readonly',
                 $fetch: 'readonly',
                 defineNuxtRouteMiddleware: 'readonly',
                 useHead: 'readonly',
+                useSeoMeta: 'readonly',
+                useNuxtApp: 'readonly',
+                clearError: 'readonly',
+                defineProps: 'readonly',
+                defineEmits: 'readonly',
+                defineExpose: 'readonly',
                 HeadersInit: 'readonly',
+                NodeJS: 'readonly',
             }
         },
         plugins: {
@@ -95,16 +108,13 @@ export default [
 
             // Type Safety
             '@typescript-eslint/no-explicit-any': 'warn',
-            '@typescript-eslint/no-explicit-any': 'warn',
             '@typescript-eslint/no-unused-vars': ['error', {
                 argsIgnorePattern: '^_|err|to|from',
                 varsIgnorePattern: '^_|err',
                 caughtErrorsIgnorePattern: '^_|err'
             }],
             '@typescript-eslint/no-non-null-assertion': 'off',
-            '@typescript-eslint/no-non-null-assertion': 'off',
 
-            // FSD Architectural Boundaries
             // FSD Architectural Boundaries
             'boundaries/element-types': [
                 'error',
@@ -115,29 +125,23 @@ export default [
                         { from: 'pages', allow: ['widgets', 'features', 'entities', 'shared'] },
                         { from: 'widgets', allow: ['features', 'entities', 'shared'] },
                         { from: 'features', allow: ['entities', 'shared'] },
-                        { from: 'entities', allow: ['shared'] },
+                        { from: 'entities', allow: ['entities', 'shared'] },
                         { from: 'shared', allow: ['shared'] },
                     ],
                 },
             ],
 
+            // Import ordering
+            'import/order': [
+                'error',
+                {
+                    groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+                    'newlines-between': 'always',
+                    alphabetize: { order: 'asc', caseInsensitive: true },
+                },
+            ],
+
             // General
-            'import/order': [
-                'error',
-                {
-                    groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-                    'newlines-between': 'always',
-                    alphabetize: { order: 'asc', caseInsensitive: true },
-                },
-            ],
-            'import/order': [
-                'error',
-                {
-                    groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-                    'newlines-between': 'always',
-                    alphabetize: { order: 'asc', caseInsensitive: true },
-                },
-            ],
             'no-undef': 'warn', // Downgraded to warn for auto-imports compatibility
             'no-empty': ['error', { allowEmptyCatch: true }],
         },

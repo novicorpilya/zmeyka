@@ -1,6 +1,6 @@
 import { useUserStore } from '~/entities/user/model/store'
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware(() => {
   const userStore = useUserStore()
   userStore.initStore()
 

@@ -20,6 +20,13 @@ export default [
                 process: 'readonly',
                 __dirname: 'readonly',
                 console: 'readonly',
+                fetch: 'readonly',
+                setTimeout: 'readonly',
+                clearTimeout: 'readonly',
+                AbortController: 'readonly',
+                Buffer: 'readonly',
+                Express: 'readonly',
+                require: 'readonly',
             },
         },
         plugins: {
@@ -40,6 +47,21 @@ export default [
 
             // NestJS Best Practices
             'no-console': 'warn',
+        },
+    },
+    {
+        files: ['src/**/*.spec.ts', 'test/**/*.ts'],
+        languageOptions: {
+            globals: {
+                describe: 'readonly',
+                it: 'readonly',
+                expect: 'readonly',
+                jest: 'readonly',
+                beforeEach: 'readonly',
+                afterEach: 'readonly',
+                beforeAll: 'readonly',
+                afterAll: 'readonly',
+            },
         },
     },
 ];

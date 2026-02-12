@@ -1,87 +1,98 @@
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import { useCookie } from '#app'
 
 import type { User } from '~/shared/types'
 
-export const useUserStore = defineStore('user', {
-  state: () => ({
-    user: null as User | null,
-    isInitialized: false,
-  }),
+export const useUserStore = defineStore('user', () => {
+  const user = ref<User | null>(null)
+  const isInitialized = ref(false)
 
-  getters: {
-    isAuthenticated: (state) => !!state.user,
-    userRole: (state) => state.user?.role || 'STUDENT',
-    userName: (state) => state.user?.name || 'Друг',
-  },
+  // Move cookie composables to top level
+  const userCookie = useCookie<string | null>('user_data', {
+    path: '/',
+    sameSite: 'lax',
+  })
+  const tokenCookie = useCookie<string | null>('access_token', {
+    path: '/',
+    sameSite: 'lax',
+  })
 
-  actions: {
-    /**
-     * Set user and sync with cookies
-     */
-    setUser(user: User | null, accessToken: string | null = null, remember: boolean = true) {
-      this.user = user
+  // Getters
+  const isAuthenticated = computed(() => !!user.value)
+  const userRole = computed(() => user.value?.role || 'STUDENT')
+  const userName = computed(() => user.value?.name || 'Друг')
 
-      const userCookie = useCookie<string | null>('user_data', {
-        path: '/',
-        maxAge: remember ? 60 * 60 * 24 * 7 : undefined,
-        sameSite: 'strict',
-      })
+  // Actions
+  const setUser = (
+    newUser: User | null,
+    accessToken: string | null = null,
+    remember: boolean = true,
+  ): void => {
+    user.value = newUser
 
-      const tokenCookie = useCookie<string | null>('access_token', {
-        path: '/',
-        maxAge: remember ? 60 * 60 * 24 * 7 : undefined,
-        sameSite: 'strict',
-      })
+    const maxAge = remember ? 60 * 60 * 24 * 7 : undefined
+    userCookie.options.maxAge = maxAge
+    tokenCookie.options.maxAge = maxAge
 
-      if (user) {
-        userCookie.value = JSON.stringify(user)
-      } else {
-        userCookie.value = null
-      }
+    if (newUser) {
+      const { id, email, name, avatar, role, createdAt, updatedAt } = newUser
+      userCookie.value = JSON.stringify({ id, email, name, avatar, role, createdAt, updatedAt })
+    } else {
+      userCookie.value = null
+    }
 
-      if (accessToken) {
-        tokenCookie.value = accessToken
-      } else if (user === null) {
-        tokenCookie.value = null
-      }
-    },
+    if (accessToken) {
+      tokenCookie.value = accessToken
+    } else if (newUser === null) {
+      tokenCookie.value = null
+    }
+  }
 
-    /**
-     * Clear all session data
-     */
-    clearUser() {
-      this.user = null
-      const accessToken = useCookie('access_token')
-      const userData = useCookie('user_data')
-      accessToken.value = null
-      userData.value = null
-    },
+  const clearUser = (): void => {
+    user.value = null
+    tokenCookie.value = null
+    userCookie.value = null
+  }
 
-    /**
-     * Hydrate store from secure cookie
-     */
-    initStore() {
-      if (this.isInitialized) return
+  const initStore = (): void => {
+    if (isInitialized.value) return
 
-      const userCookie = useCookie<unknown>('user_data')
+    if (userCookie.value) {
+      try {
+        const data =
+          typeof userCookie.value === 'string' ? JSON.parse(userCookie.value) : userCookie.value
 
-      if (userCookie.value) {
-        try {
-          const rawData =
-            typeof userCookie.value === 'string' ? JSON.parse(userCookie.value) : userCookie.value
-
-          if (rawData && typeof rawData === 'object') {
-            // Crucial: JSON.parse(JSON.stringify()) ensures we have a plain JS object
-            // and strips any symbols/prototypes that break Nuxt serialization
-            this.user = JSON.parse(JSON.stringify(rawData))
+        if (data && typeof data === 'object') {
+          const d = data as Record<string, unknown>
+          const sanitized: User = {
+            id: String(d.id),
+            email: String(d.email),
+            name: d.name ? String(d.name) : undefined,
+            avatar: d.avatar ? String(d.avatar) : undefined,
+            role: (d.role as User['role']) || 'STUDENT',
+            createdAt: String(d.createdAt || new Date().toISOString()),
+            updatedAt: String(d.updatedAt || new Date().toISOString()),
           }
-        } catch (e) {
-          console.error('Store init error:', e)
-          this.clearUser()
+          user.value = sanitized
         }
+      } catch (e) {
+        console.error('[UserStore] Failed to initialize from cookie:', e)
+        clearUser()
       }
+    }
 
-      this.isInitialized = true
-    },
-  },
+    isInitialized.value = true
+  }
+
+  return {
+    user,
+    isInitialized,
+    isAuthenticated,
+    userRole,
+    userName,
+    setUser,
+    clearUser,
+    initStore,
+  }
 })

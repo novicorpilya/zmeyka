@@ -3,9 +3,9 @@ import { j as joinRelativeURL, u as useRuntimeConfig, g as getResponseStatusText
 import { renderToString } from 'vue/server-renderer';
 import { createHead as createHead$1, propsToString, renderSSRHead } from 'unhead/server';
 import { stringify, uneval } from 'devalue';
+import { FlatMetaPlugin, DeprecationsPlugin, PromisesPlugin, TemplateParamsPlugin, AliasSortingPlugin } from 'unhead/plugins';
 import { walkResolver } from 'unhead/utils';
 import { isRef, toValue, hasInjectionContext, inject, ref, watchEffect, getCurrentInstance, onBeforeUnmount, onDeactivated, onActivated } from 'vue';
-import { DeprecationsPlugin, PromisesPlugin, TemplateParamsPlugin, AliasSortingPlugin } from 'unhead/plugins';
 
 const VueResolver = (_, value) => {
   return isRef(value) ? toValue(value) : value;
@@ -64,6 +64,16 @@ function clientUseHead(head, input, options = {}) {
   }
   return entry;
 }
+function useSeoMeta(input = {}, options = {}) {
+  const head = options.head || /* @__PURE__ */ injectHead();
+  head.use(FlatMetaPlugin);
+  const { title, titleTemplate, ...meta } = input;
+  return useHead({
+    title,
+    titleTemplate,
+    _flatMeta: meta
+  }, options);
+}
 
 // @__NO_SIDE_EFFECTS__
 function createHead(options = {}) {
@@ -77,7 +87,7 @@ function createHead(options = {}) {
 
 const NUXT_RUNTIME_PAYLOAD_EXTRACTION = false;
 
-const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"description","content":"Освой Python и основы IT с помощью самого доброго в мире ИИ-наставника."},{"property":"og:title","content":"Zmeyka — Твой интерактивный ИИ-наставник в мире IT"},{"property":"og:description","content":"Освой Python и основы IT с помощью самого доброго в мире ИИ-наставника."},{"property":"og:type","content":"website"},{"property":"og:url","content":"https://zmeyka.io"},{"property":"og:image","content":"https://zmeyka.io/og-image.png"}],"link":[],"style":[],"script":[],"noscript":[],"title":"Zmeyka — Твой интерактивный ИИ-наставник в мире IT"};
+const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"description","content":"Освой Python и основы IT с помощью самого доброго в мире ИИ-наставника."},{"property":"og:title","content":"Змейка — Твой интерактивный ИИ-наставник в мире IT"},{"property":"og:description","content":"Освой Python и основы IT с помощью самого доброго в мире ИИ-наставника."},{"property":"og:type","content":"website"},{"property":"og:url","content":"https://zmeyka.ru"},{"property":"og:image","content":"https://zmeyka.ru/og-image.png"}],"link":[],"style":[],"script":[{"src":"https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js","defer":true,"crossorigin":"anonymous"},{"src":"https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js","defer":true,"crossorigin":"anonymous"}],"noscript":[]};
 
 const appRootTag = "div";
 
@@ -369,6 +379,18 @@ const renderer = defineRenderHandler(async (event) => {
 			href: payloadURL
 		} ] }, headEntryOptions);
 	}
+	if (ssrContext["~preloadManifest"] && !NO_SCRIPTS) {
+		ssrContext.head.push({ link: [{
+			rel: "preload",
+			as: "fetch",
+			fetchpriority: "low",
+			crossorigin: "anonymous",
+			href: buildAssetsURL(`builds/meta/${ssrContext.runtimeConfig.app.buildId}.json`)
+		}] }, {
+			...headEntryOptions,
+			tagPriority: "low"
+		});
+	}
 	// 2. Styles
 	if (inlinedStyles.length) {
 		ssrContext.head.push({ style: inlinedStyles });
@@ -475,5 +497,5 @@ const renderer$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty
   default: renderer
 }, Symbol.toStringTag, { value: 'Module' }));
 
-export { buildAssetsURL as a, baseURL as b, headSymbol as h, renderer$1 as r, useHead as u };
+export { useHead as a, baseURL as b, buildAssetsURL as c, headSymbol as h, renderer$1 as r, useSeoMeta as u };
 //# sourceMappingURL=renderer.mjs.map

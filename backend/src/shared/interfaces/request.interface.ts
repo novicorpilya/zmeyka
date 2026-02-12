@@ -5,6 +5,7 @@ export interface UserPayload {
   id: string
   email: string
   role: Role
+  tokenVersion?: number
 }
 
 export interface AuthenticatedRequest extends Request {

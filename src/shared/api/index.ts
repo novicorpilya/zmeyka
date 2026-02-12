@@ -1,49 +1,60 @@
-// eslint-disable-next-line boundaries/element-types
 import { useUserStore } from '~/entities/user/model/store'
+
+interface FetchError {
+  response?: {
+    status?: number
+  }
+}
 
 // Module-level lock for token refreshing to prevent race conditions
 let refreshPromise: Promise<string | null> | null = null
 
 export const useApi = () => {
   const config = useRuntimeConfig()
-  const accessToken = useCookie<string | null>('access_token')
   const userStore = useUserStore()
 
-  // Internal fetcher configuration
+  // Create $fetch instance ONCE per composable call, not per request
   const apiFetch = $fetch.create({
     baseURL: config.public.apiBase as string,
     onRequest({ options }) {
       options.credentials = 'include'
-      // We only set the header if the token is available and it's not an HttpOnly cookie
-      // In many cases with HttpOnly cookies, the browser handles this automatically.
-      if (accessToken.value) {
-        const headers = new Headers(options.headers)
-        headers.set('Authorization', `Bearer ${accessToken.value}`)
+      const at = useCookie<string | null>('access_token')
+      const token = at.value
+      // Only attach if it looks like a real JWT (min length check)
+      if (token && typeof token === 'string' && token.length > 20) {
+        const headers = new Headers((options.headers as HeadersInit) || {})
+        headers.set('Authorization', `Bearer ${token}`)
         options.headers = headers
       }
     },
   })
 
-  /**
-   * Custom wrapper to handle 401 and transparent retry
-   */
   return async <T = unknown>(
     request: string,
     options: Record<string, unknown> = {},
   ): Promise<T> => {
-    try {
-      return await apiFetch(request, options)
-    } catch (error: unknown) {
-      const responseStatus = (error as { response?: { status?: number } })?.response?.status
+    const at = useCookie<string | null>('access_token')
+    const initialToken = at.value
 
-      // If not unauthorized or it's an auth-related request, bubble up the error
+    try {
+      return (await apiFetch(request, options)) as T
+    } catch (error: unknown) {
+      const responseStatus = (error as FetchError)?.response?.status
+
       if (responseStatus !== 401) throw error
 
       const url = request.toString()
       if (url.includes('/auth/refresh') || url.includes('/auth/login')) throw error
 
+      // If the token has already changed while we were waiting for the response,
+      // it means another request (or tab) already refreshed it. Just retry.
+      if (at.value !== initialToken && at.value) {
+        const headers = new Headers((options.headers as HeadersInit) || {})
+        headers.set('Authorization', `Bearer ${at.value}`)
+        return (await apiFetch(request, { ...options, headers })) as T
+      }
+
       try {
-        // If a refresh is already in progress, wait for it instead of starting a new one
         if (!refreshPromise) {
           refreshPromise = (async () => {
             try {
@@ -66,18 +77,22 @@ export const useApi = () => {
         const newToken = await refreshPromise
 
         if (newToken) {
-          accessToken.value = newToken
-          // Retry original request with the new token in headers
+          at.value = newToken
           const headers = new Headers((options.headers as HeadersInit) || {})
           headers.set('Authorization', `Bearer ${newToken}`)
-          return await apiFetch(request, { ...options, headers })
+          return (await apiFetch(request, { ...options, headers })) as T
         }
 
         throw new Error('Refresh failed')
       } catch (refreshError: unknown) {
         // Cleanup on terminal failure
-        accessToken.value = null
-        userStore.clearUser()
+        if (at.value) {
+          if (import.meta.dev) {
+            console.warn('[API] Silent refresh failed, clearing user session')
+          }
+          at.value = null
+          userStore.clearUser()
+        }
 
         if (process.client) {
           const currentPath = window.location.pathname

@@ -40,6 +40,8 @@
     "include": [
         "nuxt.config.ts",
         "src/**/*",
+        "src/types/**/*.d.ts",
+        "src/shims.d.ts",
         ".nuxt/nuxt.d.ts"
     ]
 }

@@ -52,7 +52,8 @@
       >
         <span class="shrink-0 uppercase tracking-widest px-1">Фильтр по уровню:</span>
         <select
-          class="w-full sm:w-auto bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-2 outline-none focus:border-brand-blue text-slate-600 font-black"
+          v-model="activeLevel"
+          class="w-full sm:w-auto bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-2 outline-none focus:border-brand-blue text-slate-600 font-black appearance-none cursor-pointer"
         >
           <option>Все уровни</option>
           <option>Новичок</option>
@@ -76,68 +77,144 @@
         >
           <!-- Course Thumbnail -->
           <div
-            class="h-40 md:h-48 bg-slate-900 relative overflow-hidden flex items-center justify-center shrink-0"
+            class="h-44 md:h-52 bg-slate-900 relative overflow-hidden flex items-center justify-center shrink-0"
           >
             <div
               class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] animate-shimmer"
             ></div>
             <span
-              class="text-5xl md:text-6xl group-hover:scale-125 transition-transform duration-500 z-10"
+              class="text-6xl md:text-7xl group-hover:scale-110 transition-transform duration-700 z-10"
             >
-              {{ isTeacher ? '🛠️' : '📚' }}
+              {{
+                course.category === 'Python'
+                  ? '🐍'
+                  : course.category === 'Frontend'
+                    ? '⚛️'
+                    : course.category === 'AI'
+                      ? '🤖'
+                      : '📚'
+              }}
             </span>
+            <div class="absolute top-4 left-4 flex flex-col gap-2">
+              <div
+                class="px-3 py-1 bg-white/10 backdrop-blur-md text-white rounded-lg text-[9px] font-black uppercase tracking-widest border border-white/20"
+              >
+                {{ course.category || 'Общее' }}
+              </div>
+              <div
+                class="px-3 py-1 bg-brand-yellow rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-800 shadow-sm"
+              >
+                {{ course.level || 'Новичок' }}
+              </div>
+            </div>
+            <!-- Price Tag -->
             <div
-              class="absolute top-4 right-4 px-3 py-1 bg-brand-yellow rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-800 shadow-sm"
+              v-if="!isTeacher"
+              class="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-2xl shadow-premium border-2 border-slate-50 flex items-center gap-2"
             >
-              {{ course.level || 'Новичок' }}
+              <span class="text-xs font-black text-slate-800">{{
+                course.price ? `${course.price} ₽` : 'Бесплатно'
+              }}</span>
+            </div>
+            <div
+              v-else
+              class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-2xl border-2 border-slate-100 flex items-center gap-2"
+            >
+              <span
+                v-if="course.isPublished"
+                class="text-[10px] font-black text-brand-green uppercase tracking-widest"
+                >В ЭФИРЕ 🟢</span
+              >
+              <span
+                v-else
+                class="text-[10px] font-black text-brand-orange uppercase tracking-widest"
+                >ЧЕРНОВИК 🟠</span
+              >
             </div>
           </div>
 
           <!-- Content -->
-          <div class="p-6 md:p-8 flex-grow flex flex-col space-y-4">
-            <div
-              class="flex items-center gap-2 text-[8px] md:text-[10px] font-black text-brand-blue uppercase tracking-widest"
+          <div class="p-6 md:p-8 flex-grow flex flex-col">
+            <!-- Teacher info -->
+            <NuxtLink
+              v-if="!isTeacher"
+              :to="`/teacher/${course.teacher?.id}`"
+              class="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity"
             >
-              <span>{{ course.category || 'Программирование' }}</span>
-              <span>•</span>
-              <span>{{ isTeacher ? (course.studentsCount || 0) + ' учеников' : '12 уроков' }}</span>
-            </div>
+              <div
+                class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-lg shadow-inner overflow-hidden border-2 border-slate-50"
+              >
+                <img
+                  v-if="course.teacher?.avatar"
+                  :src="course.teacher.avatar"
+                  class="w-full h-full object-cover"
+                />
+                <span v-else>👨‍🏫</span>
+              </div>
+              <div class="min-w-0">
+                <p
+                  class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1"
+                >
+                  Мастер курса
+                </p>
+                <p class="text-xs font-black text-slate-800 truncate">
+                  {{ course.teacher?.name || 'Анонимный мастер' }}
+                </p>
+              </div>
+            </NuxtLink>
+
             <h3
-              class="text-lg md:text-xl font-black text-slate-800 line-clamp-2 leading-tight group-hover:text-brand-blue transition-colors"
+              class="text-xl font-black text-slate-800 line-clamp-2 leading-tight group-hover:text-brand-blue transition-colors mb-3"
             >
               {{ course.title }}
             </h3>
-            <p class="text-xs md:text-sm font-bold text-slate-400 line-clamp-2 md:line-clamp-3">
-              {{ course.description }}
-            </p>
 
-            <!-- Footer info -->
-            <div class="pt-5 border-t-2 border-slate-50 flex items-center justify-between mt-auto">
-              <div v-if="!isTeacher" class="flex items-center gap-2">
-                <div
-                  class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200 uppercase text-[8px] md:text-[10px] font-black shrink-0"
+            <div
+              class="flex items-center gap-4 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6"
+            >
+              <span class="flex items-center gap-1.5"
+                >🎓 {{ course.plannedLessonsCount }} уроков</span
+              >
+              <span class="flex items-center gap-1.5"
+                >🔥 {{ course.studentsCount || 0 }} учеников</span
+              >
+            </div>
+
+            <!-- Prices & Mentoring -->
+            <div class="p-4 bg-slate-50 rounded-2xl border-2 border-slate-100 mb-6 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest"
+                  >Курс:</span
                 >
-                  {{ course.teacher?.name?.[0] || 'П' }}
-                </div>
+                <span class="text-xs font-black text-slate-800">{{
+                  course.price ? `${course.price} ₽` : 'Бесплатно ✨'
+                }}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest"
+                  >Менторинг:</span
+                >
                 <span
-                  class="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest truncate max-w-[80px] sm:max-w-none"
+                  class="text-xs font-black"
+                  :class="course.mentoringPrice ? 'text-brand-green' : 'text-slate-300'"
                 >
-                  {{ course.teacher?.name || 'Мастер' }}
+                  {{ course.mentoringPrice ? `${course.mentoringPrice} ₽` : 'Недоступен' }}
                 </span>
               </div>
-              <div
-                v-else
-                class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest"
-              >
-                <span v-if="course.isPublished" class="text-brand-green">В эфире 🟢</span>
-                <span v-else class="text-brand-orange">Черновик 🟠</span>
-              </div>
+            </div>
 
+            <!-- Footer Action -->
+            <div class="pt-6 border-t-2 border-slate-50 mt-auto">
               <NuxtLink
                 :to="isTeacher ? `/courses/builder/${course.id}` : `/courses/${course.id}`"
-                class="bg-brand-blue px-4 h-9 md:h-10 rounded-xl flex items-center justify-center text-white text-xs md:text-sm font-black shadow-[0_4px_0_0_#1e40af] hover:translate-y-0.5 hover:shadow-none active:translate-y-1 transition-all gap-2"
+                class="w-full py-4 rounded-2xl flex items-center justify-center text-white text-sm font-black transition-all gap-3"
+                :class="
+                  isTeacher
+                    ? 'bg-slate-900 shadow-cartoon-sm hover:translate-y-0.5'
+                    : 'bg-brand-blue shadow-premium hover:scale-[1.02] active:scale-95'
+                "
               >
-                {{ isTeacher ? 'КОНСТРУКТОР' : '🚀' }}
+                {{ isTeacher ? 'УПРАВЛЯТЬ СТУДИЕЙ ⚙️' : 'ПОДРОБНЕЕ О КУРСЕ 🚀' }}
               </NuxtLink>
             </div>
           </div>
@@ -180,6 +257,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+
 import { useCourseApi } from '~/entities/course/api'
 import { useTeacherStore } from '~/entities/teacher/model/store'
 import { useUserStore } from '~/entities/user/model/store'
@@ -192,12 +271,17 @@ const router = useRouter()
 
 const isTeacher = computed(() => userStore.user?.role === 'TEACHER')
 const activeCategory = ref('Все')
+const activeLevel = ref('Все уровни')
 
 const {
   data: allCourses,
   pending,
   refresh,
-} = await useAsyncData<Course[]>('courses-catalog', () => getCourses() as Promise<Course[]>)
+} = useAsyncData<Course[]>('courses-catalog-v2', () => getCourses() as Promise<Course[]>, {
+  lazy: true,
+  server: false,
+  watch: [isTeacher],
+})
 
 const filteredCourses = computed(() => {
   let list = (allCourses.value || []).map((course) => {
@@ -211,18 +295,25 @@ const filteredCourses = computed(() => {
     return course
   })
 
-  if (isTeacher.value) {
-    return list.filter((c: Course) => c.teacherId === userStore.user?.id)
+  if (activeCategory.value !== 'Все') {
+    list = list.filter((c) => c.category === activeCategory.value)
   }
 
-  if (activeCategory.value === 'Все') return list
-  return list.filter((c) => c.category === activeCategory.value)
+  if (activeLevel.value !== 'Все уровни') {
+    list = list.filter((c) => (c.level || 'Новичок') === activeLevel.value)
+  }
+
+  return list
 })
 
 onMounted(async () => {
   refresh()
   if (isTeacher.value) {
-    await teacherStore.fetchSummary()
+    try {
+      await teacherStore.fetchSummary()
+    } catch (e) {
+      console.error('Failed to fetch dashboard summary', e)
+    }
   }
 })
 

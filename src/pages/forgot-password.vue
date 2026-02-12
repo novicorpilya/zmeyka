@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import logoImage from '~/assets/logo.png'
 import { useAuthApi } from '~/features/auth/api'
 
 const { forgotPassword } = useAuthApi()
@@ -48,7 +49,7 @@ definePageMeta({
           <div
             class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-cartoon border-2 border-slate-100 group-hover:scale-110 transition-transform"
           >
-            <img src="~/assets/logo.png" alt="Zmeyka" class="w-8 h-8 object-contain" />
+            <img :src="logoImage" alt="Zmeyka" class="w-8 h-8 object-contain" />
           </div>
           <span class="text-2xl font-black text-slate-800 tracking-tighter">Zmeyka</span>
         </NuxtLink>

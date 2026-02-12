@@ -5,6 +5,7 @@ import { NotFoundException } from '@nestjs/common'
 
 describe('DashboardService', () => {
   let service: DashboardService
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let prisma: PrismaService
 
   const mockPrisma = {

@@ -29,14 +29,12 @@ let AuthController = class AuthController {
     async register(dto, res) {
         const result = await this.authService.register(dto);
         this.setCookies(res, result.accessToken, result.refreshToken);
-        const { refreshToken, accessToken, ...response } = result;
-        return res.status(common_1.HttpStatus.CREATED).json(response);
+        return res.status(common_1.HttpStatus.CREATED).json(result);
     }
     async login(dto, res) {
         const result = await this.authService.login(dto);
         this.setCookies(res, result.accessToken, result.refreshToken, dto.rememberMe);
-        const { refreshToken, accessToken, ...response } = result;
-        return res.status(common_1.HttpStatus.OK).json(response);
+        return res.status(common_1.HttpStatus.OK).json(result);
     }
     async logout(req, res) {
         await this.authService.logout(req.user.id);
@@ -66,17 +64,22 @@ let AuthController = class AuthController {
         return this.authService.resetPassword(dto.token, dto.newPassword);
     }
     setCookies(res, accessToken, refreshToken, remember = true) {
-        const cookieOptions = {
-            httpOnly: true,
+        const commonOptions = {
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: 'lax',
             path: '/',
         };
         if (remember) {
-            cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000;
+            commonOptions.maxAge = 7 * 24 * 60 * 60 * 1000;
         }
-        res.cookie('refresh_token', refreshToken, cookieOptions);
-        res.cookie('access_token', accessToken, cookieOptions);
+        res.cookie('refresh_token', refreshToken, {
+            ...commonOptions,
+            httpOnly: true,
+        });
+        res.cookie('access_token', accessToken, {
+            ...commonOptions,
+            httpOnly: false,
+        });
     }
 };
 exports.AuthController = AuthController;

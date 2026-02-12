@@ -1,24 +1,69 @@
 <template>
   <div class="flex flex-col h-full space-y-6">
-    <!-- Feedback Header -->
+    <!-- AI Status -->
     <div
-      v-if="homework.feedback || homework.score !== null"
-      class="p-6 bg-slate-50 rounded-2xl border-2 border-slate-100 flex items-center justify-between"
+      v-if="homework.status === 'CHECKING'"
+      class="p-6 bg-brand-blue/5 rounded-3xl border-4 border-slate-100 flex items-center gap-4 animate-pulse"
     >
-      <div v-if="homework.feedback" class="space-y-1">
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-          Вердикт учителя:
-        </p>
-        <p class="font-bold text-slate-700">{{ homework.feedback }}</p>
+      <div
+        class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-sm border-2 border-slate-50"
+      >
+        🤖
       </div>
-      <div v-if="homework.score !== null" class="text-right">
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Оценка:</p>
-        <div class="text-2xl font-black text-brand-green">{{ homework.score }} / 100</div>
+      <div>
+        <p class="text-xs font-black text-brand-blue uppercase tracking-widest">
+          Running CI/CD pipeline...
+        </p>
+        <p class="text-[11px] font-bold text-slate-400">
+          ИИ анализирует твой код на наличие багов и уязвимостей. 🐍
+        </p>
+      </div>
+    </div>
+
+    <div
+      v-else-if="homework.feedback"
+      class="p-6 bg-white rounded-3xl border-4 border-slate-100 flex items-center justify-between shadow-sm"
+    >
+      <div class="space-y-1">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+          Вердикт системы:
+        </p>
+        <p class="font-bold text-slate-700 leading-relaxed">{{ homework.feedback }}</p>
+      </div>
+      <div class="shrink-0 ml-6">
+        <!-- Статусы в стиле Big Tech -->
+        <div v-if="homework.status === 'COMPLETED'" class="flex flex-col items-center">
+          <div
+            class="px-4 py-1.5 bg-brand-green/10 text-brand-green border-2 border-brand-green/20 rounded-full text-[10px] font-black tracking-tighter mb-1"
+          >
+            ПРИНЯТО (LGTM)
+          </div>
+          <div class="text-[9px] font-black text-slate-300 uppercase">Одобрено</div>
+        </div>
+        <div v-else-if="homework.status === 'REJECTED'" class="flex flex-col items-center">
+          <div
+            class="px-4 py-1.5 bg-rose-50 text-rose-500 border-2 border-rose-100 rounded-full text-[10px] font-black tracking-tighter mb-1 uppercase"
+          >
+            Нужны правки
+          </div>
+          <div class="text-[9px] font-black text-slate-300 uppercase">Требуется рефакторинг</div>
+        </div>
+        <div v-else-if="homework.status === 'NEEDS_REVIEW'" class="flex flex-col items-center">
+          <div
+            class="px-4 py-1.5 bg-amber-50 text-amber-500 border-2 border-amber-100 rounded-full text-[10px] font-black tracking-tighter mb-1 uppercase"
+          >
+            На проверке
+          </div>
+          <div class="text-[9px] font-black text-slate-300 uppercase">Ручной разбор</div>
+        </div>
       </div>
     </div>
 
     <!-- Chat Messages -->
-    <div class="flex-grow space-y-6 overflow-y-auto pr-2 custom-scrollbar max-h-[500px]">
+    <div
+      ref="messagesContainer"
+      class="flex-grow space-y-6 overflow-y-auto pr-2 custom-scrollbar max-h-[500px]"
+    >
       <div
         v-for="comment in homework.comments"
         :key="comment.id"
@@ -28,7 +73,7 @@
         <div
           class="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center text-lg shrink-0"
         >
-          {{ comment.author.role === 'TEACHER' ? '👨‍🏫' : '🐍' }}
+          {{ ['TEACHER', 'ADMIN'].includes(comment.author.role) ? '👨‍🏫' : '🐍' }}
         </div>
         <div class="space-y-2 max-w-[80%]">
           <div
@@ -88,11 +133,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import type { Ref } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 
+import { useHomeworksApi } from '~/entities/homework/api'
 import { useUserStore } from '~/entities/user/model/store'
-import { useHomeworksApi } from '~/features/homeworks/api'
-import type { Homework } from '~/shared/types'
+import { useToast } from '~/shared/composables/useToast'
+import type { Homework, Socket } from '~/shared/types'
 
 const props = defineProps<{
   homework: Homework
@@ -102,9 +149,51 @@ const emit = defineEmits(['refresh'])
 
 const userStore = useUserStore()
 const homeworksApi = useHomeworksApi()
+const nuxtApp = useNuxtApp()
+const $socket = (nuxtApp as unknown as { $socket: Ref<Socket> }).$socket
+const toast = useToast()
 
 const newComment = ref('')
 const isSending = ref(false)
+
+const messagesContainer = ref<HTMLElement | null>(null)
+
+const scrollToBottom = () => {
+  if (messagesContainer.value) {
+    messagesContainer.value.scrollTo({
+      top: messagesContainer.value.scrollHeight,
+      behavior: 'smooth',
+    })
+  }
+}
+
+watch(
+  () => props.homework.comments,
+  () => {
+    setTimeout(scrollToBottom, 100)
+  },
+  { deep: true },
+)
+
+onMounted(() => {
+  setTimeout(scrollToBottom, 500)
+  if ($socket.value) {
+    const socket = $socket.value
+    socket.on('new_comment', (data: unknown) => {
+      const socketData = data as { homeworkId: string }
+      if (socketData.homeworkId === props.homework.id) {
+        emit('refresh', props.homework.lessonId)
+      }
+    })
+  }
+})
+
+onUnmounted(() => {
+  if ($socket.value) {
+    const socket = $socket.value
+    socket.off('new_comment')
+  }
+})
 
 const sendComment = async () => {
   if (!newComment.value.trim() || isSending.value) return
@@ -112,9 +201,9 @@ const sendComment = async () => {
   try {
     await homeworksApi.addComment(props.homework.id, newComment.value)
     newComment.value = ''
-    emit('refresh')
+    emit('refresh', props.homework.lessonId)
   } catch (err) {
-    alert('Ошибка при отправке комментария')
+    toast.error('Ошибка при отправке комментария')
   } finally {
     isSending.value = false
   }

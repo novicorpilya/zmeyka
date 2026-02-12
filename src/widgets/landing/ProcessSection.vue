@@ -2,90 +2,214 @@
   <section
     ref="sectionRef"
     id="process"
-    class="bg-slate-900 py-32 md:py-0 overflow-hidden relative"
+    class="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 py-24 md:py-32 lg:py-0 overflow-hidden relative"
   >
-    <!-- Background dynamic elements -->
-    <div class="absolute inset-0 pointer-events-none">
+    <!-- Ambient Background -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
       <div
-        class="absolute top-[20%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px]"
+        class="absolute top-0 left-1/4 w-[800px] h-[800px] bg-emerald-500/5 rounded-full blur-[150px]"
       ></div>
       <div
-        class="absolute bottom-[20%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]"
+        class="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-violet-500/5 rounded-full blur-[150px]"
+      ></div>
+      <!-- Grid pattern -->
+      <div
+        class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]"
       ></div>
     </div>
 
-    <!-- Pinned Title Control -->
-    <div class="md:h-screen flex flex-col justify-center items-center relative z-20 px-6">
-      <div class="text-center mb-20 md:mb-0 process-header">
-        <span
-          class="inline-block px-4 py-1 rounded-full bg-white/5 border border-white/10 text-emerald-400 text-[10px] font-black uppercase tracking-[0.4em] mb-6"
-          >Workflow</span
+    <!-- Section Header -->
+    <div class="lg:h-screen flex flex-col justify-center items-center relative z-20 px-6">
+      <div class="text-center mb-16 md:mb-20 lg:mb-0 process-header max-w-4xl mx-auto">
+        <!-- Badge -->
+        <div
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-8"
         >
-        <h2 class="text-5xl md:text-9xl font-black text-white leading-[0.9] tracking-tighter">
-          Твоя
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500"
-            >эволюция</span
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-emerald-400 text-xs font-bold uppercase tracking-[0.2em]"
+            >Процесс обучения</span
           >
+        </div>
+
+        <h2
+          class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight mb-6"
+        >
+          От новичка до<br />
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500"
+          >
+            профессионала
+          </span>
         </h2>
-        <p class="text-slate-400 mt-8 text-xl font-medium max-w-sm mx-auto opacity-60">
-          Скроль вниз, чтобы увидеть магию превращения
+
+        <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          Четыре этапа, которые превратят тебя в крутого разработчика. Каждый шаг продуман до
+          мелочей.
         </p>
       </div>
 
-      <!-- Horizontal Wrapper -->
+      <!-- Horizontal Scroll Container -->
       <div
         ref="horizontalRef"
-        class="md:flex md:w-[400vw] h-full md:absolute md:top-0 md:left-0 md:flex-row items-center gap-0 md:pl-[100vw]"
+        class="lg:flex lg:w-[400vw] h-full lg:absolute lg:top-0 lg:left-0 lg:flex-row items-center gap-0 lg:pl-[100vw]"
       >
+        <!-- Step Cards -->
         <div
           v-for="(step, i) in steps"
           :key="i"
-          class="process-panel w-full md:w-screen h-auto md:h-screen flex items-center justify-center flex-shrink-0 px-6 py-20 md:py-0"
+          class="process-panel w-full lg:w-screen h-auto lg:h-screen flex items-center justify-center flex-shrink-0 px-6 py-16 lg:py-0"
         >
-          <div
-            class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center"
-          >
-            <!-- Visual Side -->
-            <div class="step-visual relative aspect-square group">
+          <div class="max-w-7xl w-full">
+            <!-- Card Container -->
+            <div
+              class="relative rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 lg:p-16 overflow-hidden"
+              :class="step.cardBg"
+            >
+              <!-- Card Background Gradient -->
               <div
-                class="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 rounded-[4rem] group-hover:scale-105 transition-transform duration-700 blur-2xl opacity-50"
+                class="absolute inset-0 bg-gradient-to-br from-white/[0.08] to-transparent"
               ></div>
-              <div
-                class="relative h-full glass-card rounded-[4rem] border border-white/10 flex items-center justify-center overflow-hidden shadow-2xl"
-              >
-                <span
-                  class="text-[120px] md:text-[240px] drop-shadow-[0_20px_50px_rgba(16,185,129,0.3)] animate-float select-none"
-                  >{{ step.icon }}</span
-                >
-                <div
-                  class="absolute top-10 left-10 text-white/5 font-black text-[120px] md:text-[200px] leading-none"
-                >
-                  {{ i + 1 }}
-                </div>
-              </div>
-            </div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
 
-            <!-- Info Side -->
-            <div class="step-info space-y-8 text-center md:text-left">
+              <!-- Glow Effect -->
               <div
-                class="inline-flex items-center gap-4 text-emerald-400 font-black text-xs uppercase tracking-[0.3em]"
+                class="absolute -top-32 -right-32 w-64 h-64 rounded-full blur-[100px] opacity-50"
+                :class="step.glowColor"
+              ></div>
+
+              <div
+                class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center"
               >
-                <span class="w-12 h-px bg-emerald-500/30"></span>
-                Phase 0{{ i + 1 }}
-              </div>
-              <h3 class="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight">
-                {{ step.title }}
-              </h3>
-              <p class="text-slate-400 text-xl md:text-2xl font-medium leading-relaxed">
-                {{ step.desc }}
-              </p>
-              <div class="pt-8 flex flex-wrap gap-3 justify-center md:justify-start">
-                <span
-                  v-for="tag in step.tags"
-                  :key="tag"
-                  class="px-5 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black uppercase text-slate-300"
-                  >{{ tag }}</span
-                >
+                <!-- Left: Step Info -->
+                <div class="step-info order-2 lg:order-1 space-y-8">
+                  <!-- Step Number -->
+                  <div class="flex items-center gap-4">
+                    <span
+                      class="text-8xl md:text-9xl lg:text-[12rem] font-black leading-none opacity-20"
+                      :class="step.numberColor"
+                    >
+                      {{ String(i + 1).padStart(2, '0') }}
+                    </span>
+                  </div>
+
+                  <!-- Title -->
+                  <div class="space-y-4">
+                    <h3
+                      class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight"
+                    >
+                      {{ step.title }}
+                    </h3>
+                    <p class="text-lg md:text-xl text-white/70 leading-relaxed max-w-lg">
+                      {{ step.desc }}
+                    </p>
+                  </div>
+
+                  <!-- Features List -->
+                  <ul class="space-y-4 pt-4">
+                    <li
+                      v-for="(feature, fi) in step.features"
+                      :key="fi"
+                      class="flex items-center gap-4"
+                    >
+                      <div
+                        class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0"
+                      >
+                        <ClientOnly>
+                          <component
+                            :is="feature.icon"
+                            class="w-5 h-5 text-white"
+                            :stroke-width="2"
+                          />
+                        </ClientOnly>
+                      </div>
+                      <span class="text-white/80 font-medium">{{ feature.text }}</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Right: Visual -->
+                <div class="step-visual order-1 lg:order-2 flex items-center justify-center">
+                  <div class="relative">
+                    <!-- Floating Icon Container -->
+                    <div
+                      class="w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-[3rem] bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-2xl"
+                    >
+                      <ClientOnly>
+                        <component
+                          :is="step.iconComponent"
+                          class="w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 text-white drop-shadow-2xl animate-float"
+                          :stroke-width="1"
+                        />
+                        <template #fallback>
+                          <div
+                            class="w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 bg-white/10 rounded-full animate-pulse"
+                          ></div>
+                        </template>
+                      </ClientOnly>
+                    </div>
+
+                    <!-- Decorative Elements -->
+                    <div
+                      class="absolute -top-6 -right-6 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 animate-float-slow"
+                    >
+                      <ClientOnly>
+                        <component
+                          :is="step.badge1Icon"
+                          class="w-8 h-8 md:w-10 md:h-10 text-white"
+                          :stroke-width="1.5"
+                        />
+                      </ClientOnly>
+                    </div>
+
+                    <div
+                      class="absolute -bottom-4 -left-4 w-14 h-14 md:w-16 md:h-16 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 animate-float-slow"
+                      style="animation-delay: -2s"
+                    >
+                      <ClientOnly>
+                        <component
+                          :is="step.badge2Icon"
+                          class="w-6 h-6 md:w-8 md:h-8 text-white"
+                          :stroke-width="1.5"
+                        />
+                      </ClientOnly>
+                    </div>
+
+                    <!-- Progress Ring -->
+                    <div class="absolute -bottom-8 -right-8 w-20 h-20 md:w-24 md:h-24">
+                      <svg viewBox="0 0 100 100" class="w-full h-full -rotate-90">
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="45"
+                          fill="none"
+                          stroke="rgba(255,255,255,0.1)"
+                          stroke-width="8"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="45"
+                          fill="none"
+                          stroke="url(#progressGradient)"
+                          stroke-width="8"
+                          stroke-linecap="round"
+                          :stroke-dasharray="`${(i + 1) * 70} 283`"
+                        />
+                        <defs>
+                          <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#10b981" />
+                            <stop offset="100%" stop-color="#3b82f6" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                      <span
+                        class="absolute inset-0 flex items-center justify-center text-white font-black text-lg md:text-xl"
+                      >
+                        {{ (i + 1) * 25 }}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -98,6 +222,27 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import {
+  Rocket,
+  Code2,
+  TrendingUp,
+  Crown,
+  Zap,
+  Terminal,
+  Layers,
+  Award,
+  UserPlus,
+  Brain,
+  Gamepad2,
+  Play,
+  Bug,
+  MessageSquare,
+  GitBranch,
+  Puzzle,
+  Target,
+  Briefcase,
+  Users,
+} from 'lucide-vue-next'
 import { ref, onMounted } from 'vue'
 
 const sectionRef = ref<HTMLElement | null>(null)
@@ -105,28 +250,64 @@ const horizontalRef = ref<HTMLElement | null>(null)
 
 const steps = [
   {
-    icon: '🥚',
+    iconComponent: Rocket,
+    badge1Icon: Zap,
+    badge2Icon: UserPlus,
     title: 'Пробуждение',
-    desc: 'Мы создаем твой цифровой профиль и подбираем персональную нейросеть-наставника под твои интересы.',
-    tags: ['Setup', 'AI Profiling', 'Character'],
+    desc: 'Создаём твой цифровой профиль и подбираем персонального ИИ-наставника под твои цели и интересы.',
+    features: [
+      { icon: UserPlus, text: 'Персонализированная настройка' },
+      { icon: Brain, text: 'ИИ-подбор учебного плана' },
+      { icon: Gamepad2, text: 'Игровой аватар и прогресс' },
+    ],
+    cardBg: 'bg-gradient-to-br from-amber-600/90 via-orange-600/80 to-red-600/70',
+    glowColor: 'bg-amber-500',
+    numberColor: 'text-white',
   },
   {
-    icon: '🧪',
+    iconComponent: Code2,
+    badge1Icon: Terminal,
+    badge2Icon: Play,
     title: 'Эксперименты',
-    desc: 'Погружение в живой код без воды. Каждая строчка кода, написанная тобой, тут же анализируется системой.',
-    tags: ['Live Coding', 'Active Learning'],
+    desc: 'Погружаешься в живой код. Каждая строчка анализируется системой и ИИ даёт мгновенную обратную связь.',
+    features: [
+      { icon: Play, text: 'Интерактивные уроки с кодом' },
+      { icon: Bug, text: 'Умный дебаггер с подсказками' },
+      { icon: MessageSquare, text: 'Чат с ИИ-наставником 24/7' },
+    ],
+    cardBg: 'bg-gradient-to-br from-violet-600/90 via-purple-600/80 to-fuchsia-600/70',
+    glowColor: 'bg-violet-500',
+    numberColor: 'text-white',
   },
   {
-    icon: '🐍',
+    iconComponent: TrendingUp,
+    badge1Icon: Layers,
+    badge2Icon: GitBranch,
     title: 'Мутация',
-    desc: 'Твой код становится чище, а решения — эффективнее. Формируем архитектурное мышление с первого дня.',
-    tags: ['Optimization', 'Refactoring'],
+    desc: 'Твой код становится чище, а решения — эффективнее. Формируем архитектурное мышление разработчика.',
+    features: [
+      { icon: GitBranch, text: 'Работа с реальными проектами' },
+      { icon: Puzzle, text: 'Паттерны и архитектура' },
+      { icon: Target, text: 'Code Review от ИИ' },
+    ],
+    cardBg: 'bg-gradient-to-br from-emerald-600/90 via-teal-600/80 to-cyan-600/70',
+    glowColor: 'bg-emerald-500',
+    numberColor: 'text-white',
   },
   {
-    icon: '🐉',
+    iconComponent: Crown,
+    badge1Icon: Award,
+    badge2Icon: Briefcase,
     title: 'Вознесение',
-    desc: 'Финальный проект готов к портфолио. Ты получаешь диплом и пожизненный доступ к нашему закрытому IT-клубу.',
-    tags: ['Portfolio', 'Certification', 'Network'],
+    desc: 'Финальный проект в портфолио, диплом и пожизненный доступ к нашему закрытому IT-сообществу.',
+    features: [
+      { icon: Briefcase, text: 'Готовое портфолио проектов' },
+      { icon: Award, text: 'Сертификат о завершении' },
+      { icon: Users, text: 'Доступ в IT-комьюнити' },
+    ],
+    cardBg: 'bg-gradient-to-br from-blue-600/90 via-indigo-600/80 to-purple-600/70',
+    glowColor: 'bg-blue-500',
+    numberColor: 'text-white',
   },
 ]
 
@@ -135,61 +316,59 @@ onMounted(() => {
 
   let mm = gsap.matchMedia()
 
-  mm.add('(min-width: 768px)', () => {
+  mm.add('(min-width: 1024px)', () => {
     if (!horizontalRef.value || !sectionRef.value) return
 
-    // Single Timeline for better stability
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.value,
         pin: true,
         scrub: 1,
         start: 'top top',
-        end: () => '+=' + horizontalRef.value!.scrollWidth,
+        end: () => (horizontalRef.value ? '+=' + horizontalRef.value.scrollWidth : '+=100%'),
         invalidateOnRefresh: true,
         anticipatePin: 1,
       },
     })
 
-    // 1. Fade out header
-    tl.to('.process-header', { opacity: 0, y: -50, duration: 0.5 }, 0)
+    // Fade out header
+    tl.to('.process-header', { opacity: 0, y: -80, duration: 0.3 }, 0)
 
-    // 2. Horizontal move
+    // Horizontal scroll
     tl.to(
       horizontalRef.value,
       {
-        x: () => -(horizontalRef.value!.scrollWidth - window.innerWidth),
+        x: () => (horizontalRef.value ? -(horizontalRef.value.scrollWidth - window.innerWidth) : 0),
         ease: 'none',
-        duration: 5, // Large duration to allow internal animations to time correctly
+        duration: 5,
       },
-      0.2,
+      0.1,
     )
 
-    // 3. Subtle panel internal animations
+    // Panel animations
     const panels = gsap.utils.toArray('.process-panel') as HTMLElement[]
     panels.forEach((panel, i) => {
       const visual = panel.querySelector('.step-visual')
       const info = panel.querySelector('.step-info')
+      const start = 0.1 + i * 1.2
 
-      // Use a small part of the main timeline for each panel
-      const start = 0.2 + i * 1.2
-      tl.from(visual, { scale: 0.8, opacity: 0.3, duration: 0.5 }, start)
-      tl.from(info, { x: 50, opacity: 0, duration: 0.5 }, start + 0.1)
+      tl.from(visual, { scale: 0.85, opacity: 0, duration: 0.6, ease: 'power2.out' }, start)
+      tl.from(info, { x: 60, opacity: 0, duration: 0.6, ease: 'power2.out' }, start + 0.1)
     })
   })
 
-  mm.add('(max-width: 767px)', () => {
+  mm.add('(max-width: 1023px)', () => {
     ;(gsap.utils.toArray('.process-panel') as HTMLElement[]).forEach((panel) => {
       gsap.from(panel, {
         scrollTrigger: {
           trigger: panel,
-          start: 'top 80%',
+          start: 'top 85%',
           toggleActions: 'play none none reverse',
         },
-        y: 40,
+        y: 60,
         opacity: 0,
-        duration: 1,
-        overwrite: 'auto',
+        duration: 0.8,
+        ease: 'power3.out',
       })
     })
   })
@@ -197,12 +376,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.glass-card {
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(40px);
-}
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+.animate-float-slow {
+  animation: float 8s ease-in-out infinite;
 }
 @keyframes float {
   0%,
@@ -210,7 +388,7 @@ onMounted(() => {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-15px);
   }
 }
 </style>

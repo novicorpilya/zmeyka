@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString, IsNumber, IsOptional, IsArray, ValidateNested } from 'class-validator'
-import { Type } from 'class-transformer'
+import { IsString, IsNumber, IsOptional, ValidateIf, Allow, IsBoolean } from 'class-validator'
 
 export class CreateModuleDto {
   @ApiProperty({ example: 'Introduction to Python' })
@@ -40,6 +39,16 @@ export class CreateLessonDto {
   @ApiProperty()
   @IsNumber()
   order!: number
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  trinketUrl?: string
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsBoolean()
+  isPreview?: boolean
 }
 
 export class UpdateLessonDto {
@@ -54,39 +63,79 @@ export class UpdateLessonDto {
   order?: number
 
   @ApiProperty({ required: false })
+  @Allow()
+  @ValidateIf((o: unknown, v: unknown) => v !== null)
   @IsOptional()
   @IsString()
-  videoUrl?: string
+  videoUrl?: string | null
+
+  @ApiProperty({ required: false })
+  @Allow()
+  @ValidateIf((o: unknown, v: unknown) => v !== null)
+  @IsOptional()
+  @IsString()
+  content?: string | null
+
+  @ApiProperty({ required: false })
+  @Allow()
+  @ValidateIf((o: unknown, v: unknown) => v !== null)
+  @IsOptional()
+  @IsString()
+  contentRich?: string | null
+
+  @ApiProperty({ required: false })
+  @Allow()
+  @ValidateIf((o: unknown, v: unknown) => v !== null)
+  @IsOptional()
+  @IsString()
+  homeworkTitle?: string | null
+
+  @ApiProperty({ required: false })
+  @Allow()
+  @ValidateIf((o: unknown, v: unknown) => v !== null)
+  @IsOptional()
+  @IsString()
+  homeworkTask?: string | null
+
+  @ApiProperty({ required: false })
+  @Allow()
+  @ValidateIf((o: unknown, v: unknown) => v !== null)
+  @IsOptional()
+  @IsString()
+  conspectusFile?: string | null
+
+  @ApiProperty({ required: false })
+  @Allow()
+  @ValidateIf((o: unknown, v: unknown) => v !== null)
+  @IsOptional()
+  @IsString()
+  homeworkFile?: string | null
+
+  @ApiProperty({ required: false })
+  @Allow()
+  @ValidateIf((o: unknown, v: unknown) => v !== null)
+  @IsOptional()
+  @IsString()
+  homeworkSolution?: string | null
+
+  @ApiProperty({ required: false })
+  @Allow()
+  @ValidateIf((o: unknown, v: unknown) => v !== null)
+  @IsOptional()
+  @IsString()
+  trinketUrl?: string | null
+
+  @ApiProperty({ required: false })
+  @Allow()
+  @ValidateIf((o: unknown, v: unknown) => v !== null)
+  @IsOptional()
+  @IsString()
+  chapters?: string | null
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsString()
-  content?: string
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  contentRich?: string
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  homeworkTitle?: string
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  homeworkTask?: string
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  conspectusFile?: string
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  homeworkFile?: string
+  @IsBoolean()
+  isPreview?: boolean
 }
 
 export class ReorderItemDto {

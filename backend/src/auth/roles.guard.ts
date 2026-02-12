@@ -6,7 +6,7 @@ import { IS_PUBLIC_KEY } from './public.decorator'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) { }
+  constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -35,7 +35,9 @@ export class RolesGuard implements CanActivate {
     const hasRole = requiredRoles.some((role) => user.role === role)
 
     if (!hasRole) {
-      throw new ForbiddenException('Insufficient permissions: this endpoint requires higher privileges')
+      throw new ForbiddenException(
+        'Insufficient permissions: this endpoint requires higher privileges',
+      )
     }
 
     return true

@@ -1,5 +1,5 @@
 <template>
-  <section id="pricing" class="py-40 px-6 bg-white relative overflow-hidden">
+  <section id="pricing" class="py-20 md:py-40 px-4 md:px-6 bg-white relative overflow-hidden">
     <!-- Sophisticated grid background -->
     <div class="absolute inset-0 pointer-events-none">
       <div
@@ -8,31 +8,33 @@
     </div>
 
     <div class="max-w-7xl mx-auto relative z-10">
-      <header class="text-center mb-32 space-y-8 pricing-header">
+      <header class="text-center mb-16 md:mb-32 space-y-4 md:space-y-8 pricing-header">
         <div
-          class="inline-block px-4 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-[0.4em]"
+          class="inline-block px-3 md:px-4 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em]"
         >
           Investment
         </div>
-        <h2 class="text-5xl md:text-8xl font-black text-slate-900 leading-[0.9] tracking-tighter">
-          Твой билет в <br />
+        <h2
+          class="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-slate-900 leading-[0.9] tracking-tighter"
+        >
+          Твой билет в <br class="hidden md:block" />
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-600"
             >высшую лигу</span
           >
         </h2>
-        <p class="text-slate-500 text-xl font-medium max-w-xl mx-auto">
+        <p class="text-slate-500 text-base md:text-xl font-medium max-w-xl mx-auto">
           Мы сделали цены доступными, чтобы ты мог сфокусироваться на главном — своём росте.
         </p>
       </header>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 items-stretch pricing-grid">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12 items-stretch pricing-grid">
         <!-- Wrapper for entrance animation -->
         <div v-for="(plan, i) in plans" :key="i" class="pricing-card-wrapper">
           <article
-            class="pricing-card h-full flex flex-col rounded-[3.5rem] p-12 border relative group overflow-hidden transition-colors duration-300"
+            class="pricing-card h-full flex flex-col rounded-[2rem] md:rounded-[3.5rem] p-6 md:p-12 border relative group overflow-hidden transition-colors duration-300"
             :class="[
               plan.active
-                ? 'bg-slate-900 border-slate-900 shadow-2xl scale-105'
+                ? 'bg-slate-900 border-slate-900 shadow-2xl md:scale-105'
                 : 'bg-white border-slate-100 hover:border-emerald-500/20 shadow-premium',
             ]"
           >
@@ -41,17 +43,19 @@
               class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
             ></div>
 
-            <div class="relative z-10 space-y-12 h-full flex flex-col pointer-events-none">
+            <div
+              class="relative z-10 space-y-6 md:space-y-12 h-full flex flex-col pointer-events-none"
+            >
               <div class="flex justify-between items-start">
                 <div>
                   <h4
-                    class="text-xl font-black uppercase tracking-tight"
+                    class="text-lg md:text-xl font-black uppercase tracking-tight"
                     :class="plan.active ? 'text-white' : 'text-slate-900'"
                   >
                     {{ plan.name }}
                   </h4>
                   <p
-                    class="text-[10px] font-black uppercase tracking-widest mt-1"
+                    class="text-[9px] md:text-[10px] font-black uppercase tracking-widest mt-1"
                     :class="plan.active ? 'text-emerald-400' : 'text-slate-400'"
                   >
                     {{ plan.badge }}
@@ -59,7 +63,7 @@
                 </div>
                 <div
                   v-if="plan.active"
-                  class="px-3 py-1 bg-emerald-500 text-white rounded-lg text-[10px] font-black uppercase tracking-widest"
+                  class="px-2 md:px-3 py-1 bg-emerald-500 text-white rounded-lg text-[9px] md:text-[10px] font-black uppercase tracking-widest"
                 >
                   Hit
                 </div>
@@ -69,32 +73,34 @@
                 class="flex items-baseline gap-1"
                 :class="plan.active ? 'text-white' : 'text-slate-900'"
               >
-                <span class="text-7xl font-black tracking-tighter price-text">{{
+                <span class="text-4xl md:text-7xl font-black tracking-tighter price-text">{{
                   plan.price
                 }}</span>
-                <span v-if="plan.price !== 'B2B'" class="text-xl font-bold opacity-30">/мес</span>
+                <span v-if="plan.price !== 'B2B'" class="text-base md:text-xl font-bold opacity-30"
+                  >/мес</span
+                >
               </div>
 
               <div class="w-full h-px" :class="plan.active ? 'bg-white/10' : 'bg-slate-100'"></div>
 
-              <ul class="space-y-6 flex-grow">
+              <ul class="space-y-3 md:space-y-6 flex-grow">
                 <li
                   v-for="item in plan.items"
                   :key="item"
-                  class="flex items-center gap-4 text-sm font-medium"
+                  class="flex items-center gap-3 md:gap-4 text-xs md:text-sm font-medium"
                 >
                   <div
-                    class="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0"
+                    class="w-4 h-4 md:w-5 md:h-5 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0"
                   >
-                    <span class="text-emerald-500 text-xs">✔</span>
+                    <span class="text-emerald-500 text-[10px] md:text-xs">✔</span>
                   </div>
                   <span :class="plan.active ? 'text-slate-400' : 'text-slate-500'">{{ item }}</span>
                 </li>
               </ul>
 
-              <div class="pt-10 pointer-events-auto">
+              <div class="pt-6 md:pt-10 pointer-events-auto">
                 <button
-                  class="btn-magnetic w-full py-6 rounded-2xl font-black text-lg group/btn overflow-hidden relative shadow-xl transition-all duration-300"
+                  class="btn-magnetic w-full py-4 md:py-6 rounded-xl md:rounded-2xl font-black text-base md:text-lg group/btn overflow-hidden relative shadow-xl transition-all duration-300"
                   :class="[
                     plan.active
                       ? 'bg-emerald-500 text-white shadow-emerald-500/20'

@@ -13,7 +13,10 @@ interface ModuleWithLessons {
 }
 
 export class ProgressUtil {
-  static calculateProgress(modules: ModuleWithLessons[], userId?: string) {
+  static calculateProgress(
+    modules: ModuleWithLessons[],
+    userId?: string,
+  ): { totalLessons: number; completedLessons: number; progress: number; xp: number } {
     let totalLessons = 0
     let completedLessons = 0
 

@@ -15,19 +15,25 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@nuxt/typescript-build": "^3.0.2",
-    "@nuxtjs/supabase": "^2.0.3",
+    "@guolao/vue-monaco-editor": "^1.6.0",
+    "@nuxtjs/color-mode": "^4.0.0",
     "@pinia/nuxt": "^0.9.0",
+    "@sentry/nuxt": "^10.38.0",
+    "canvas-confetti": "^1.9.4",
+    "dompurify": "^3.3.1",
     "gsap": "^3.14.2",
     "lucide-vue-next": "^0.474.0",
     "nuxt": "^3.15.0",
     "pinia": "^2.3.1",
+    "socket.io-client": "^4.8.3",
     "vue": "^3.5.0",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^1.13.0",
     "@tailwindcss/vite": "^4.0.0",
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/dompurify": "^3.0.5",
     "@types/node": "^22.0.0",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
@@ -43,7 +49,6 @@
     "globals": "^17.3.0",
     "jsdom": "^27.4.0",
     "prettier": "^3.8.1",
-    "sass": "^1.83.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.0",
     "vitest": "^4.0.18"

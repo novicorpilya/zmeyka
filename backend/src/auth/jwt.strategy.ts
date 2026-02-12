@@ -1,8 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { ConfigService } from '@nestjs/config'
-import { PrismaService } from '../prisma/prisma.service'
 import { Request } from 'express'
 import { Role } from '@prisma/client'
 
@@ -10,18 +9,28 @@ interface JwtPayload {
   sub: string
   email: string
   role: Role
+  v: number
+}
+
+interface ValidatedUserPayload {
+  id: string
+  email: string
+  role: Role
+  tokenVersion: number
 }
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private prisma: PrismaService,
-    private config: ConfigService,
-  ) {
+  constructor(private config: ConfigService) {
+    const secret = config.get<string>('JWT_SECRET')
+    if (!secret) {
+      throw new Error('CRITICAL: JWT_SECRET is not defined in environment variables.')
+    }
+
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken(),
-        (req: Request) => {
+        (req: Request): string | null => {
           let token = null
           if (req && req.cookies) {
             token = req.cookies['access_token']
@@ -30,20 +39,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         },
       ]),
       ignoreExpiration: false,
-      secretOrKey: config.get<string>('JWT_SECRET') || 'fallback_secret_change_me',
+      secretOrKey: secret,
     })
   }
 
-  async validate(payload: JwtPayload) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: payload.sub },
-    })
-
-    if (!user) {
-      throw new UnauthorizedException()
+  async validate(payload: JwtPayload): Promise<ValidatedUserPayload> {
+    // PERFORMANCE OP: We trust the token signature (verified by Passport).
+    // avoiding a DB call on every single request.
+    // If you need to revoke tokens, implement a Redis blacklist or use short-lived access tokens.
+    return {
+      id: payload.sub,
+      email: payload.email,
+      role: payload.role,
+      tokenVersion: payload.v,
     }
-
-    const { password, refreshToken: _, ...result } = user
-    return result
   }
 }

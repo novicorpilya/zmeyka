@@ -1,32 +1,19 @@
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/user.dto';
+import { Role, User } from '@prisma/client';
+type SafeUser = Omit<User, 'password' | 'refreshToken'>;
+interface UserListItem {
+    id: string;
+    email: string;
+    name: string | null;
+    role: Role;
+    createdAt: Date;
+}
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
-    create(createUserDto: CreateUserDto): Promise<{
-        name: string | null;
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        email: string;
-        avatar: string | null;
-        role: import(".prisma/client").$Enums.Role;
-        refreshToken: string | null;
-        resetToken: string | null;
-        resetTokenExpires: Date | null;
-    }>;
-    findAll(): Promise<{
-        name: string | null;
-        id: string;
-        createdAt: Date;
-        email: string;
-        role: import(".prisma/client").$Enums.Role;
-    }[]>;
-    findOne(id: string): Promise<{
-        name: string | null;
-        id: string;
-        createdAt: Date;
-        email: string;
-        role: import(".prisma/client").$Enums.Role;
-    } | null>;
+    create(createUserDto: CreateUserDto): Promise<SafeUser>;
+    findAll(): Promise<UserListItem[]>;
+    findOne(id: string): Promise<UserListItem | null>;
 }
+export {};

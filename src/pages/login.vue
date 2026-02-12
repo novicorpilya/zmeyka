@@ -10,24 +10,35 @@
       style="animation-delay: 2s"
     ></div>
 
-    <div class="w-full max-w-lg relative z-10 space-y-8">
-      <div class="text-center space-y-4">
-        <NuxtLink to="/" class="inline-flex items-center gap-2 group">
+    <div class="w-full max-w-lg relative z-10 space-y-6 md:space-y-8">
+      <div class="text-center space-y-3 md:space-y-4">
+        <NuxtLink to="/" class="inline-flex items-center gap-2 group mx-auto">
           <div
-            class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-cartoon border-2 border-slate-100 group-hover:scale-110 transition-transform"
+            class="w-16 h-16 xs:w-20 xs:h-20 md:w-32 md:h-32 bg-white rounded-2xl md:rounded-[2.5rem] flex items-center justify-center shadow-cartoon border-4 border-slate-100 group-hover:scale-110 transition-transform"
           >
-            <img src="~/assets/logo.png" alt="Zmeyka" class="w-8 h-8 object-contain" />
+            <img
+              :src="logoImage"
+              alt="Змейка"
+              class="w-10 h-10 xs:w-14 xs:h-14 md:w-24 md:h-24 object-contain"
+            />
           </div>
-          <span class="text-2xl font-black text-slate-800 tracking-tighter">Zmeyka</span>
+          <span class="text-3xl xs:text-4xl md:text-6xl font-black text-slate-800 tracking-tighter"
+            >Змейка</span
+          >
         </NuxtLink>
-        <h1 class="text-4xl font-black text-slate-800 tracking-tight">С возвращением!</h1>
-        <p class="text-slate-400 font-bold">Твоя Змейка уже соскучилась 🐍</p>
+        <h1 class="text-2xl xs:text-3xl md:text-4xl font-black text-slate-800 tracking-tight">
+          С возвращением!
+        </h1>
+        <p class="text-slate-400 font-bold text-sm md:text-base">Твоя Змейка уже соскучилась 🐍</p>
       </div>
 
-      <div class="bg-white p-10 rounded-[3rem] border-4 border-slate-100 shadow-cartoon space-y-8">
+      <div
+        class="bg-white p-6 xs:p-8 md:p-10 rounded-[2rem] md:rounded-[3rem] border-4 border-slate-100 shadow-cartoon space-y-6 md:space-y-8"
+      >
         <form @submit.prevent="handleLogin" class="space-y-6">
-          <div class="space-y-2">
-            <label class="text-sm font-black text-slate-400 uppercase tracking-widest px-1"
+          <div class="space-y-1.5 md:space-y-2">
+            <label
+              class="text-[10px] md:text-sm font-black text-slate-400 uppercase tracking-widest px-1"
               >Email</label
             >
             <div class="relative group">
@@ -36,38 +47,42 @@
                 type="email"
                 placeholder="serpent@expert.io"
                 required
-                class="w-full px-6 py-5 bg-slate-50 border-4 border-slate-50 rounded-2xl font-bold text-slate-700 outline-none focus:border-brand-green focus:bg-white transition-all placeholder:text-slate-300"
+                class="w-full px-5 md:px-6 py-4 md:py-5 bg-slate-50 border-2 md:border-4 border-slate-50 rounded-xl md:rounded-2xl font-bold text-slate-700 outline-none focus:border-brand-green focus:bg-white transition-all placeholder:text-slate-300 text-sm md:text-base"
               />
               <span
-                class="absolute right-6 top-1/2 -translate-y-1/2 text-2xl grayscale group-focus-within:grayscale-0 transition-all"
+                class="absolute right-5 md:right-6 top-1/2 -translate-y-1/2 text-xl md:text-2xl grayscale group-focus-within:grayscale-0 transition-all"
                 >📧</span
               >
             </div>
           </div>
 
-          <div class="space-y-2">
+          <div class="space-y-1.5 md:space-y-2">
             <div class="flex items-center justify-between px-1">
-              <label class="text-sm font-black text-slate-400 uppercase tracking-widest"
+              <label
+                class="text-[10px] md:text-sm font-black text-slate-400 uppercase tracking-widest"
                 >Пароль</label
               >
               <NuxtLink
                 to="/forgot-password"
-                class="text-xs font-black text-brand-green hover:underline"
+                class="text-[10px] md:text-xs font-black text-brand-green hover:underline"
                 >Забыл?</NuxtLink
               >
             </div>
             <div class="relative group">
               <input
                 v-model="form.password"
-                type="password"
+                :type="showPassword ? 'text' : 'password'"
                 placeholder="••••••••"
                 required
-                class="w-full px-6 py-5 bg-slate-50 border-4 border-slate-50 rounded-2xl font-bold text-slate-700 outline-none focus:border-brand-blue focus:bg-white transition-all placeholder:text-slate-300"
+                class="w-full px-5 md:px-6 py-4 md:py-5 bg-slate-50 border-2 md:border-4 border-slate-50 rounded-xl md:rounded-2xl font-bold text-slate-700 outline-none focus:border-brand-blue focus:bg-white transition-all placeholder:text-slate-300 text-sm md:text-base"
               />
-              <span
-                class="absolute right-6 top-1/2 -translate-y-1/2 text-2xl grayscale group-focus-within:grayscale-0 transition-all"
-                >🔑</span
+              <button
+                type="button"
+                @click="togglePassword"
+                class="absolute right-5 md:right-6 top-1/2 -translate-y-1/2 text-xl md:text-2xl grayscale group-focus-within:grayscale-0 transition-all hover:scale-110 active:scale-95"
               >
+                {{ showPassword ? '👁️' : '🔒' }}
+              </button>
             </div>
           </div>
 
@@ -102,9 +117,9 @@
           <button
             type="submit"
             :disabled="loading"
-            class="w-full bg-brand-green py-5 rounded-2xl font-black text-white text-xl shadow-[0_8px_0_0_#166534] hover:translate-y-0.5 hover:shadow-[0_6px_0_0_#166534] active:translate-y-2 active:shadow-none transition-all disabled:opacity-50 disabled:translate-y-0 disabled:shadow-none flex items-center justify-center gap-3"
+            class="w-full bg-brand-green py-4 md:py-5 rounded-xl md:rounded-2xl font-black text-white text-lg md:text-xl shadow-[0_6px_0_0_#166534] md:shadow-[0_8px_0_0_#166534] hover:translate-y-0.5 hover:shadow-[0_4px_0_0_#166534] md:hover:shadow-[0_6px_0_0_#166534] active:translate-y-1 md:active:translate-y-2 active:shadow-none transition-all disabled:opacity-50 disabled:translate-y-0 disabled:shadow-none flex items-center justify-center gap-2 md:gap-3"
           >
-            <span v-if="loading" class="animate-spin text-2xl">⏳</span>
+            <span v-if="loading" class="animate-spin text-xl md:text-2xl">⏳</span>
             <span v-else>Войти в гнездо</span>
           </button>
         </form>
@@ -155,6 +170,7 @@
 </template>
 
 <script setup lang="ts">
+import logoImage from '~/assets/logo.png'
 import { useUserStore } from '~/entities/user/model/store'
 import { useAuthApi } from '~/features/auth/api'
 
@@ -168,8 +184,13 @@ const form = reactive({
   rememberMe: true,
 })
 
+const showPassword = ref(false)
 const loading = ref(false)
 const error = ref('')
+
+const togglePassword = () => {
+  showPassword.value = !showPassword.value
+}
 
 const handleLogin = async () => {
   loading.value = true

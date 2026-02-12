@@ -9,14 +9,22 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super()
   }
 
-  canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ])
-    if (isPublic) {
-      return true
+
+    try {
+      // Still attempt to authenticate even if public
+      const res = await super.canActivate(context)
+      return res as boolean
+    } catch (e) {
+      // If public, ignore auth errors (req.user will be empty)
+      if (isPublic) {
+        return true
+      }
+      throw e
     }
-    return super.canActivate(context)
   }
 }

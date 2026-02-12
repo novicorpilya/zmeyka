@@ -21,6 +21,9 @@ import { Public } from './public.decorator'
 
 import { AuthenticatedRequest } from '../shared/interfaces/request.interface'
 import { CookieOptions } from 'express'
+import { User } from '@prisma/client'
+
+type SafeUser = Omit<User, 'password' | 'refreshToken'>
 
 @ApiTags('auth')
 @Controller('auth')
@@ -32,11 +35,10 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({ status: 201, description: 'User successfully registered' })
   @ApiResponse({ status: 409, description: 'User already exists' })
-  async register(@Body() dto: RegisterDto, @Res() res: Response) {
+  async register(@Body() dto: RegisterDto, @Res() res: Response): Promise<Response> {
     const result = await this.authService.register(dto)
     this.setCookies(res, result.accessToken, result.refreshToken)
-    const { refreshToken, accessToken, ...response } = result
-    return res.status(HttpStatus.CREATED).json(response)
+    return res.status(HttpStatus.CREATED).json(result)
   }
 
   @Public()
@@ -45,18 +47,17 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, description: 'Successfully logged in' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  async login(@Body() dto: LoginDto, @Res() res: Response) {
+  async login(@Body() dto: LoginDto, @Res() res: Response): Promise<Response> {
     const result = await this.authService.login(dto)
     this.setCookies(res, result.accessToken, result.refreshToken, dto.rememberMe)
-    const { refreshToken, accessToken, ...response } = result
-    return res.status(HttpStatus.OK).json(response)
+    return res.status(HttpStatus.OK).json(result)
   }
 
   @Post('logout')
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Logout user' })
-  async logout(@Req() req: AuthenticatedRequest, @Res() res: Response) {
+  async logout(@Req() req: AuthenticatedRequest, @Res() res: Response): Promise<Response> {
     await this.authService.logout(req.user.id)
     res.clearCookie('refresh_token')
     res.clearCookie('access_token')
@@ -67,7 +68,7 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Refresh access token' })
-  async refresh(@Req() req: Request, @Res() res: Response) {
+  async refresh(@Req() req: Request, @Res() res: Response): Promise<Response> {
     const refreshToken = req.cookies['refresh_token']
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token not found')
@@ -82,7 +83,7 @@ export class AuthController {
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get current user profile' })
-  async getMe(@Req() req: AuthenticatedRequest) {
+  async getMe(@Req() req: AuthenticatedRequest): Promise<SafeUser> {
     return this.authService.getMe(req.user.id)
   }
 
@@ -90,7 +91,10 @@ export class AuthController {
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Update current user profile' })
-  async updateProfile(@Req() req: AuthenticatedRequest, @Body() dto: UpdateProfileDto) {
+  async updateProfile(
+    @Req() req: AuthenticatedRequest,
+    @Body() dto: UpdateProfileDto,
+  ): Promise<SafeUser> {
     return this.authService.updateProfile(req.user.id, dto)
   }
 
@@ -98,7 +102,7 @@ export class AuthController {
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Request password reset' })
-  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+  async forgotPassword(@Body() dto: ForgotPasswordDto): Promise<{ message: string }> {
     return this.authService.forgotPassword(dto.email)
   }
 
@@ -106,7 +110,7 @@ export class AuthController {
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset password with token' })
-  async resetPassword(@Body() dto: ResetPasswordDto) {
+  async resetPassword(@Body() dto: ResetPasswordDto): Promise<{ message: string }> {
     return this.authService.resetPassword(dto.token, dto.newPassword)
   }
 
@@ -115,19 +119,28 @@ export class AuthController {
     accessToken: string,
     refreshToken: string,
     remember: boolean = true,
-  ) {
-    const cookieOptions: CookieOptions = {
-      httpOnly: true,
+  ): void {
+    const commonOptions: CookieOptions = {
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
     }
 
     if (remember) {
-      cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000 // 7 days
+      commonOptions.maxAge = 7 * 24 * 60 * 60 * 1000 // 7 days
     }
 
-    res.cookie('refresh_token', refreshToken, cookieOptions)
-    res.cookie('access_token', accessToken, cookieOptions)
+    // Refresh token: MUST be httpOnly for security
+    res.cookie('refresh_token', refreshToken, {
+      ...commonOptions,
+      httpOnly: true,
+    })
+
+    // Access token: httpOnly: false allows frontend API client to read it and put into Authorization header
+    // This prevents unnecessary 401 errors during token rotation
+    res.cookie('access_token', accessToken, {
+      ...commonOptions,
+      httpOnly: false,
+    })
   }
 }

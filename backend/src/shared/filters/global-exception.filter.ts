@@ -7,12 +7,13 @@ import {
   Logger,
 } from '@nestjs/common'
 import { Request, Response } from 'express'
+import * as Sentry from '@sentry/nestjs'
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger('GlobalExceptionFilter')
 
-  catch(exception: unknown, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp()
     const response = ctx.getResponse<Response>()
     const request = ctx.getRequest<Request>()
@@ -25,15 +26,21 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         ? exception.getResponse()
         : { message: 'Internal Server Error' }
 
-    // Senior Logging: Include method, url, status and stack if it's a 500 error
     const logMessage = `${request.method} ${request.url} - Status: ${status}`
+
+    // Log the full error for debugging
+    this.logger.error(logMessage)
+    if (exception instanceof Error) {
+      this.logger.error(exception.stack)
+    }
+
+    // In Production/Stage, capture 500 errors in Sentry
     if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(logMessage, (exception as Error).stack)
-    } else {
-      this.logger.warn(logMessage)
+      Sentry.captureException(exception)
     }
 
     response.status(status).json({
+      success: false,
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,

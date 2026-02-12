@@ -634,36 +634,21 @@ const _inlineRuntimeConfig = {
     "routeRules": {
       "/__nuxt_error": {
         "cache": false
+      },
+      "/_nuxt/builds/meta/**": {
+        "headers": {
+          "cache-control": "public, max-age=31536000, immutable"
+        }
+      },
+      "/_nuxt/builds/**": {
+        "headers": {
+          "cache-control": "public, max-age=1, immutable"
+        }
       }
     }
   },
   "public": {
-    "apiBase": "http://localhost:3001/api",
-    "supabase": {
-      "url": "https://vjaddelexrzcbzghgngv.supabase.co",
-      "key": "sb_publishable_zTsUrz-byb06-jelWlmeeA_FSxzao_p",
-      "redirect": false,
-      "redirectOptions": {
-        "login": "/login",
-        "callback": "/confirm",
-        "exclude": [],
-        "cookieRedirect": false,
-        "saveRedirectToCookie": false
-      },
-      "cookieName": "sb",
-      "cookiePrefix": "sb-vjaddelexrzcbzghgngv-auth-token",
-      "useSsrCookies": true,
-      "cookieOptions": {
-        "maxAge": 28800,
-        "sameSite": "lax",
-        "secure": true
-      },
-      "clientOptions": {}
-    }
-  },
-  "supabase": {
-    "serviceKey": "",
-    "secretKey": ""
+    "apiBase": "http://localhost:3001/api"
   }
 };
 const envOptions = {
@@ -2028,7 +2013,7 @@ async function errorHandler(error, event) {
 
 const rootDir = "C:/Users/novik/OneDrive/Рабочий стол/zmeyka";
 
-const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"description","content":"Освой Python и основы IT с помощью самого доброго в мире ИИ-наставника."},{"property":"og:title","content":"Zmeyka — Твой интерактивный ИИ-наставник в мире IT"},{"property":"og:description","content":"Освой Python и основы IT с помощью самого доброго в мире ИИ-наставника."},{"property":"og:type","content":"website"},{"property":"og:url","content":"https://zmeyka.io"},{"property":"og:image","content":"https://zmeyka.io/og-image.png"}],"link":[],"style":[],"script":[],"noscript":[],"title":"Zmeyka — Твой интерактивный ИИ-наставник в мире IT"};
+const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"description","content":"Освой Python и основы IT с помощью самого доброго в мире ИИ-наставника."},{"property":"og:title","content":"Змейка — Твой интерактивный ИИ-наставник в мире IT"},{"property":"og:description","content":"Освой Python и основы IT с помощью самого доброго в мире ИИ-наставника."},{"property":"og:type","content":"website"},{"property":"og:url","content":"https://zmeyka.ru"},{"property":"og:image","content":"https://zmeyka.ru/og-image.png"}],"link":[],"style":[],"script":[{"src":"https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js","defer":true,"crossorigin":"anonymous"},{"src":"https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js","defer":true,"crossorigin":"anonymous"}],"noscript":[]};
 
 const appRootTag = "div";
 
@@ -2135,7 +2120,7 @@ function readAsset (id) {
   return promises.readFile(resolve$1(serverDir, assets[id].path))
 }
 
-const publicAssetBases = {};
+const publicAssetBases = {"/_nuxt/builds/meta/":{"maxAge":31536000},"/_nuxt/builds/":{"maxAge":1}};
 
 function isPublicAssetURL(id = '') {
   if (assets[id]) {
@@ -3059,6 +3044,18 @@ const renderer = defineRenderHandler(async (event) => {
 			crossorigin: "anonymous",
 			href: payloadURL
 		} ] }, headEntryOptions);
+	}
+	if (ssrContext["~preloadManifest"] && !NO_SCRIPTS) {
+		ssrContext.head.push({ link: [{
+			rel: "preload",
+			as: "fetch",
+			fetchpriority: "low",
+			crossorigin: "anonymous",
+			href: buildAssetsURL(`builds/meta/${ssrContext.runtimeConfig.app.buildId}.json`)
+		}] }, {
+			...headEntryOptions,
+			tagPriority: "low"
+		});
 	}
 	// 2. Styles
 	if (inlinedStyles.length) {

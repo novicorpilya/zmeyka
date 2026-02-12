@@ -1,0 +1,13 @@
+node_modules
+.output
+.nuxt
+.env
+dist
+*.log
+.git
+.vscode
+.agent
+*.md
+Dockerfile
+docker-compose.yml
+package-lock.json

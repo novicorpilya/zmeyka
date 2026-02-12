@@ -15,10 +15,17 @@
         class="flex items-center justify-between bg-white p-4 rounded-3xl border-4 border-slate-100 shadow-sm"
       >
         <NuxtLink
-          to="/dashboard"
+          :to="
+            ['TEACHER', 'ADMIN'].includes(userStore.user?.role as string) ? '/dashboard' : '/tasks'
+          "
           class="flex items-center gap-3 font-black text-slate-400 hover:text-brand-blue transition-colors text-xs uppercase tracking-widest"
         >
-          <span class="text-lg">⬅️</span> В панель учителя
+          <span class="text-lg">⬅️</span>
+          {{
+            ['TEACHER', 'ADMIN'].includes(userStore.user?.role as string)
+              ? 'В панель учителя'
+              : 'К моим задачам'
+          }}
         </NuxtLink>
         <div class="flex items-center gap-4">
           <span
@@ -109,54 +116,58 @@
             class="bg-white p-8 rounded-[3rem] border-4 border-slate-100 shadow-cartoon space-y-8"
           >
             <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">
-              Выставить оценку
+              {{
+                ['TEACHER', 'ADMIN'].includes(userStore.user?.role as string)
+                  ? 'Выставить оценку'
+                  : 'Статус работы'
+              }}
             </h3>
 
             <div class="space-y-6">
-              <div class="space-y-3">
+              <div
+                class="space-y-3"
+                v-if="['TEACHER', 'ADMIN'].includes(userStore.user?.role as string)"
+              >
                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
                   >Статус проверки</label
                 >
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 gap-3">
                   <button
-                    v-for="status in ['PENDING', 'CHECKING', 'COMPLETED', 'REJECTED']"
+                    v-for="status in ['COMPLETED', 'REJECTED', 'NEEDS_REVIEW', 'PENDING']"
                     :key="status"
                     @click="gradingForm.status = status"
-                    class="py-3 rounded-xl border-2 font-black text-[10px] uppercase tracking-widest transition-all"
+                    class="py-4 px-6 rounded-2xl border-4 font-black text-xs uppercase tracking-widest transition-all flex items-center justify-between group"
                     :class="
                       gradingForm.status === status
-                        ? 'bg-brand-blue border-brand-blue text-white shadow-lg'
-                        : 'bg-slate-50 border-transparent text-slate-400 hover:border-slate-200'
+                        ? 'bg-brand-blue border-brand-blue text-white shadow-lg scale-[1.02]'
+                        : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-slate-200'
                     "
                   >
-                    {{
-                      status === 'COMPLETED'
-                        ? 'ПРИНЯТО ✅'
-                        : status === 'REJECTED'
-                          ? 'ДОРАБОТКА ❌'
-                          : status
-                    }}
+                    <span>
+                      {{
+                        status === 'COMPLETED'
+                          ? 'Принять ✅'
+                          : status === 'REJECTED'
+                            ? 'Нужны правки ❌'
+                            : status === 'NEEDS_REVIEW'
+                              ? 'Ручная проверка 🔍'
+                              : 'В очереди / Пропустить ⏳'
+                      }}
+                    </span>
+                    <span
+                      class="opacity-0 group-hover:opacity-100 transition-opacity"
+                      v-if="gradingForm.status !== status"
+                    >
+                      👉
+                    </span>
                   </button>
                 </div>
               </div>
 
-              <div class="space-y-3">
-                <label
-                  class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none flex justify-between"
-                >
-                  <span>Оценка (0-100)</span>
-                  <span class="text-brand-blue">{{ gradingForm.score }}</span>
-                </label>
-                <input
-                  type="range"
-                  v-model="gradingForm.score"
-                  min="0"
-                  max="100"
-                  class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-brand-blue"
-                />
-              </div>
-
-              <div class="space-y-3">
+              <div
+                class="space-y-3"
+                v-if="['TEACHER', 'ADMIN'].includes(userStore.user?.role as string)"
+              >
                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
                   >Краткий вердикт</label
                 >
@@ -169,12 +180,53 @@
               </div>
 
               <button
+                v-if="['TEACHER', 'ADMIN'].includes(userStore.user?.role as string)"
                 @click="saveGrades"
                 :disabled="isSaving"
                 class="w-full py-5 bg-brand-green text-white rounded-2xl font-black shadow-[0_8px_0_0_#166534] hover:translate-y-0.5 hover:shadow-none transition-all disabled:opacity-50 flex items-center justify-center gap-3"
               >
                 {{ isSaving ? 'СОХРАНЯЕМ...' : 'СОХРАНИТЬ РЕЗУЛЬТАТ ✨' }}
               </button>
+
+              <div
+                v-if="!['TEACHER', 'ADMIN'].includes(userStore.user?.role as string)"
+                class="p-6 bg-slate-50 rounded-2xl border-2 border-slate-100 space-y-4"
+              >
+                <div class="flex items-center justify-between">
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Статус:
+                  </p>
+                  <span
+                    class="px-3 py-1 rounded-full font-black text-[9px] uppercase tracking-widest"
+                    :class="{
+                      'bg-brand-green/10 text-brand-green': homework.status === 'COMPLETED',
+                      'bg-rose-50 text-rose-500': homework.status === 'REJECTED',
+                      'bg-amber-50 text-amber-500':
+                        homework.status === 'PENDING' ||
+                        homework.status === 'NEEDS_REVIEW' ||
+                        homework.status === 'CHECKING',
+                    }"
+                  >
+                    {{
+                      homework.status === 'COMPLETED'
+                        ? 'Принято'
+                        : homework.status === 'REJECTED'
+                          ? 'Нужны правки'
+                          : 'На проверке'
+                    }}
+                  </span>
+                </div>
+                <div v-if="homework.feedback">
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                    Вердикт учителя:
+                  </p>
+                  <p class="text-xs font-bold text-slate-600 italic">"{{ homework.feedback }}"</p>
+                </div>
+                <div class="pt-2 border-t border-slate-200 flex items-center gap-3 text-slate-400">
+                  <span class="text-xl">🎓</span>
+                  <p class="text-[9px] font-bold">Спроси учителя в чате, если остались вопросы</p>
+                </div>
+              </div>
             </div>
           </div>
         </aside>
@@ -184,40 +236,48 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 
-import { useHomeworksApi } from '~/features/homeworks/api'
+import { useHomeworksApi } from '~/entities/homework/api'
+import { useUserStore } from '~/entities/user/model/store'
 import HomeworkDiscussion from '~/features/homeworks/ui/HomeworkDiscussion.vue'
+import { useToast } from '~/shared/composables/useToast'
 import type { Homework } from '~/shared/types'
 
 const route = useRoute()
+const userStore = useUserStore()
 const homeworksApi = useHomeworksApi()
+const toast = useToast()
 
-const homework = ref<Homework | null>(null)
-const pending = ref(true)
+const {
+  data: homework,
+  pending,
+  refresh: loadHomework,
+} = await useAsyncData<Homework>(`homework-detail-${route.params.id}`, () =>
+  homeworksApi.getById(route.params.id as string),
+)
+
 const isSaving = ref(false)
-
 const gradingForm = ref({
   status: 'PENDING',
   score: 100,
   feedback: '',
 })
 
-const loadHomework = async () => {
-  try {
-    const data = await homeworksApi.getById(route.params.id as string)
-    homework.value = data
-    gradingForm.value = {
-      status: data.status,
-      score: data.score || 100,
-      feedback: data.feedback || '',
+// Sync form with data (Server & Client compatible)
+watch(
+  homework,
+  (newVal) => {
+    if (newVal) {
+      gradingForm.value = {
+        status: newVal.status,
+        score: newVal.score || 100,
+        feedback: newVal.feedback || '',
+      }
     }
-  } catch (err) {
-    console.error('Failed to load homework:', err)
-  } finally {
-    pending.value = false
-  }
-}
+  },
+  { immediate: true },
+)
 
 const saveGrades = async () => {
   if (!homework.value) return
@@ -229,10 +289,10 @@ const saveGrades = async () => {
       Number(gradingForm.value.score),
       gradingForm.value.feedback,
     )
-    alert('Результат сохранен! 🚀')
+    toast.success('Результат сохранен! 🚀')
     loadHomework()
   } catch (err) {
-    alert('Ошибка при сохранении')
+    toast.error('Ошибка при сохранении')
   } finally {
     isSaving.value = false
   }

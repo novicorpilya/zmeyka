@@ -23,18 +23,42 @@ model User {
   avatar        String?
   role          Role           @default(STUDENT)
   courses       Course[]       @relation("UserCourses")
+  cohorts       Cohort[]       @relation("CohortStudents")
   homeworks     Homework[]     @relation("UserHomeworks")
   comments      Comment[]      @relation("UserComments")
   progress      UserProgress[]
+  payments      Payment[]
   stats         UserStats?
+  teacherProfile TeacherProfile?
   activities    UserActivity[]
   refreshToken  String?
+  tokenVersion  Int            @default(0)
   resetToken         String?
   resetTokenExpires  DateTime?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  executionLogs CodeExecutionLog[]
+  notifications Notification[]
 
   @@index([email])
+}
+
+model Cohort {
+  id          String   @id @default(uuid())
+  name        String
+  startDate   DateTime?
+  endDate     DateTime?
+  
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId    String
+  
+  students    User[]   @relation("CohortStudents")
+  homeworks   Homework[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([courseId])
 }
 
 model UserStats {
@@ -48,6 +72,28 @@ model UserStats {
   completedCourses Int    @default(0)
   completedLessons Int    @default(0)
   lastActivityAt   DateTime @default(now())
+}
+
+model TeacherProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  bio             String?  @db.Text
+  videoUrl        String?  // Video business card
+  subjects        String[] // Subjects taught: ["Python", "Algorithms"]
+  institution     String?  // Where they teach
+  workplace       String?  // Current workplace
+  education       String?  // Where they studied
+  experience      Int?     // Years of experience
+  
+  certificates    Json?    // Array of { title: string, issuer: string, year: string, url?: string }
+  achievements    String[] // List of achievements
+  
+  socialLinks     Json?    // { linkedin?: string, github?: string, telegram?: string, website?: string }
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model UserProgress {
@@ -82,17 +128,52 @@ model Course {
   thumbnail    String?
   category     String?
   level        String?
+  price        Int           @default(0)
+  mentoringPrice Int         @default(0)
+  introVideoUrl String?
   teacher      User          @relation("UserCourses", fields: [teacherId], references: [id])
   teacherId    String
   isPublished  Boolean       @default(false)
 
   modules      Module[]
+  cohorts      Cohort[]
   homeworks    Homework[]
+  payments     Payment[]
+  plannedLessonsCount Int       @default(0)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
   @@index([teacherId])
   @@index([updatedAt])
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
+
+model Payment {
+  id               String        @id @default(uuid())
+  status           PaymentStatus @default(PENDING)
+  amount           Int
+  currency         String        @default("RUB")
+  
+  userId           String
+  user             User          @relation(fields: [userId], references: [id])
+  
+  courseId         String
+  course           Course        @relation(fields: [courseId], references: [id])
+  
+  provider         String        // e.g., "YOOKASSA", "MOCK"
+  providerPaymentId String?      @unique // ID from the provider
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([courseId])
 }
 
 
@@ -117,7 +198,11 @@ model Lesson {
   homeworkTitle  String?
   homeworkTask   String?   // The prompt for the student
   homeworkFile   String?   // URL to attached template (Zip/Code)
+  homeworkSolution String?   // NEW: Hidden solution for teacher and AI
+  trinketUrl     String?
+  chapters       String?   // JSON string of [{time: number, title: string}]
   order          Int
+  isPreview      Boolean   @default(false)
   module         Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   moduleId       String
   quiz           Quiz?
@@ -147,10 +232,22 @@ model Question {
 
 model Homework {
   id        String   @id @default(uuid())
-  status    String   @default("PENDING") // PENDING, CHECKING, COMPLETED, REJECTED
+  status    String   @default("PENDING") // PENDING, CHECKING, COMPLETED, REJECTED, NEEDS_REVIEW
   score     Int?
   feedback  String?
   
+  // AI Augmented Review fields
+  confidenceScore      Int?    // 0-100 score of AI certainty
+  aiFeedbackDraft      String? // AI prepared feedback for teacher
+  aiScoreDraft         Int?    // AI suggested score
+  aiReasoning          String? // AI internal reasoning for the review
+  isManualReviewRequired Boolean @default(false)
+
+  // Integrity & Learning Path fields
+  integrityScore       Int?    // 0-100 score of code originality
+  integrityReasoning    String? // AI explanation of potential "cheating" or "learning path"
+  socraticHints        String? // JSON string: guiding questions for the student
+
   lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   lessonId  String
   
@@ -162,6 +259,9 @@ model Homework {
   course    Course   @relation(fields: [courseId], references: [id])
   courseId  String
 
+  cohort    Cohort?  @relation(fields: [cohortId], references: [id])
+  cohortId  String?
+
   comments  Comment[]
 
   createdAt DateTime @default(now())
@@ -171,7 +271,9 @@ model Homework {
   @@index([lessonId])
   @@index([studentId])
   @@index([courseId])
+  @@index([cohortId])
   @@index([status])
+  @@index([isManualReviewRequired])
 }
 
 model Comment {
@@ -186,5 +288,37 @@ model Comment {
 
   @@index([homeworkId])
   @@index([authorId])
+}
+
+model CodeExecutionLog {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  lessonId  String?
+  code      String
+  output    String?
+  error     String?
+  success   Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([lessonId])
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      String   // INFO, SUCCESS, WARNING, ERROR, ASSIGNMENT, COMMENT
+  title     String
+  message   String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
 }
 

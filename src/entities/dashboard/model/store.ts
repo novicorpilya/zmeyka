@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 
-// eslint-disable-next-line boundaries/element-types
-import { useDashboardApi } from '~/features/dashboard/api'
-import type { DashboardSummary } from '~/shared/types'
+import { useDashboardApi } from '~/entities/dashboard/api'
+import { useHomeworksApi } from '~/entities/homework/api'
+import type { DashboardSummary, Homework } from '~/shared/types'
 
 export const useDashboardStore = defineStore('dashboard', {
   state: () => ({
@@ -15,14 +15,14 @@ export const useDashboardStore = defineStore('dashboard', {
     },
     activeCourses: [] as DashboardSummary['activeCourses'],
     recentActivity: [] as DashboardSummary['recentActivity'],
-    loading: false,
+    homeworks: [] as Homework[],
+    loading: true,
     error: null as string | null,
     isInitialized: false,
   }),
 
   actions: {
     async fetchSummary() {
-      this.loading = true
       this.error = null
 
       try {
@@ -35,10 +35,20 @@ export const useDashboardStore = defineStore('dashboard', {
 
         this.isInitialized = true
       } catch (err: unknown) {
-        const errorData = err as { data?: { message?: string } }
-        this.error = errorData.data?.message || 'Ошибка загрузки дашборда'
+        console.error('Dashboard fetch error:', err)
+        const apiErr = err as { data?: { message?: string }; message?: string }
+        this.error = apiErr.data?.message || apiErr.message || 'Ошибка загрузки дашборда'
       } finally {
         this.loading = false
+        this.isInitialized = true
+      }
+    },
+    async fetchHomeworks() {
+      try {
+        const { getUserHomeworks } = useHomeworksApi()
+        this.homeworks = await getUserHomeworks()
+      } catch (err) {
+        console.error('Homeworks fetch error:', err)
       }
     },
   },

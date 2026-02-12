@@ -3,73 +3,34 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ConfigService } from '@nestjs/config';
+import { User } from '@prisma/client';
+import { UsersService } from '../users/users.service';
+type SafeUser = Omit<User, 'password' | 'refreshToken'>;
+interface AuthResponse {
+    user: SafeUser;
+    accessToken: string;
+    refreshToken: string;
+}
 export declare class AuthService {
     private prisma;
     private jwtService;
     private configService;
+    private userService;
     private readonly logger;
-    constructor(prisma: PrismaService, jwtService: JwtService, configService: ConfigService);
-    register(dto: RegisterDto): Promise<{
-        accessToken: string;
-        refreshToken: string;
-        user: {
-            name: string | null;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            email: string;
-            avatar: string | null;
-            role: import(".prisma/client").$Enums.Role;
-            resetToken: string | null;
-            resetTokenExpires: Date | null;
-        };
-    }>;
-    login(dto: LoginDto): Promise<{
-        accessToken: string;
-        refreshToken: string;
-        user: {
-            name: string | null;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            email: string;
-            avatar: string | null;
-            role: import(".prisma/client").$Enums.Role;
-            resetToken: string | null;
-            resetTokenExpires: Date | null;
-        };
-    }>;
+    constructor(prisma: PrismaService, jwtService: JwtService, configService: ConfigService, userService: UsersService);
+    register(dto: RegisterDto): Promise<AuthResponse>;
+    login(dto: LoginDto): Promise<AuthResponse>;
     logout(userId: string): Promise<void>;
     refreshTokens(refreshToken: string): Promise<{
         accessToken: string;
         refreshToken: string;
     }>;
-    getMe(userId: string): Promise<{
-        name: string | null;
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        email: string;
-        avatar: string | null;
-        role: import(".prisma/client").$Enums.Role;
-        resetToken: string | null;
-        resetTokenExpires: Date | null;
-    }>;
+    getMe(userId: string): Promise<SafeUser>;
     updateProfile(userId: string, data: {
         name?: string;
         password?: string;
         avatar?: string;
-    }): Promise<{
-        name: string | null;
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        email: string;
-        avatar: string | null;
-        role: import(".prisma/client").$Enums.Role;
-        resetToken: string | null;
-        resetTokenExpires: Date | null;
-    }>;
+    }): Promise<SafeUser>;
     forgotPassword(email: string): Promise<{
         message: string;
     }>;
@@ -79,3 +40,4 @@ export declare class AuthService {
     private updateRefreshToken;
     private getTokens;
 }
+export {};

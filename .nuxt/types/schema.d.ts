@@ -14,56 +14,14 @@ import { NuxtModule, ModuleDependencyMeta } from '@nuxt/schema'
    nitro: {
       envPrefix: string,
    },
-
-   supabase: {
-      serviceKey: any,
-
-      secretKey: any,
-   },
   }
   interface SharedPublicRuntimeConfig {
    apiBase: string,
-
-   supabase: {
-      url: string,
-
-      key: string,
-
-      redirect: boolean,
-
-      redirectOptions: {
-         login: string,
-
-         callback: string,
-
-         exclude: Array<any>,
-
-         cookieRedirect: boolean,
-
-         saveRedirectToCookie: boolean,
-      },
-
-      cookieName: string,
-
-      cookiePrefix: string,
-
-      useSsrCookies: boolean,
-
-      cookieOptions: {
-         maxAge: number,
-
-         sameSite: string,
-
-         secure: boolean,
-      },
-
-      clientOptions: any,
-   },
   }
 declare module '@nuxt/schema' {
   interface ModuleDependencies {
     ["pinia"]?: ModuleDependencyMeta<typeof import("@pinia/nuxt").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
-    ["@nuxtjs/supabase"]?: ModuleDependencyMeta<typeof import("@nuxtjs/supabase").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
+    ["@sentry/nuxt/module"]?: ModuleDependencyMeta<typeof import("@sentry/nuxt/module").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
     ["@nuxt/telemetry"]?: ModuleDependencyMeta<typeof import("@nuxt/telemetry").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
   }
   interface NuxtOptions {
@@ -72,9 +30,9 @@ declare module '@nuxt/schema' {
      */
     ["pinia"]: typeof import("@pinia/nuxt").default extends NuxtModule<infer O, unknown, boolean> ? O | false : Record<string, any> | false
     /**
-     * Configuration for `@nuxtjs/supabase`
+     * Configuration for `@sentry/nuxt/module`
      */
-    ["supabase"]: typeof import("@nuxtjs/supabase").default extends NuxtModule<infer O, unknown, boolean> ? O | false : Record<string, any> | false
+    ["sentry"]: typeof import("@sentry/nuxt/module").default extends NuxtModule<infer O, unknown, boolean> ? O | false : Record<string, any> | false
     /**
      * Configuration for `@nuxt/telemetry`
      */
@@ -86,14 +44,14 @@ declare module '@nuxt/schema' {
      */
     ["pinia"]?: typeof import("@pinia/nuxt").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
     /**
-     * Configuration for `@nuxtjs/supabase`
+     * Configuration for `@sentry/nuxt/module`
      */
-    ["supabase"]?: typeof import("@nuxtjs/supabase").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
+    ["sentry"]?: typeof import("@sentry/nuxt/module").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
     /**
      * Configuration for `@nuxt/telemetry`
      */
     ["telemetry"]?: typeof import("@nuxt/telemetry").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
-    modules?: (undefined | null | false | NuxtModule<any> | string | [NuxtModule | string, Record<string, any>] | ["@pinia/nuxt", Exclude<NuxtConfig["pinia"], boolean>] | ["@nuxtjs/supabase", Exclude<NuxtConfig["supabase"], boolean>] | ["@nuxt/telemetry", Exclude<NuxtConfig["telemetry"], boolean>])[],
+    modules?: (undefined | null | false | NuxtModule<any> | string | [NuxtModule | string, Record<string, any>] | ["@pinia/nuxt", Exclude<NuxtConfig["pinia"], boolean>] | ["@sentry/nuxt/module", Exclude<NuxtConfig["sentry"], boolean>] | ["@nuxt/telemetry", Exclude<NuxtConfig["telemetry"], boolean>])[],
   }
   interface RuntimeConfig extends UserRuntimeConfig {}
   interface PublicRuntimeConfig extends UserPublicRuntimeConfig {}
@@ -101,7 +59,7 @@ declare module '@nuxt/schema' {
 declare module 'nuxt/schema' {
   interface ModuleDependencies {
     ["pinia"]?: ModuleDependencyMeta<typeof import("@pinia/nuxt").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
-    ["@nuxtjs/supabase"]?: ModuleDependencyMeta<typeof import("@nuxtjs/supabase").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
+    ["@sentry/nuxt/module"]?: ModuleDependencyMeta<typeof import("@sentry/nuxt/module").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
     ["@nuxt/telemetry"]?: ModuleDependencyMeta<typeof import("@nuxt/telemetry").default extends NuxtModule<infer O> ? O | false : Record<string, unknown>> | false
   }
   interface NuxtOptions {
@@ -111,10 +69,10 @@ declare module 'nuxt/schema' {
      */
     ["pinia"]: typeof import("@pinia/nuxt").default extends NuxtModule<infer O, unknown, boolean> ? O | false : Record<string, any> | false
     /**
-     * Configuration for `@nuxtjs/supabase`
-     * @see https://www.npmjs.com/package/@nuxtjs/supabase
+     * Configuration for `@sentry/nuxt/module`
+     * @see https://www.npmjs.com/package/@sentry/nuxt/module
      */
-    ["supabase"]: typeof import("@nuxtjs/supabase").default extends NuxtModule<infer O, unknown, boolean> ? O | false : Record<string, any> | false
+    ["sentry"]: typeof import("@sentry/nuxt/module").default extends NuxtModule<infer O, unknown, boolean> ? O | false : Record<string, any> | false
     /**
      * Configuration for `@nuxt/telemetry`
      * @see https://www.npmjs.com/package/@nuxt/telemetry
@@ -128,16 +86,16 @@ declare module 'nuxt/schema' {
      */
     ["pinia"]?: typeof import("@pinia/nuxt").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
     /**
-     * Configuration for `@nuxtjs/supabase`
-     * @see https://www.npmjs.com/package/@nuxtjs/supabase
+     * Configuration for `@sentry/nuxt/module`
+     * @see https://www.npmjs.com/package/@sentry/nuxt/module
      */
-    ["supabase"]?: typeof import("@nuxtjs/supabase").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
+    ["sentry"]?: typeof import("@sentry/nuxt/module").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
     /**
      * Configuration for `@nuxt/telemetry`
      * @see https://www.npmjs.com/package/@nuxt/telemetry
      */
     ["telemetry"]?: typeof import("@nuxt/telemetry").default extends NuxtModule<infer O, unknown, boolean> ? Partial<O> | false : Record<string, any> | false
-    modules?: (undefined | null | false | NuxtModule<any> | string | [NuxtModule | string, Record<string, any>] | ["@pinia/nuxt", Exclude<NuxtConfig["pinia"], boolean>] | ["@nuxtjs/supabase", Exclude<NuxtConfig["supabase"], boolean>] | ["@nuxt/telemetry", Exclude<NuxtConfig["telemetry"], boolean>])[],
+    modules?: (undefined | null | false | NuxtModule<any> | string | [NuxtModule | string, Record<string, any>] | ["@pinia/nuxt", Exclude<NuxtConfig["pinia"], boolean>] | ["@sentry/nuxt/module", Exclude<NuxtConfig["sentry"], boolean>] | ["@nuxt/telemetry", Exclude<NuxtConfig["telemetry"], boolean>])[],
   }
   interface RuntimeConfig extends SharedRuntimeConfig {}
   interface PublicRuntimeConfig extends SharedPublicRuntimeConfig {}

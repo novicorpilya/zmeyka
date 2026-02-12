@@ -1,62 +1,70 @@
 <template>
   <main class="overflow-x-hidden">
-    <HeroSection :start-route="startRoute" />
+    <UltraHeroSection :start-route="startRoute" />
+    <ClientOnly placeholder-tag="section">
+      <InteractiveSandbox />
+      <template #fallback>
+        <section class="py-24 bg-slate-900 flex items-center justify-center">
+          <div
+            class="w-full max-w-6xl mx-auto h-[450px] bg-slate-800/50 rounded-[2rem] animate-pulse flex items-center justify-center text-slate-500 font-bold uppercase tracking-widest text-sm"
+          >
+            Загрузка интерактивной песочницы...
+          </div>
+        </section>
+      </template>
+    </ClientOnly>
     <FeaturesSection />
     <ProcessSection />
     <PricingSection />
+    <TestimonialsSection />
     <FaqSection />
-    <CtaSection :start-route="startRoute" />
+    <ContactSection />
+    <UltraCtaSection :start-route="startRoute" />
   </main>
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from '@entities/user/model/store'
 import { computed } from 'vue'
 
-import { useUserStore } from '@entities/user/model/store'
-import CtaSection from '~/widgets/landing/CtaSection.vue'
+import ContactSection from '~/widgets/landing/ContactSection.vue'
 import FaqSection from '~/widgets/landing/FaqSection.vue'
 import FeaturesSection from '~/widgets/landing/FeaturesSection.vue'
-import HeroSection from '~/widgets/landing/HeroSection.vue'
+import InteractiveSandbox from '~/widgets/landing/InteractiveSandbox.vue'
 import PricingSection from '~/widgets/landing/PricingSection.vue'
 import ProcessSection from '~/widgets/landing/ProcessSection.vue'
+import TestimonialsSection from '~/widgets/landing/TestimonialsSection.vue'
+import UltraCtaSection from '~/widgets/landing/UltraCtaSection.vue'
+import UltraHeroSection from '~/widgets/landing/UltraHeroSection.vue'
 
 const userStore = useUserStore()
 const startRoute = computed(() => (userStore.isAuthenticated ? '/dashboard' : '/register'))
 
-// SEO Meta management
+// Modern SEO Meta management
+useSeoMeta({
+  title: 'Змейка — Твой интерактивный ИИ-наставник в мире IT',
+  description:
+    'Освой Python и основы IT с помощью самого доброго в мире ИИ-наставника. Мгновенная проверка кода, геймификация и личный диплом.',
+  ogTitle: 'Змейка — Учись кодить играя',
+  ogDescription:
+    'Интерактивная платформа с ИИ-проверкой домашних заданий. Начни бесплатно прямо сейчас!',
+  ogUrl: 'https://zmeyka.ru',
+  ogImage: 'https://zmeyka.ru/og-image.png',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterImage: 'https://zmeyka.ru/og-image.png',
+})
+
 useHead({
-  title: 'Zmeyka — Твой интерактивный ИИ-наставник в мире IT',
-  meta: [
-    {
-      name: 'description',
-      content:
-        'Освой Python и основы IT с помощью самого доброго в мире ИИ-наставника. Мгновенная проверка кода, геймификация и личный диплом.',
-    },
-    {
-      name: 'keywords',
-      content:
-        'курсы программирования, python для новичков, обучение ИИ, змейка обучение, IT школа',
-    },
-    { property: 'og:title', content: 'Zmeyka — Учись кодить играя' },
-    {
-      property: 'og:description',
-      content:
-        'Интерактивная платформа с ИИ-проверкой домашних заданий. Начни бесплатно прямо сейчас!',
-    },
-    { property: 'og:url', content: 'https://zmeyka.io' },
-    { property: 'og:image', content: 'https://zmeyka.io/og-image.png' },
-    { property: 'og:type', content: 'website' },
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:image', content: 'https://zmeyka.io/og-image.png' },
-  ],
-  link: [{ rel: 'canonical', href: 'https://zmeyka.io' }],
+  link: [{ rel: 'canonical', href: 'https://zmeyka.ru' }],
   htmlAttrs: { lang: 'ru' },
+})
+
+definePageMeta({
+  layout: 'default',
 })
 </script>
 
 <style>
 /* Global landing styles if any, but mostly encapsulated in components */
-html {
-  scroll-behavior: smooth;
-}
 </style>

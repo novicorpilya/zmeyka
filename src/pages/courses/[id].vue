@@ -1,12 +1,24 @@
 <template>
   <div class="animate-in fade-in duration-700 bg-slate-50 min-h-screen pb-20">
-    <div v-if="pending" class="h-screen flex flex-col items-center justify-center gap-6">
+    <div v-if="coursePending" class="h-screen flex flex-col items-center justify-center gap-6">
       <div
         class="w-16 h-16 border-4 border-brand-green border-t-transparent rounded-full animate-spin"
       ></div>
       <p class="font-black text-slate-400 uppercase tracking-widest text-xs">
         Загружаем мир знаний...
       </p>
+    </div>
+
+    <div
+      v-else-if="error"
+      class="h-screen flex flex-col items-center justify-center gap-6 p-8 text-center"
+    >
+      <div class="text-6xl">😱</div>
+      <AppHeading level="h2" size="md" center uppercase>Ой! Ошибка загрузки</AppHeading>
+      <p class="text-slate-500 font-bold max-w-md">{{ error }}</p>
+      <AppButton variant="secondary" size="lg" @click="fetchCourse(route.params.id as string)">
+        ПОПРОБОВАТЬ СНОВА
+      </AppButton>
     </div>
 
     <div v-else-if="course" class="max-w-[1600px] mx-auto p-4 md:p-8 space-y-8">
@@ -36,340 +48,200 @@
         </div>
       </nav>
 
-      <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start relative">
         <!-- Main Stage -->
         <div class="xl:col-span-8 space-y-8">
           <!-- Cinema Mode Player -->
-          <div
-            class="bg-slate-900 rounded-[3rem] border-8 border-white shadow-cartoon overflow-hidden group aspect-video relative"
-          >
-            <template v-if="currentLesson?.videoUrl">
-              <video
-                ref="videoPlayer"
-                :key="currentLesson.id"
-                :src="getFullUrl(currentLesson.videoUrl)"
-                controls
-                class="w-full h-full object-cover"
-              ></video>
-            </template>
-            <div
-              v-else
-              class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 text-center p-10"
-            >
-              <div class="text-6xl mb-6 animate-pulse">📼</div>
-              <h3 class="text-2xl font-black text-white uppercase tracking-tight">
-                В этом уроке пока нет видео
-              </h3>
-              <p class="text-slate-400 font-bold max-w-sm mt-2">
-                Но не волнуйся! Изучи конспект и приступай к практике ниже.
-              </p>
-            </div>
-          </div>
+          <LessonPlayer
+            v-if="playerSource.videoUrl"
+            :video-url="playerSource.videoUrl"
+            :chapters="playerSource.chapters"
+          />
 
           <!-- Content Tabs -->
-          <div
-            class="bg-white rounded-[3rem] border-4 border-slate-100 shadow-cartoon overflow-hidden transition-all"
-          >
-            <div class="flex border-b-4 border-slate-50">
-              <button
-                v-for="tab in ['Конспект', 'Практика', 'Обсуждение']"
-                :key="tab"
-                @click="activeTab = tab"
-                class="flex-grow py-6 font-black text-sm uppercase tracking-widest transition-all relative"
-                :class="activeTab === tab ? 'text-brand-blue' : 'text-slate-400 hover:bg-slate-50'"
-              >
-                {{ tab }}
-                <div
-                  v-if="activeTab === tab"
-                  class="absolute bottom-0 left-0 right-0 h-1.5 bg-brand-blue"
-                ></div>
-              </button>
-            </div>
+          <LessonTabsContainer v-model="activeTab">
+            <!-- Access Locked State for non-enrolled students -->
+            <EnrollmentPrompt
+              v-if="!course.isEnrolled"
+              :current-lesson="currentLesson"
+              :is-enrolling="isEnrolling"
+              :price="course.price"
+              :mentoring-price="course.mentoringPrice"
+              :format-file-url="formatFileUrl"
+              @enroll="handleEnroll"
+            />
 
-            <div class="p-8 md:p-12 min-h-[400px]">
+            <!-- Enroll-Only Content -->
+            <template v-else>
               <!-- Conspectus View -->
-              <div
-                v-if="activeTab === 'Конспект'"
-                class="space-y-8 animate-in fade-in duration-500"
-              >
-                <div class="flex items-center justify-between border-b-2 border-slate-50 pb-6">
-                  <h2 class="text-3xl font-black text-slate-800 tracking-tight">
-                    {{ currentLesson?.title || 'Выбери урок' }}
-                  </h2>
-                </div>
-                <div class="prose prose-slate max-w-none text-slate-600">
-                  <div
-                    v-if="currentLesson?.contentRich"
-                    class="whitespace-pre-wrap font-bold leading-relaxed"
-                  >
-                    {{ currentLesson.contentRich }}
-                  </div>
-                  <div v-else class="text-center py-20 opacity-30">
-                    <div class="text-5xl mb-4">📖</div>
-                    <p class="font-black uppercase tracking-widest">Конспект скоро появится</p>
-                  </div>
-                </div>
-              </div>
+              <LessonMaterials
+                v-show="activeTab === 'Материалы'"
+                :current-lesson="currentLesson"
+                :format-file-url="formatFileUrl"
+              />
 
-              <!-- Practice / Homework Lab -->
-              <div
-                v-if="activeTab === 'Практика'"
-                class="space-y-10 animate-in fade-in duration-500"
-              >
-                <div v-if="currentLesson?.homeworkTask" class="space-y-8">
-                  <div
-                    class="p-8 bg-brand-orange/5 border-4 border-brand-orange/10 rounded-[2.5rem] relative overflow-hidden"
-                  >
-                    <div class="relative z-10 space-y-4">
-                      <span
-                        class="px-4 py-1.5 bg-brand-orange text-white rounded-full font-black text-[10px] uppercase tracking-widest shadow-sm"
-                        >ЗАДАНИЕ</span
-                      >
-                      <h3 class="text-2xl font-black text-slate-800">
-                        {{ currentLesson.homeworkTitle || 'Практическая задача' }}
-                      </h3>
-                      <p class="font-bold text-slate-600 leading-relaxed whitespace-pre-wrap">
-                        {{ currentLesson.homeworkTask }}
-                      </p>
-                    </div>
-                    <div
-                      class="absolute -right-10 -bottom-10 text-9xl opacity-10 rotate-12 pointer-events-none"
-                    >
-                      🛠️
-                    </div>
-                  </div>
-
-                  <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                      <label class="text-xs font-black text-slate-400 uppercase tracking-widest"
-                        >Твое решение (Python)</label
-                      >
-                    </div>
-                    <div class="relative group">
-                      <textarea
-                        v-model="solution"
-                        :disabled="
-                          currentHomework?.status === 'PENDING' ||
-                          currentHomework?.status === 'CHECKING'
-                        "
-                        placeholder="def my_solution():\n    # Пиши код здесь..."
-                        class="w-full h-80 bg-slate-900 rounded-[2rem] p-8 font-mono text-sm text-brand-green border-4 border-white shadow-cartoon outline-none focus:border-brand-green/30 transition-all resize-none disabled:opacity-50"
-                      ></textarea>
-                      <button
-                        @click="submitSolution"
-                        :disabled="
-                          isSubmitting ||
-                          currentHomework?.status === 'PENDING' ||
-                          currentHomework?.status === 'CHECKING'
-                        "
-                        class="absolute bottom-6 right-6 px-10 py-4 bg-brand-green text-white rounded-2xl font-black shadow-[0_6px_0_0_#166534] hover:translate-y-0.5 hover:shadow-none transition-all flex items-center gap-3 disabled:opacity-50 disabled:shadow-none"
-                      >
-                        {{
-                          isSubmitting
-                            ? 'ОТПРАВЛЯЕМ...'
-                            : currentHomework?.status === 'PENDING'
-                              ? 'НА ПРОВЕРКЕ ⏳'
-                              : 'ОТПРАВИТЬ ✨'
-                        }}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div v-else class="text-center py-20 opacity-30">
-                  <div class="text-5xl mb-4">🏖️</div>
-                  <p class="font-black uppercase tracking-widest">
-                    В этом уроке практики нет. Отдыхай!
-                  </p>
-                </div>
-              </div>
-              <!-- Discussion Tab -->
-              <div
-                v-if="activeTab === 'Обсуждение'"
-                class="animate-in fade-in duration-500 min-h-[400px]"
-              >
-                <HomeworkDiscussion
-                  v-if="currentHomework"
-                  :homework="currentHomework"
-                  @refresh="fetchHomeworkStatus"
+              <!-- REAL DEV: Practice Area -->
+              <ErrorBoundary v-show="activeTab === 'Практика'">
+                <LessonPractice
+                  v-model:solution="solution"
+                  :current-lesson="currentLesson"
+                  :is-submitting="isSubmitting"
+                  :format-file-url="formatFileUrl"
+                  @submit="submitSolution"
                 />
-                <div v-else class="text-center py-20 opacity-30">
-                  <div class="text-5xl mb-4">💬</div>
-                  <p class="font-black uppercase tracking-widest">
-                    Отправьте решение, чтобы открыть обсуждение с учителем
-                  </p>
-                </div>
+              </ErrorBoundary>
+
+              <!-- Discussion Area -->
+              <div
+                v-show="activeTab === 'Обсуждение'"
+                class="animate-in fade-in duration-300 min-h-[400px]"
+              >
+                <ClientOnly>
+                  <div v-if="currentHomework">
+                    <HomeworkDiscussion
+                      :homework="currentHomework"
+                      @refresh="fetchHomeworkStatus"
+                    />
+                  </div>
+                  <AppEmptyState
+                    v-else
+                    icon="💬"
+                    title="Обсуждение закрыто"
+                    description="Отправьте решение, чтобы открыть чат с учителем"
+                  />
+                </ClientOnly>
               </div>
-            </div>
-          </div>
+            </template>
+          </LessonTabsContainer>
         </div>
 
         <!-- Sidebar -->
-        <aside class="xl:col-span-4 space-y-8 sticky top-8">
-          <div
-            class="bg-brand-blue p-8 rounded-[3rem] shadow-[0_12px_0_0_#1e40af] text-white space-y-6 relative overflow-hidden group"
-          >
-            <div class="relative z-10">
-              <h3 class="text-xl font-black uppercase tracking-tight mb-2">Общий прогресс</h3>
-              <div class="flex items-end gap-2 mb-4">
-                <span class="text-5xl font-black leading-none">{{ xp }}</span>
-                <span class="text-xl font-bold opacity-60">XP</span>
-              </div>
-              <div class="h-3 bg-white/20 rounded-full overflow-hidden">
-                <div
-                  class="h-full bg-white rounded-full transition-all duration-1000"
-                  :style="{ width: progress + '%' }"
-                ></div>
-              </div>
-            </div>
-            <div
-              class="absolute -top-20 -right-20 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-[2s]"
-            ></div>
-          </div>
-
-          <div
-            class="bg-white p-8 rounded-[3rem] border-4 border-slate-100 shadow-cartoon space-y-6"
-          >
-            <h3
-              class="text-lg font-black text-slate-800 uppercase tracking-tight flex items-center gap-3"
-            >
-              🗺️ План курса
-            </h3>
-            <div class="space-y-8 overflow-y-auto max-h-[500px] pr-2 custom-scrollbar">
-              <div v-for="(mod, mIdx) in course.modules" :key="mod.id" class="space-y-4">
-                <div class="flex items-center gap-3">
-                  <div
-                    class="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-xs"
-                  >
-                    {{ Number(mIdx) + 1 }}
-                  </div>
-                  <span class="font-black text-xs text-slate-800 uppercase tracking-widest">{{
-                    mod.title
-                  }}</span>
-                </div>
-                <div class="ml-4 pl-4 border-l-4 border-slate-50 space-y-3">
-                  <div
-                    v-for="lesson in mod.lessons"
-                    :key="lesson.id"
-                    @click="selectLesson(lesson)"
-                    class="flex items-center gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer group"
-                    :class="
-                      currentLesson?.id === lesson.id
-                        ? 'bg-brand-blue/5 border-brand-blue/20'
-                        : 'bg-slate-50 border-transparent hover:border-slate-200'
-                    "
-                  >
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center text-lg">
-                      {{ lesson.videoUrl ? '📺' : '📖' }}
-                    </div>
-                    <div class="flex-grow min-w-0">
-                      <p
-                        class="text-xs font-black truncate"
-                        :class="
-                          currentLesson?.id === lesson.id ? 'text-brand-blue' : 'text-slate-500'
-                        "
-                      >
-                        {{ lesson.title }}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </aside>
+        <CourseSidebar
+          v-if="course"
+          :course="course"
+          :current-lesson="currentLesson"
+          @select="selectLesson"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import confetti from 'canvas-confetti'
+import { ref, onMounted, watch } from 'vue'
 
-import { useCourseApi } from '~/entities/course/api'
-import { useHomeworksApi } from '~/features/homeworks/api'
+definePageMeta({ layout: 'app', middleware: ['auth'] })
+
+import type { Lesson, Module } from '~/entities/course/model/types'
+import { useCourse } from '~/entities/course/model/useCourse'
+import CourseSidebar from '~/features/course/ui/CourseSidebar.vue'
+import EnrollmentPrompt from '~/features/course/ui/EnrollmentPrompt.vue'
+import LessonMaterials from '~/features/course/ui/LessonMaterials.vue'
+import LessonPlayer from '~/features/course/ui/LessonPlayer.vue'
+import LessonPractice from '~/features/course/ui/LessonPractice.vue'
+import LessonTabsContainer from '~/features/course/ui/LessonTabsContainer.vue'
+import { useHomeworkFlow } from '~/features/homeworks/model/useHomeworkFlow'
 import HomeworkDiscussion from '~/features/homeworks/ui/HomeworkDiscussion.vue'
-import type { Course, Lesson, Homework } from '~/shared/types'
+import { useToast } from '~/shared/composables/useToast'
+import AppButton from '~/shared/ui/AppButton.vue'
+import AppEmptyState from '~/shared/ui/AppEmptyState.vue'
+import AppHeading from '~/shared/ui/AppHeading.vue'
+import ErrorBoundary from '~/shared/ui/ErrorBoundary.vue'
+import { formatFileUrl } from '~/shared/utils/url'
 
-const config = useRuntimeConfig()
 const route = useRoute()
-const { getCourse } = useCourseApi()
-const homeworksApi = useHomeworksApi()
+const toast = useToast()
 
-const course = ref<Course | null>(null)
-const currentLesson = ref<Lesson | null>(null)
-const pending = ref(true)
-const activeTab = ref('Конспект')
-const solution = ref('')
-const currentHomework = ref<Homework | null>(null)
-const isSubmitting = ref(false)
-const progress = computed(() => course.value?.calculatedProgress || 0)
-const xp = computed(() => course.value?.calculatedXp || 0)
+const {
+  course,
+  currentLesson,
+  isPending: coursePending,
+  isEnrolling,
+  error,
+  fetchCourse,
+  handleEnroll: enrollAction,
+  selectLesson: selectLessonAction,
+} = useCourse()
+
+const {
+  currentHomework,
+  isSubmitting,
+  solution,
+  fetchHomeworkStatus,
+  submitSolution: submitAction,
+  resetSolution,
+} = useHomeworkFlow()
+
+const playerSource = computed(() => {
+  if (!course.value) return { videoUrl: null, chapters: null }
+
+  // If user is enrolled, show lesson content
+  if (course.value.isEnrolled) {
+    return {
+      videoUrl: currentLesson.value?.videoUrl || null,
+      chapters: currentLesson.value?.chapters || null,
+    }
+  }
+
+  // For non-enrolled users: Main stage ALWAYS features the Trailer (Intro Video)
+  return {
+    videoUrl: course.value.introVideoUrl || null,
+    chapters: null,
+  }
+})
+
+const activeTab = ref('Материалы')
 
 onMounted(async () => {
-  try {
-    const data = (await getCourse(route.params.id as string)) as Course
-    course.value = data
-    if (data.modules?.[0]?.lessons?.[0]) {
-      currentLesson.value = data.modules[0].lessons[0]
+  await fetchCourse(route.params.id as string)
+
+  // Handle deep-linking to a specific lesson via query param
+  if (route.query.lesson && course.value?.modules) {
+    const allLessons = course.value.modules.flatMap((m: Module) => m.lessons || [])
+    const targetLesson = allLessons.find((l: Lesson) => l.id === route.query.lesson)
+    if (targetLesson) {
+      selectLessonAction(targetLesson)
     }
-  } catch (err) {
-    console.error('Failed to load course:', err)
-  } finally {
-    pending.value = false
   }
 })
 
 const selectLesson = async (lesson: Lesson) => {
-  currentLesson.value = lesson
-  solution.value = ''
-  await fetchHomeworkStatus()
+  selectLessonAction(lesson)
+  resetSolution()
 }
 
-const fetchHomeworkStatus = async () => {
-  if (!currentLesson.value) return
-  try {
-    currentHomework.value = await homeworksApi.getStatus(currentLesson.value.id)
-  } catch (err) {
-    currentHomework.value = null
+const handleEnroll = async () => {
+  const success = await enrollAction()
+  if (success) {
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+    })
+  } else {
+    toast.error('Не удалось записаться на курс. Попробуй позже.')
   }
 }
 
 const submitSolution = async () => {
-  if (!currentLesson.value || !course.value || !solution.value) return
-  isSubmitting.value = true
-  try {
-    await homeworksApi.submit(currentLesson.value.id, course.value.id, solution.value)
-    await fetchHomeworkStatus()
-    alert('Решение отправлено на проверку! 🚀')
-  } catch (err) {
-    alert('Ошибка при отправке решения')
-  } finally {
-    isSubmitting.value = false
+  if (!currentLesson.value || !course.value) return
+
+  const success = await submitAction(currentLesson.value.id, course.value.id)
+  if (success) {
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#10B981', '#3B82F6', '#F59E0B'],
+    })
+    toast.success('Решение отправлено на проверку! 🚀')
+  } else {
+    toast.error('Ошибка при отправке решения')
   }
 }
 
-watch(currentLesson, () => {
-  fetchHomeworkStatus()
+watch(currentLesson, (newLesson) => {
+  if (newLesson) fetchHomeworkStatus(newLesson.id)
 })
-
-const getFullUrl = (url: string) => {
-  if (!url) return ''
-  if (url.startsWith('http')) return url
-  return `${config.public.apiBase.replace('/api', '')}${url}`
-}
-
-definePageMeta({ layout: 'app', middleware: ['auth'] })
 </script>
-
-<style scoped>
-.shadow-cartoon {
-  box-shadow: 0 12px 0 0 #f1f5f9;
-}
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 20px;
-}
-</style>
