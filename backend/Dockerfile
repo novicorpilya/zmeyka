@@ -9,7 +9,7 @@ RUN apk add --no-cache libc6-compat
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm ci
+RUN npm install
 COPY . .
 
 RUN npx prisma generate
