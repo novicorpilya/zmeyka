@@ -1,5 +1,5 @@
 <template>
-  <section class="py-24 px-6 bg-slate-900 relative overflow-hidden">
+  <section id="sandbox" class="py-24 px-6 bg-slate-900 relative overflow-hidden">
     <!-- Background Accents -->
     <div class="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
       <div
@@ -15,21 +15,24 @@
         <span
           class="px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em]"
         >
-          Интерактивный опыт
+          Попробуй бесплатно
         </span>
         <h2 class="text-4xl md:text-6xl font-black text-white tracking-tighter">
-          Попробуй <span class="text-emerald-500">прямо сейчас</span>
+          Твой первый <span class="text-emerald-500">код</span>
         </h2>
-        <p class="text-slate-400 text-lg font-bold">
-          Змейка проголодалась. Помоги ей подкрепиться кодом!
+        <p class="text-slate-400 text-lg font-bold max-w-2xl mx-auto">
+          Пройди мини-квест: разбуди ИИ-змею, накорми её и проведи эволюцию.
+          <br class="hidden md:block" />
+          Это займет всего 30 секунд.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch relative">
         <!-- Editor Side -->
         <div
-          class="bg-slate-800 rounded-[2rem] border-4 border-slate-700 shadow-2xl overflow-hidden flex flex-col h-[450px]"
+          class="bg-slate-800 rounded-[2rem] border-4 border-slate-700 shadow-2xl overflow-hidden flex flex-col h-[500px] relative z-20"
         >
+          <!-- Editor Header -->
           <div
             class="px-6 py-4 bg-slate-700/50 border-b border-slate-600 flex items-center justify-between"
           >
@@ -39,121 +42,178 @@
               <div class="w-3 h-3 rounded-full bg-emerald-500/50"></div>
             </div>
             <div class="flex items-center gap-4">
-              <button
-                @click="copySnippet"
-                class="text-[10px] font-black text-slate-500 hover:text-emerald-400 uppercase tracking-widest transition-colors flex items-center gap-1.5"
-                title="Копировать код"
-              >
-                <span>Copy</span>
-                <span class="opacity-50">📋</span>
-              </button>
-              <button
-                @click="resetSandbox"
-                class="text-[10px] font-black text-slate-500 hover:text-red-400 uppercase tracking-widest transition-colors flex items-center gap-1.5"
-                title="Сбросить код"
-              >
-                <span>Reset</span>
-                <span class="opacity-50">🔄</span>
-              </button>
               <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
-                >sandbox.py</span
+                >mission_control.py</span
               >
             </div>
           </div>
 
-          <div class="flex-grow relative font-mono text-sm md:text-base p-6">
+          <!-- Code Area -->
+          <div class="flex-grow relative font-mono text-sm md:text-base p-6 overflow-hidden">
             <div
-              class="absolute left-0 top-0 w-12 h-full bg-slate-900/30 border-r border-slate-700/50 flex flex-col items-center pt-6 text-slate-600 select-none"
+              class="absolute left-0 top-0 w-12 h-full bg-slate-900/30 border-r border-slate-700/50 flex flex-col items-center pt-6 text-slate-600 select-none z-0"
             >
-              <span v-for="i in 10" :key="i" class="leading-relaxed">{{ i }}</span>
+              <span v-for="i in 12" :key="i" class="leading-relaxed">{{ i }}</span>
             </div>
-            <div class="pl-10 space-y-1">
-              <p class="text-slate-500"># Змейка ждет твоей команды</p>
-              <p class="text-slate-500">
-                # Используй: <span class="text-emerald-400">snake.eat("apple")</span>
-              </p>
-              <div class="relative mt-4">
-                <textarea
-                  ref="textareaRef"
-                  v-model="code"
-                  @keydown.enter.prevent="handleEnter"
-                  placeholder="Допиши код здесь..."
-                  class="w-full bg-transparent border-none outline-none text-emerald-400 resize-none leading-relaxed placeholder:text-slate-700 h-40"
+            <div class="pl-10 space-y-2 relative z-10">
+              <div class="text-slate-500">
+                # Шаг {{ currentStep + 1 }}/3: {{ steps[currentStep].title }}
+              </div>
+              <div class="text-slate-500"># Задача: {{ steps[currentStep].instruction }}</div>
+              <div class="text-slate-500 text-purple-400">
+                import <span class="text-white">snake_ai</span>
+              </div>
+              <div class="relative mt-4 group">
+                <input
+                  ref="inputRef"
+                  v-model="userCode"
+                  @keydown.enter.prevent="runStep"
+                  type="text"
+                  class="w-full bg-slate-900/50 text-emerald-400 p-3 rounded-lg border border-emerald-500/20 focus:border-emerald-500/50 outline-none font-mono placeholder:text-slate-700/50 transition-colors"
+                  :placeholder="steps[currentStep].placeholder"
                   spellcheck="false"
-                ></textarea>
+                  autocomplete="off"
+                  :disabled="isProcessing || isCompleted"
+                />
+              </div>
+              <div
+                v-if="errorMsg"
+                class="text-red-400 text-xs mt-2 flex items-center gap-2 animate-shake"
+              >
+                <span>⚠️</span> {{ errorMsg }}
               </div>
             </div>
           </div>
 
+          <!-- Console Output -->
+          <div
+            ref="logsContainer"
+            class="p-4 bg-black/40 border-t border-slate-700 h-32 overflow-y-auto font-mono text-xs"
+          >
+            <div
+              v-for="(log, i) in logs"
+              :key="i"
+              :class="log.type === 'error' ? 'text-red-400' : 'text-slate-400'"
+              class="mb-1"
+            >
+              <span class="opacity-30 mr-2">[{{ log.time }}]</span>
+              <span :class="{ 'text-emerald-400': log.type === 'success' }">{{ log.msg }}</span>
+            </div>
+            <div v-if="isProcessing" class="text-emerald-500 animate-pulse mt-2">
+              _ processing request...
+            </div>
+          </div>
+
+          <!-- Action Bar -->
           <div class="p-4 bg-slate-900/50 border-t border-slate-700">
             <button
-              @click="runCode"
-              :disabled="isRunning"
-              class="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-slate-900 font-black py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 group shimmer-button"
+              @click="runStep"
+              :disabled="isProcessing || isCompleted"
+              class="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 font-black py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 group shimmer-button"
             >
-              <span v-if="isRunning" class="animate-spin">⏳</span>
-              <span v-else>ЗАПУСТИТЬ КОД</span>
+              <span v-if="isProcessing">ВЫПОЛНЕНИЕ...</span>
+              <span v-else>ЗАПУСТИТЬ КОД (ENTER)</span>
               <span class="group-hover:translate-x-1 transition-transform">→</span>
             </button>
           </div>
         </div>
 
-        <!-- Playground Side -->
+        <!-- Visual Side -->
         <div
-          class="bg-slate-950 rounded-[2rem] border-4 border-slate-800 shadow-2xl relative overflow-hidden flex items-center justify-center h-[450px]"
+          class="bg-slate-950 rounded-[2rem] border-4 border-slate-800 shadow-2xl relative overflow-hidden flex items-center justify-center h-[500px]"
         >
-          <!-- Grid Background -->
+          <!-- Matrix Grid -->
           <div
-            class="absolute inset-0 opacity-10"
+            class="absolute inset-0 opacity-20"
             style="
-              background-image: radial-gradient(#334155 1px, transparent 1px);
-              background-size: 20px 20px;
+              background-image:
+                linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px);
+              background-size: 40px 40px;
             "
           ></div>
 
-          <!-- The Game Elements -->
-          <div class="relative w-full h-full">
-            <!-- Apple -->
+          <!-- Completion Overlay -->
+          <div
+            v-if="isCompleted"
+            class="absolute inset-0 bg-slate-900/95 backdrop-blur-md flex flex-col items-center justify-center text-center p-8 z-50 animate-fade-in"
+          >
             <div
-              id="apple-target"
-              class="absolute top-1/2 left-3/4 -translate-y-1/2 -translate-x-1/2 w-12 h-12 bg-red-500 rounded-full border-4 border-red-400 shadow-[0_0_30px_rgba(239,68,68,0.4)] flex items-center justify-center text-2xl"
-              :class="{ 'scale-0 opacity-0 transition-all duration-500': hasEaten }"
+              class="w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center text-5xl mb-6 shadow-[0_0_50px_rgba(16,185,129,0.5)] animate-bounce"
             >
-              🍎
+              🚀
+            </div>
+            <h3 class="text-3xl md:text-4xl font-black text-white mb-2">Mission Complete!</h3>
+            <p class="text-slate-300 text-lg mb-8 max-w-sm">
+              Вы написали свой первый код и прокачали ИИ-ассистента.
+              <br />
+              <span class="text-emerald-400 font-bold">Не потеряйте прогресс!</span>
+            </p>
+
+            <NuxtLink to="/register" class="w-full max-w-xs">
+              <button
+                class="w-full bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-400 hover:to-blue-500 text-white font-black py-4 px-8 rounded-xl transition-all shadow-xl shadow-emerald-500/20 transform hover:-translate-y-1 block"
+              >
+                СОХРАНИТЬ УРОВЕНЬ
+              </button>
+            </NuxtLink>
+            <p class="text-slate-500 text-xs mt-4">*Регистрация бесплатна и займет 1 минуту</p>
+          </div>
+
+          <!-- Scene Container -->
+          <div
+            v-else
+            class="relative w-full h-full perspective-1000 flex items-center justify-center"
+          >
+            <!-- Particle Effects Layer -->
+            <div v-show="isEvolving" class="absolute inset-0 pointer-events-none">
+              <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500 rounded-full blur-[100px] animate-pulse opacity-50"
+              ></div>
             </div>
 
-            <!-- Snake Mascot -->
-            <div
-              id="snake-playground"
-              class="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2"
-            >
+            <!-- Snake Sprite -->
+            <div class="relative z-10 transition-all duration-700" :class="snakeClasses">
+              <!-- Speech Bubble -->
+              <div
+                v-if="currentBubble"
+                class="absolute -top-20 left-1/2 -translate-x-1/2 bg-white text-slate-900 px-4 py-2 rounded-xl font-bold shadow-lg animate-pop-in whitespace-nowrap z-20 pointer-events-none"
+              >
+                {{ currentBubble }}
+                <div
+                  class="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-white rotate-45"
+                ></div>
+              </div>
+
+              <!-- Zzz Animation (Step 0) -->
+              <div
+                v-if="currentStep === 0"
+                class="absolute -top-12 -right-8 text-4xl font-black text-slate-600 opacity-50 animate-float"
+              >
+                Zzz...
+              </div>
+
+              <!-- Main Image -->
               <img
-                :src="beginnerSnakeImage"
+                :src="currentSnakeImage"
                 alt="Snake"
-                class="w-32 h-32 object-contain filter drop-shadow-[0_10px_30px_rgba(16,185,129,0.3)]"
+                class="w-48 h-48 md:w-64 md:h-64 object-contain transition-all duration-500"
+                :class="{
+                  'grayscale-[0.8] opacity-60': currentStep === 0,
+                  'filter brightness-125 drop-shadow-[0_0_30px_rgba(16,185,129,0.6)]':
+                    currentStep === 2,
+                }"
               />
             </div>
 
-            <!-- Feedback Bubble -->
-            <Transition name="bounce">
-              <div
-                v-if="feedback"
-                class="absolute top-1/4 left-1/2 -translate-x-1/2 bg-white px-6 py-3 rounded-2xl shadow-premium border-2 border-emerald-500 flex items-center gap-3"
-              >
-                <span class="text-2xl">{{ feedback.icon }}</span>
-                <p class="text-slate-800 font-black text-sm whitespace-nowrap">
-                  {{ feedback.text }}
-                </p>
-              </div>
-            </Transition>
-          </div>
-
-          <!-- Console Output Overlay -->
-          <div
-            v-if="output.length"
-            class="absolute bottom-4 left-4 right-4 bg-black/80 backdrop-blur-md p-4 rounded-xl border border-white/10 font-mono text-[10px] text-emerald-500 max-h-32 overflow-y-auto"
-          >
-            <p v-for="(line, i) in output" :key="i">>>> {{ line }}</p>
+            <!-- Apple Target (Step 1) -->
+            <div
+              v-if="currentStep === 1 && showApple"
+              class="absolute top-1/2 right-[10%] -translate-y-1/2 text-4xl animate-bounce transition-all duration-500"
+              :class="{ 'opacity-0 scale-150': appleEaten }"
+            >
+              🍎
+            </div>
           </div>
         </div>
       </div>
@@ -163,163 +223,232 @@
 
 <script setup lang="ts">
 import { gsap } from 'gsap'
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, nextTick, onMounted } from 'vue'
 
-import beginnerSnakeImage from '~/assets/beginnerSnake.png'
+// Assets
+import beginnerSnakeImage from '@shared/assets/beginnerSnake.png'
+import programmSnakeImage from '@shared/assets/programmSnake.png'
 
-const code = ref('snake.eat(')
-const isRunning = ref(false)
-const hasEaten = ref(false)
-const output = ref<string[]>([])
-const feedback = ref<{ text: string; icon: string } | null>(null)
-const textareaRef = ref<HTMLTextAreaElement | null>(null)
+const inputRef = ref<HTMLInputElement | null>(null)
+const logsContainer = ref<HTMLDivElement | null>(null)
+const userCode = ref('')
+const currentStep = ref(0)
+const isProcessing = ref(false)
+const errorMsg = ref('')
 
-let ctx: gsap.Context
+const isCompleted = ref(false)
+const isEvolving = ref(false)
+const showApple = ref(false)
+const appleEaten = ref(false)
 
-const handleEnter = () => {
-  runCode()
-}
+const logs = ref<{ time: string; msg: string; type: 'info' | 'success' | 'error' }[]>([
+  {
+    time: getCurrentTime(),
+    msg: 'System initialized. Waiting for connection...',
+    type: 'info',
+  },
+])
 
-const copySnippet = () => {
-  navigator.clipboard.writeText(code.value)
-  feedback.value = { text: 'Код скопирован!', icon: '📋' }
-  setTimeout(() => (feedback.value = null), 2000)
-}
+const steps = [
+  {
+    title: 'Пробуждение',
+    instruction: 'Змейка спит. Активируйте нейросеть командой wake_up()',
+    placeholder: 'snake.wake_up()',
+    expected: ['snake.wake_up()', 'wake_up()'],
+  },
+  {
+    title: 'Охота',
+    instruction: 'Цель обнаружена. Запустите алгоритм охоты.',
+    placeholder: 'snake.hunt()',
+    expected: ['snake.hunt()', 'hunt()'],
+  },
+  {
+    title: 'Эволюция',
+    instruction: 'Накоплено достаточно данных. Запустите эволюцию.',
+    placeholder: 'snake.evolve()',
+    expected: ['snake.evolve()', 'evolve()'],
+  },
+]
 
-const runCode = () => {
-  if (isRunning.value) return
-  isRunning.value = true
-  output.value = ['>>> Инициализация змейки...', '>>> Проверка синтаксиса...']
+// Computed Props
+const currentBubble = computed(() => {
+  if (currentStep.value === 1 && !appleEaten.value) return 'Я голоден! 🍎'
+  if (currentStep.value === 2 && !isEvolving.value) return 'Система готова! ⚡'
+  return null
+})
 
-  setTimeout(() => {
-    const cleanCode = code.value.trim().toLowerCase()
+const currentSnakeImage = computed(() => {
+  return currentStep.value >= 2 && isEvolving.value ? programmSnakeImage : beginnerSnakeImage
+})
 
-    if (cleanCode.includes('snake.eat("apple")') || cleanCode.includes("snake.eat('apple')")) {
-      output.value.push('Success: Аргумент "apple" принят.')
-      output.value.push('>>> Змейка приступает к трапезе.')
-      triggerWinAnimation()
-    } else if (cleanCode === 'snake.reset()' || cleanCode === 'reset') {
-      output.value.push('>>> Сброс состояния...')
-      resetSandbox()
-    } else {
-      output.value.push('SyntaxError: Неизвестная команда или неверный аргумент.')
-      output.value.push('Подсказка: попробуй snake.eat("apple")')
-      triggerErrorAnimation()
-    }
-    isRunning.value = false
-  }, 800)
-}
-
-const triggerWinAnimation = () => {
-  if (!import.meta.client) return
-
-  ctx.add(() => {
-    const tl = gsap.timeline()
-
-    tl.to('#snake-playground', {
-      x: 200,
-      duration: 1,
-      ease: 'power2.inOut',
-      onStart: () => {
-        feedback.value = { text: 'М-м-м, вкусно!', icon: '🤩' }
-      },
-    })
-
-    tl.to(
-      '#apple-target',
-      {
-        scale: 1.5,
-        opacity: 0,
-        duration: 0.3,
-      },
-      '-=0.2',
-    )
-
-    tl.to('#snake-playground', {
-      scale: 1.2,
-      duration: 0.3,
-      yoyo: true,
-      repeat: 1,
-    })
-
-    tl.to('#snake-playground', {
-      x: 0,
-      duration: 1,
-      ease: 'power2.inOut',
-      onComplete: () => {
-        hasEaten.value = true
-        setTimeout(() => {
-          resetSandbox()
-        }, 3000)
-      },
-    })
-  })
-}
-
-const triggerErrorAnimation = () => {
-  if (!import.meta.client) return
-
-  feedback.value = { text: 'Чего-чего?', icon: '🤔' }
-  ctx.add(() => {
-    gsap.to('#snake-playground', {
-      x: 10,
-      duration: 0.1,
-      repeat: 5,
-      yoyo: true,
-      onComplete: () => {
-        setTimeout(() => {
-          feedback.value = null
-        }, 2000)
-      },
-    })
-  })
-}
-
-const resetSandbox = () => {
-  hasEaten.value = false
-  feedback.value = null
-  output.value = []
-  code.value = 'snake.eat('
-  nextTick(() => {
-    textareaRef.value?.focus()
-  })
-}
-
-onMounted(() => {
-  if (import.meta.client) {
-    ctx = gsap.context(() => {})
+const snakeClasses = computed(() => {
+  return {
+    'animate-pulse-slow': currentStep.value === 1,
+    'scale-110': isEvolving.value,
   }
 })
 
-onUnmounted(() => {
-  if (ctx) ctx.revert()
+// Methods
+function getCurrentTime() {
+  return new Date().toLocaleTimeString('ru-RU', {
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+}
+
+const addLog = (msg: string, type: 'info' | 'success' | 'error' = 'info') => {
+  logs.value.push({ time: getCurrentTime(), msg, type })
+  nextTick(() => {
+    if (logsContainer.value) {
+      logsContainer.value.scrollTop = logsContainer.value.scrollHeight
+    }
+  })
+}
+
+const runStep = () => {
+  if (isProcessing.value || isCompleted.value) return
+  errorMsg.value = ''
+
+  const input = userCode.value.trim().toLowerCase().replace(/\s/g, '')
+  const expectedVariants = steps[currentStep.value].expected.map((s) =>
+    s.toLowerCase().replace(/\s/g, ''),
+  )
+
+  isProcessing.value = true
+  addLog(`> ${userCode.value}`)
+
+  setTimeout(() => {
+    if (expectedVariants.includes(input)) {
+      handleSuccess()
+    } else {
+      handleError()
+    }
+  }, 600)
+}
+
+const handleSuccess = () => {
+  isProcessing.value = false
+  userCode.value = ''
+  addLog('Command executed successfully.', 'success')
+
+  if (currentStep.value === 0) {
+    // Wake Up
+    gsap.fromTo(
+      '.snake-container img',
+      { scale: 0.8 },
+      { scale: 1.1, duration: 0.4, yoyo: true, repeat: 1 },
+    )
+    currentStep.value++
+    showApple.value = true
+  } else if (currentStep.value === 1) {
+    // Hunt
+    appleEaten.value = true
+    addLog('Target acquired. Consuming data...', 'success')
+    setTimeout(() => {
+      currentStep.value++
+    }, 1000)
+  } else if (currentStep.value === 2) {
+    // Evolve
+    isEvolving.value = true
+    addLog('INITIATING EVOLUTION SEQUENCE...', 'success')
+
+    setTimeout(() => {
+      isCompleted.value = true
+      addLog('SYSTEM: EVOLUTION COMPLETE.', 'success')
+    }, 2000)
+  }
+
+  // Focus next
+  if (!isCompleted.value) {
+    nextTick(() => inputRef.value?.focus())
+  }
+}
+
+const handleError = () => {
+  isProcessing.value = false
+  errorMsg.value = 'Ошибка синтаксиса. Попробуйте снова.'
+  addLog('Error: SyntaxError or Unknown Command', 'error')
+
+  if (inputRef.value) {
+    gsap.fromTo(
+      inputRef.value,
+      { x: -5 },
+      { x: 5, duration: 0.1, repeat: 3, yoyo: true, clearProps: 'x' },
+    )
+  }
+}
+
+onMounted(() => {
+  // Focus optional on start? Maybe too aggressive
 })
 </script>
 
 <style scoped>
-.shadow-premium {
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
-
-.bounce-enter-active {
-  animation: bounce-in 0.5s;
-}
-.bounce-leave-active {
-  animation: bounce-in 0.5s reverse;
-}
-@keyframes bounce-in {
-  0% {
-    transform: translate(-50%, 0) scale(0);
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
   }
   50% {
-    transform: translate(-50%, -20px) scale(1.1);
+    transform: translateY(-10px);
   }
-  100% {
+}
+
+.animate-pop-in {
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.8);
+  }
+  to {
+    opacity: 1;
     transform: translate(-50%, 0) scale(1);
   }
 }
 
-textarea::selection {
-  background: rgba(16, 185, 129, 0.3);
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-shake {
+  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+.perspective-1000 {
+  perspective: 1000px;
 }
 </style>

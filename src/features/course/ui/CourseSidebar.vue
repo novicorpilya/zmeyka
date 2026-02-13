@@ -92,8 +92,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import TeacherCard from '~/entities/teacher/ui/TeacherCard.vue'
-import type { Course, Lesson } from '~/shared/types'
+import TeacherCard from '@entities/teacher/ui/TeacherCard.vue'
+import type { Course, Lesson } from '@shared/types'
 
 const props = defineProps<{
   course: Course | null

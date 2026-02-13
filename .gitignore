@@ -65,7 +65,3 @@ coverage/
 
 # OS
 Thumbs.db
-
-# Agents
-.agent/
-.agents/

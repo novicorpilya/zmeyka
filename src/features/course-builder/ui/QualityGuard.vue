@@ -110,7 +110,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-import type { Lesson, Question } from '~/shared/types'
+import type { Lesson, Question } from '@shared/types'
 
 const props = defineProps<{
   lesson: Lesson

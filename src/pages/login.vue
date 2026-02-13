@@ -170,9 +170,9 @@
 </template>
 
 <script setup lang="ts">
-import logoImage from '~/assets/logo.png'
-import { useUserStore } from '~/entities/user/model/store'
-import { useAuthApi } from '~/features/auth/api'
+import logoImage from '@shared/assets/logo.png'
+import { useUserStore } from '@entities/user/model/store'
+import { useAuthApi } from '@features/auth/api'
 
 const router = useRouter()
 const userStore = useUserStore()

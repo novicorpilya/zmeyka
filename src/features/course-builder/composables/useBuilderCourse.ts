@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 
-import { useBuilderApi } from '~/features/course-builder/api'
-import { useModal } from '~/shared/composables/useModal'
-import { useToast } from '~/shared/composables/useToast'
-import type { Course, Lesson } from '~/shared/types'
+import { useBuilderApi } from '@features/course-builder/api'
+import { useModal } from '@shared/composables/useModal'
+import { useToast } from '@shared/composables/useToast'
+import type { Course, Lesson } from '@shared/types'
 
 /**
  * Composable for course builder CRUD operations:
@@ -207,11 +207,7 @@ export const useBuilderCourse = () => {
         }
       }
       toast.success('Изменения сохранены', 2000)
-    } catch (err: unknown) {
-      const apiErr = err as { data?: unknown }
-      if (import.meta.dev && apiErr.data) {
-        console.error('[CourseBuilder] Server error details:', JSON.stringify(apiErr.data, null, 2))
-      }
+    } catch {
       toast.error('Не удалось сохранить изменения')
     } finally {
       setTimeout(() => (isSaving.value = false), 500)

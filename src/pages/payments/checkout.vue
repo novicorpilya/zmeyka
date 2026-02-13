@@ -90,9 +90,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-import type { PaymentDetails } from '~/entities/payment/api'
-import { usePaymentApi } from '~/entities/payment/api'
-import { useToast } from '~/shared/composables/useToast'
+import type { PaymentDetails } from '@entities/payment/api'
+import { usePaymentApi } from '@entities/payment/api'
+import { useToast } from '@shared/composables/useToast'
 
 const route = useRoute()
 const router = useRouter()
@@ -111,8 +111,8 @@ const fetchPayment = async () => {
   }
   try {
     payment.value = await getPayment(paymentId)
-  } catch (err) {
-    console.error('Failed to fetch payment:', err)
+  } catch {
+    // Payment fetch failed
   } finally {
     isLoading.value = false
   }

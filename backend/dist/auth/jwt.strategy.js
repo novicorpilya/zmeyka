@@ -23,12 +23,14 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromExtractors([
                 passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
+                passport_jwt_1.ExtractJwt.fromUrlQueryParameter('token'),
+                passport_jwt_1.ExtractJwt.fromUrlQueryParameter('accessToken'),
+                passport_jwt_1.ExtractJwt.fromUrlQueryParameter('access_token'),
                 (req) => {
-                    let token = null;
                     if (req && req.cookies) {
-                        token = req.cookies['access_token'];
+                        return req.cookies['access_token'] || req.cookies['accessToken'] || null;
                     }
-                    return token;
+                    return null;
                 },
             ]),
             ignoreExpiration: false,

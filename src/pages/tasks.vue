@@ -67,16 +67,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { useHomeworksApi } from '~/entities/homework/api'
-import { useTeacherStore } from '~/entities/teacher/model/store'
-import { useTasksData } from '~/features/homeworks/model/useTasksData'
-import StudentHomeworkList from '~/features/homeworks/ui/StudentHomeworkList.vue'
-import TeacherHomeworkQueue from '~/features/homeworks/ui/TeacherHomeworkQueue.vue'
-import TeacherStudentList from '~/features/homeworks/ui/TeacherStudentList.vue'
-import { useHomeworkNotifications } from '~/shared/composables/useHomeworkNotifications'
-import AppButton from '~/shared/ui/AppButton.vue'
-import AppHeading from '~/shared/ui/AppHeading.vue'
-import ErrorBoundary from '~/shared/ui/ErrorBoundary.vue'
+import { useHomeworksApi } from '@entities/homework/api'
+import { useTeacherStore } from '@entities/teacher/model/store'
+import { useTasksData } from '@features/homeworks/model/useTasksData'
+import StudentHomeworkList from '@features/homeworks/ui/StudentHomeworkList.vue'
+import TeacherHomeworkQueue from '@features/homeworks/ui/TeacherHomeworkQueue.vue'
+import TeacherStudentList from '@features/homeworks/ui/TeacherStudentList.vue'
+import { useHomeworkNotifications } from '@shared/composables/useHomeworkNotifications'
+import AppButton from '@shared/ui/AppButton.vue'
+import AppHeading from '@shared/ui/AppHeading.vue'
+import ErrorBoundary from '@shared/ui/ErrorBoundary.vue'
 
 const teacherStore = useTeacherStore()
 const homeworksApi = useHomeworksApi()
@@ -104,13 +104,13 @@ const createChatAndRedirect = async (studentId: string) => {
   try {
     const { homeworkId } = await homeworksApi.ensureChat(studentId)
     router.push(`/homework/${homeworkId}`)
-  } catch (err) {
-    console.error('Failed to create/get chat', err)
+  } catch {
+    // Failed to create chat
   }
 }
 
 definePageMeta({
-  layout: 'app',
+  layout: 'main',
   middleware: ['auth'],
 })
 </script>

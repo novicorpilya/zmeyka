@@ -52,10 +52,10 @@
 </template>
 
 <script setup lang="ts">
-import logoImage from '~/assets/logo.png'
-import { useRegistration } from '~/features/auth/model/useRegistration'
-import RegisterForm from '~/features/auth/ui/RegisterForm.vue'
-import RoleSelector from '~/features/auth/ui/RoleSelector.vue'
+import logoImage from '@shared/assets/logo.png'
+import { useRegistration } from '@features/auth/model/useRegistration'
+import RegisterForm from '@features/auth/ui/RegisterForm.vue'
+import RoleSelector from '@features/auth/ui/RoleSelector.vue'
 
 const { step, form, loading, error, selectRole, handleRegister, goBack } = useRegistration()
 

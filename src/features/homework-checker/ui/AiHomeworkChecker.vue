@@ -77,7 +77,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { useGeminiService, type ReviewResult } from '~/services/geminiService'
+import { useGeminiService, type ReviewResult } from '@shared/api/gemini.service'
 
 const props = defineProps<{
   code: string
@@ -95,8 +95,8 @@ const checkHomework = async () => {
   try {
     const { reviewCode } = useGeminiService()
     result.value = await reviewCode(props.code, props.taskDescription)
-  } catch (error) {
-    console.error('AI Check failed:', error)
+  } catch {
+    // Silent fail
   } finally {
     isChecking.value = false
   }

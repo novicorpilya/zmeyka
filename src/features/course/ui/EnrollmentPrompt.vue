@@ -58,9 +58,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Lesson } from '~/entities/course/model/types'
-import AppButton from '~/shared/ui/AppButton.vue'
-import AppHeading from '~/shared/ui/AppHeading.vue'
+import type { Lesson } from '@entities/course/model/types'
+import AppButton from '@shared/ui/AppButton.vue'
+import AppHeading from '@shared/ui/AppHeading.vue'
 
 interface Props {
   currentLesson: Lesson | null

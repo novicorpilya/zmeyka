@@ -1,5 +1,5 @@
-import { useApi } from '~/shared/api'
-import type { Course } from '~/shared/types'
+import { useApi } from '@shared/api'
+import type { Course } from '@shared/types'
 
 export const useCourseApi = () => {
   const api = useApi()

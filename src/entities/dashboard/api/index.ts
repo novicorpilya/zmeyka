@@ -1,5 +1,5 @@
-import { useApi } from '~/shared/api'
-import type { DashboardSummary } from '~/shared/types'
+import { useApi } from '@shared/api'
+import type { DashboardSummary } from '@shared/types'
 
 export const useDashboardApi = () => {
   const api = useApi()

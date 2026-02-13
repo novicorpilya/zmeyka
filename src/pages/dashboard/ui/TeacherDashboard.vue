@@ -25,11 +25,11 @@
 </template>
 
 <script setup lang="ts">
-import { useTeacherStore } from '~/entities/teacher/model/store'
-import TeacherActionCard from '~/widgets/teacher-dashboard/ui/TeacherActionCard.vue'
-import TeacherGradingQueue from '~/widgets/teacher-dashboard/ui/TeacherGradingQueue.vue'
-import TeacherStatsGrid from '~/widgets/teacher-dashboard/ui/TeacherStatsGrid.vue'
-import TeacherStudentsList from '~/widgets/teacher-dashboard/ui/TeacherStudentsList.vue'
+import { useTeacherStore } from '@entities/teacher/model/store'
+import TeacherActionCard from '@widgets/teacher-dashboard/ui/TeacherActionCard.vue'
+import TeacherGradingQueue from '@widgets/teacher-dashboard/ui/TeacherGradingQueue.vue'
+import TeacherStatsGrid from '@widgets/teacher-dashboard/ui/TeacherStatsGrid.vue'
+import TeacherStudentsList from '@widgets/teacher-dashboard/ui/TeacherStudentsList.vue'
 
 const teacherStore = useTeacherStore()
 </script>

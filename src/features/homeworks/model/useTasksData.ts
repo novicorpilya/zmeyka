@@ -1,9 +1,9 @@
 import { computed, ref } from 'vue'
 
-import { useHomeworksApi } from '~/entities/homework/api'
-import { useTeacherStore } from '~/entities/teacher/model/store'
-import { useUserStore } from '~/entities/user/model/store'
-import type { Homework } from '~/shared/types'
+import { useHomeworksApi } from '@entities/homework/api'
+import { useTeacherStore } from '@entities/teacher/model/store'
+import { useUserStore } from '@entities/user/model/store'
+import type { Homework } from '@shared/types'
 
 export const useTasksData = () => {
   const userStore = useUserStore()
@@ -23,8 +23,8 @@ export const useTasksData = () => {
     try {
       const data = await homeworksApi.getUserHomeworks()
       studentHomeworks.value = data
-    } catch (err) {
-      console.error('Failed to fetch student homeworks', err)
+    } catch {
+      // Silent fail
     } finally {
       isLoadingStudent.value = false
     }
@@ -38,8 +38,8 @@ export const useTasksData = () => {
         if (isTeacher.value) {
           await teacherStore.fetchSummary()
         }
-      } catch (e) {
-        console.error('[Tasks] Data Fetch error:', e)
+      } catch {
+        // Silent fail
       }
       return true
     },

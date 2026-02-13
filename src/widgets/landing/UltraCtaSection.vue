@@ -38,46 +38,50 @@
           <div class="space-y-6 md:space-y-12 text-center lg:text-left cta-content">
             <span
               class="inline-flex items-center gap-2 md:gap-3 px-4 md:px-6 py-1.5 md:py-2 rounded-full bg-white/5 border border-white/10 text-emerald-400 text-[10px] md:text-xs font-black uppercase tracking-[0.4em]"
-              >Final Step</span
+              >Первый шаг бесплатно</span
             >
 
             <h2
               class="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-white leading-[0.9] tracking-tighter"
             >
-              Хватит <br class="hidden md:block" />
+              Откройте ребенку <br class="hidden md:block" />
               <span
                 class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400"
-                >просто ждать</span
+                >мир будущего</span
               >
             </h2>
 
             <p
               class="text-slate-400 text-base md:text-xl lg:text-2xl font-medium max-w-lg mx-auto lg:mx-0 leading-relaxed"
             >
-              Твоя карьера в IT начинается не с универа, а с первой написанной строчки кода. Сделай
-              это сейчас.
+              Начните с простого: первый учебный модуль доступен сразу после регистрации. Без
+              привязки карты и скрытых платежей.
             </p>
 
             <div
               class="flex flex-col sm:flex-row gap-4 md:gap-8 justify-center lg:justify-start pt-4 md:pt-6"
             >
-              <NuxtLink
-                :to="userStore.isAuthenticated ? '/dashboard' : '/register'"
-                class="btn-magnetic group/btn relative scale-up"
-              >
+              <NuxtLink to="/register" class="btn-magnetic group/btn relative scale-up">
                 <span
                   class="block px-8 md:px-12 py-4 md:py-6 bg-emerald-500 rounded-xl md:rounded-2xl font-black text-white text-lg md:text-2xl hover:bg-emerald-400 transition-all shadow-2xl shadow-emerald-500/20 text-center shimmer-button"
                 >
                   <ClientOnly>
-                    {{ userStore.isAuthenticated ? 'Вернуться в кабинет' : 'Ворваться в IT' }}
-                    <template #fallback>Ворваться в IT</template>
+                    {{
+                      userStore.isAuthenticated ? 'Вернуться к обучению' : 'Попробовать демо-урок'
+                    }}
+                    <template #fallback>Попробовать демо-урок</template>
                   </ClientOnly>
                 </span>
               </NuxtLink>
               <button
-                class="px-8 md:px-12 py-4 md:py-6 rounded-xl md:rounded-2xl font-black text-slate-400 text-base md:text-xl hover:text-white transition-all"
+                class="group/secondary px-8 md:px-12 py-4 md:py-6 rounded-xl md:rounded-2xl font-black text-white text-base md:text-xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all flex items-center justify-center gap-3 backdrop-blur-sm"
               >
-                Чат поддержки
+                <div
+                  class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover/secondary:bg-emerald-500/20 transition-colors"
+                >
+                  <MessageCircle class="w-5 h-5 text-emerald-400" />
+                </div>
+                <span>Консультация</span>
               </button>
             </div>
           </div>
@@ -121,10 +125,11 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { MessageCircle } from 'lucide-vue-next'
 import { ref, onMounted } from 'vue'
 
-import programmSnakeImage from '~/assets/programmSnake.png'
-import { useUserStore } from '~/entities/user/model/store'
+import programmSnakeImage from '@shared/assets/programmSnake.png'
+import { useUserStore } from '@entities/user/model/store'
 
 const userStore = useUserStore()
 const isMounted = ref(false)

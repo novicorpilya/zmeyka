@@ -210,7 +210,7 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick, watch } from 'vue'
 
-import type { Lesson } from '~/shared/types'
+import type { Lesson } from '@shared/types'
 
 const props = defineProps<{
   lesson: Lesson

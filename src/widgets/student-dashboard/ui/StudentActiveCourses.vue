@@ -79,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DashboardSummary } from '~/shared/types'
+import type { DashboardSummary } from '@shared/types'
 
 defineProps<{
   courses: DashboardSummary['activeCourses']

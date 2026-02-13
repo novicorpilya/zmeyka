@@ -75,12 +75,12 @@
 <script setup lang="ts">
 import { ref, computed, reactive, watch } from 'vue'
 
-import { useUserStore } from '~/entities/user/model/store'
-import { useAuthApi } from '~/features/auth/api'
-import ProfessionalProfileForm from '~/features/teacher/ui/ProfessionalProfileForm.vue'
-import type { User } from '~/shared/types'
-import AvatarSettings from '~/widgets/settings/ui/AvatarSettings.vue'
-import ProfileForm from '~/widgets/settings/ui/ProfileForm.vue'
+import { useUserStore } from '@entities/user/model/store'
+import { useAuthApi } from '@features/auth/api'
+import ProfessionalProfileForm from '@features/teacher/ui/ProfessionalProfileForm.vue'
+import type { User } from '@shared/types'
+import AvatarSettings from '@widgets/settings/ui/AvatarSettings.vue'
+import ProfileForm from '@widgets/settings/ui/ProfileForm.vue'
 
 const userStore = useUserStore()
 const { updateProfile } = useAuthApi()
@@ -142,7 +142,7 @@ const handleLogout = () => {
 }
 
 definePageMeta({
-  layout: 'app',
+  layout: 'main',
   middleware: ['auth'],
 })
 </script>

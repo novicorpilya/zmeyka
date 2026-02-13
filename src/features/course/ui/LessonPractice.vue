@@ -152,10 +152,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
-import type { Lesson } from '~/entities/course/model/types'
-import AppButton from '~/shared/ui/AppButton.vue'
-import AppCard from '~/shared/ui/AppCard.vue'
-import AppHeading from '~/shared/ui/AppHeading.vue'
+import type { Lesson } from '@entities/course/model/types'
+import AppButton from '@shared/ui/AppButton.vue'
+import AppCard from '@shared/ui/AppCard.vue'
+import AppHeading from '@shared/ui/AppHeading.vue'
 
 interface Props {
   currentLesson: Lesson | null

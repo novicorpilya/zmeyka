@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 
-import type { Homework } from '~/shared/types'
-import { useHomeworksApi } from '~/entities/homework/api'
+import { useHomeworksApi } from '@entities/homework/api'
+import type { Homework } from '@shared/types'
 
 export const useHomeworkFlow = () => {
   const homeworksApi = useHomeworksApi()
@@ -41,8 +41,8 @@ export const useHomeworkFlow = () => {
       await homeworksApi.submit(lessonId, courseId, solution.value)
       await fetchHomeworkStatus(lessonId)
       return true
-    } catch (err) {
-      console.error('Submission failed:', err)
+    } catch {
+      // Submission failed
       return false
     } finally {
       isSubmitting.value = false

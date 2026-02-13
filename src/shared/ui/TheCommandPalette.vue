@@ -130,7 +130,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 
-import { useCommandPalette, type CommandAction } from '~/shared/composables/useCommandPalette'
+import { useCommandPalette, type CommandAction } from '@shared/composables/useCommandPalette'
 
 const { isOpen, actions, close, toggle } = useCommandPalette()
 

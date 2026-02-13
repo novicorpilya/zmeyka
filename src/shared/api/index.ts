@@ -1,4 +1,6 @@
-import { useUserStore } from '~/entities/user/model/store'
+import { useUserStore } from '@entities/user/model/store'
+
+export * from './gemini.service'
 
 interface FetchError {
   response?: {
@@ -87,9 +89,7 @@ export const useApi = () => {
       } catch (refreshError: unknown) {
         // Cleanup on terminal failure
         if (at.value) {
-          if (import.meta.dev) {
-            console.warn('[API] Silent refresh failed, clearing user session')
-          }
+          // Silent refresh failed, clearing user session
           at.value = null
           userStore.clearUser()
         }

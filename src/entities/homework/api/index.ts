@@ -1,5 +1,5 @@
-import { useApi } from '~/shared/api'
-import type { Homework } from '~/shared/types'
+import { useApi } from '@shared/api'
+import type { Homework } from '@shared/types'
 
 export interface HomeworkComment {
   id: string

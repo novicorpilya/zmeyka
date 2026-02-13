@@ -1,7 +1,7 @@
 import { ref, reactive } from 'vue'
 
-import { useUserStore } from '~/entities/user/model/store'
-import { useAuthApi } from '~/features/auth/api'
+import { useUserStore } from '@entities/user/model/store'
+import { useAuthApi } from '@features/auth/api'
 
 export const useRegistration = () => {
   const router = useRouter()

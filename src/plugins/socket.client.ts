@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client'
 import { ref, watch } from 'vue'
 
-import { useUserStore } from '~/entities/user/model/store'
+import { useUserStore } from '@entities/user/model/store'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
@@ -25,11 +25,11 @@ export default defineNuxtPlugin((nuxtApp) => {
     })
 
     socket.on('connect', () => {
-      if (import.meta.dev) console.log('✅ WebSocket Connected')
+      // WebSocket Connected
     })
 
     socket.on('disconnect', () => {
-      if (import.meta.dev) console.log('❌ WebSocket Disconnected')
+      // WebSocket Disconnected
     })
 
     socket.on('homework_reviewed', (_data: unknown) => {

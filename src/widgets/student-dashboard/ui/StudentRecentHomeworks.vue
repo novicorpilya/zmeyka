@@ -63,7 +63,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import type { Homework } from '~/shared/types'
+import type { Homework } from '@shared/types'
 
 const props = defineProps<{
   homeworks: Homework[]

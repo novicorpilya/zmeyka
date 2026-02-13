@@ -47,11 +47,11 @@
 </template>
 
 <script setup lang="ts">
-import type { Lesson } from '~/entities/course/model/types'
-import AppButton from '~/shared/ui/AppButton.vue'
-import AppEmptyState from '~/shared/ui/AppEmptyState.vue'
-import AppHeading from '~/shared/ui/AppHeading.vue'
-import { sanitizeHtml } from '~/shared/utils/sanitizer'
+import type { Lesson } from '@entities/course/model/types'
+import AppButton from '@shared/ui/AppButton.vue'
+import AppEmptyState from '@shared/ui/AppEmptyState.vue'
+import AppHeading from '@shared/ui/AppHeading.vue'
+import { sanitizeHtml } from '@shared/utils/sanitizer'
 
 interface Props {
   currentLesson: Lesson | null

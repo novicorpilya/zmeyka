@@ -1,4 +1,4 @@
-import { useApi } from '~/shared/api'
+import { useApi } from '@shared/api'
 
 export interface PaymentDetails {
   id: string

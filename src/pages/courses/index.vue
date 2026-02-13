@@ -259,10 +259,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 
-import { useCourseApi } from '~/entities/course/api'
-import { useTeacherStore } from '~/entities/teacher/model/store'
-import { useUserStore } from '~/entities/user/model/store'
-import type { Course } from '~/shared/types'
+import { useCourseApi } from '@entities/course/api'
+import { useTeacherStore } from '@entities/teacher/model/store'
+import { useUserStore } from '@entities/user/model/store'
+import type { Course } from '@shared/types'
 
 const { getCourses } = useCourseApi()
 const userStore = useUserStore()
@@ -311,14 +311,14 @@ onMounted(async () => {
   if (isTeacher.value) {
     try {
       await teacherStore.fetchSummary()
-    } catch (e) {
-      console.error('Failed to fetch dashboard summary', e)
+    } catch {
+      // failed fetch
     }
   }
 })
 
 definePageMeta({
-  layout: 'app',
+  layout: 'main',
   middleware: ['auth'],
 })
 </script>

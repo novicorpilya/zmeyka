@@ -240,8 +240,7 @@ const parsedChapters = computed(() => {
   try {
     const data = typeof props.chapters === 'string' ? JSON.parse(props.chapters) : props.chapters
     return Array.isArray(data) ? data : []
-  } catch (e) {
-    console.error('[LessonPlayer] Parse failed:', e)
+  } catch {
     return []
   }
 })

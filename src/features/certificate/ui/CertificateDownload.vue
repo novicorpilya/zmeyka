@@ -58,8 +58,8 @@ const handleDownload = async () => {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-  } catch (error) {
-    console.error('Certification failed:', error)
+  } catch {
+    // Silent fail
   } finally {
     isGenerating.value = false
   }

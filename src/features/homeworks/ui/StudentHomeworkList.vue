@@ -72,11 +72,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import type { Homework } from '~/shared/types'
-import AppButton from '~/shared/ui/AppButton.vue'
-import AppCard from '~/shared/ui/AppCard.vue'
-import AppEmptyState from '~/shared/ui/AppEmptyState.vue'
-import AppHeading from '~/shared/ui/AppHeading.vue'
+import type { Homework } from '@shared/types'
+import AppButton from '@shared/ui/AppButton.vue'
+import AppCard from '@shared/ui/AppCard.vue'
+import AppEmptyState from '@shared/ui/AppEmptyState.vue'
+import AppHeading from '@shared/ui/AppHeading.vue'
 
 interface Props {
   tasks: Homework[]

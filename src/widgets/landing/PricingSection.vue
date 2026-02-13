@@ -12,18 +12,19 @@
         <div
           class="inline-block px-3 md:px-4 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em]"
         >
-          Investment
+          тарифы
         </div>
         <h2
           class="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-slate-900 leading-[0.9] tracking-tighter"
         >
-          Твой билет в <br class="hidden md:block" />
+          Инвестиция в <br class="hidden md:block" />
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-600"
-            >высшую лигу</span
+            >будущее ребенка</span
           >
         </h2>
         <p class="text-slate-500 text-base md:text-xl font-medium max-w-xl mx-auto">
-          Мы сделали цены доступными, чтобы ты мог сфокусироваться на главном — своём росте.
+          Первый учебный модуль всегда бесплатен. Для тех, кто готов идти дальше — гибкие условия
+          обучения.
         </p>
       </header>
 
@@ -129,40 +130,40 @@ import { onMounted } from 'vue'
 const plans = [
   {
     name: 'Старт',
-    badge: 'Hobby',
+    badge: 'Для новичков',
     price: '0₽',
     items: [
-      '5 ИИ проверок в день',
-      'Базовые курсы Python',
-      'Доступ в сообщество',
-      '1 активный проект',
+      '5 проверок кода ИИ в день',
+      'Основы Python и логики',
+      'Доступ в открытое комьюнити',
+      '1 учебный проект',
     ],
-    cta: 'Выбрать Free',
+    cta: 'Попробовать бесплатно',
   },
   {
-    name: 'PRO Змейка',
-    badge: 'Professional',
+    name: 'PRO',
+    badge: 'Популярный выбор',
     price: '990₽',
     items: [
-      'Безлимит проверок ИИ',
-      'Все текущие и будущие курсы',
-      'Личный диплом и портфолио',
-      'Приоритетный доступ к менторам',
+      'Безлимитный Code Review от ИИ',
+      'Доступ ко всем продвинутым курсам',
+      'Сертификат и помощь с портфолио',
+      'Прямая связь с менторами',
     ],
-    cta: 'Стать PRO',
+    cta: 'Стать профессионалом',
     active: true,
   },
   {
-    name: 'Academy',
-    badge: 'Schools',
+    name: 'Бизнес',
+    badge: 'Для команд и школ',
     price: 'B2B',
     items: [
-      'Кабинет для группы',
-      'Аналитика успеваемости',
-      'Скидки от 10 человек',
-      'API для интеграции',
+      'Кабинет преподавателя',
+      'Аналитика всей группы',
+      'Индивидуальные условия',
+      'Приоритетная поддержка',
     ],
-    cta: 'Связаться',
+    cta: 'Узнать больше',
   },
 ]
 

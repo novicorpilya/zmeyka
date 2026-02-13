@@ -1,5 +1,5 @@
-import { useApi } from '~/shared/api'
-import type { AuthResponse, LoginRequest, RegisterRequest, User } from '~/shared/types'
+import { useApi } from '@shared/api'
+import type { AuthResponse, LoginRequest, RegisterRequest, User } from '@shared/types'
 
 export interface MessageResponse {
   message: string

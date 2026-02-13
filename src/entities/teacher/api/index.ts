@@ -1,5 +1,5 @@
-import { useApi } from '~/shared/api'
-import type { TeacherDashboardSummary, TeacherProfile, Cohort, AnalyticsItem } from '~/shared/types'
+import { useApi } from '@shared/api'
+import type { TeacherDashboardSummary, TeacherProfile, Cohort, AnalyticsItem } from '@shared/types'
 
 export const useTeacherApi = () => {
   const api = useApi()

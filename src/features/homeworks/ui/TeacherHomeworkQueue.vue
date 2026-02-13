@@ -60,12 +60,12 @@
 </template>
 
 <script setup lang="ts">
-import type { TeacherDashboardSummary } from '~/entities/teacher/model/types'
-import AppButton from '~/shared/ui/AppButton.vue'
-import AppCard from '~/shared/ui/AppCard.vue'
-import AppEmptyState from '~/shared/ui/AppEmptyState.vue'
-import AppHeading from '~/shared/ui/AppHeading.vue'
-import { formatDate } from '~/shared/utils/date'
+import type { TeacherDashboardSummary } from '@entities/teacher/model/types'
+import AppButton from '@shared/ui/AppButton.vue'
+import AppCard from '@shared/ui/AppCard.vue'
+import AppEmptyState from '@shared/ui/AppEmptyState.vue'
+import AppHeading from '@shared/ui/AppHeading.vue'
+import { formatDate } from '@shared/utils/date'
 
 type RecentHomework = TeacherDashboardSummary['recentHomeworks'][number]
 

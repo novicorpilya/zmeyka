@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import logoImage from '~/assets/logo.png'
+import logoImage from '@shared/assets/logo.png'
 
 defineProps<{
   name?: string

@@ -313,7 +313,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Course } from '~/shared/types'
+import type { Course } from '@shared/types'
 
 defineProps<{
   course: Course | null

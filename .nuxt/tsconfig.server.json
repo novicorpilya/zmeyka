@@ -110,9 +110,6 @@
       "#internal/nuxt/paths": [
         "../node_modules/@nuxt/nitro-server/dist/runtime/utils/paths"
       ],
-      "@app": [
-        "./~/app"
-      ],
       "@pages": [
         "./~/pages"
       ],
@@ -128,8 +125,8 @@
       "@shared": [
         "./~/shared"
       ],
-      "@services": [
-        "./~/services"
+      "@opentelemetry/resources": [
+        "./@opentelemetry/resources/build/src/index.js"
       ],
       "#unhead/composables": [
         "../node_modules/nuxt/dist/head/runtime/composables/v3"

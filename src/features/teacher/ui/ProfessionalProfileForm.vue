@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-10">
     <div class="flex items-center justify-between">
-      <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight">
+      <h2 class="text-2xl font-black font-display text-slate-800 uppercase tracking-tight">
         Публичный профиль 🎨
       </h2>
       <button
@@ -36,7 +36,7 @@
           v-for="t in subTabs"
           :key="t.id"
           @click="activeSubTab = t.id"
-          class="w-full text-left px-5 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all shrink-0"
+          class="w-full text-left px-5 py-3 rounded-xl font-black font-display text-xs uppercase tracking-widest transition-all shrink-0"
           :class="
             activeSubTab === t.id
               ? 'bg-brand-blue text-white shadow-md'
@@ -53,7 +53,8 @@
         <!-- Basic Info -->
         <div v-if="activeSubTab === 'basic'" class="space-y-6">
           <div class="space-y-3">
-            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4"
+            <label
+              class="text-[10px] font-black font-display text-slate-400 uppercase tracking-widest ml-4"
               >Обо мне</label
             >
             <textarea
@@ -220,10 +221,10 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 
-import { useTeacherApi } from '~/entities/teacher/api'
-import type { TeacherProfile } from '~/entities/teacher/model/types'
-import { useUploadApi } from '~/shared/api/upload'
-import { useToast } from '~/shared/composables/useToast'
+import { useTeacherApi } from '@entities/teacher/api'
+import type { TeacherProfile } from '@entities/teacher/model/types'
+import { useUploadApi } from '@shared/api/upload'
+import { useToast } from '@shared/composables/useToast'
 
 const teacherApi = useTeacherApi()
 const uploadApi = useUploadApi()
@@ -263,8 +264,8 @@ onMounted(async () => {
     const data = await teacherApi.getProfile()
     Object.assign(profile, data)
     profile.certificates = profile.certificates || []
-  } catch (err) {
-    console.error('Failed to load profile', err)
+  } catch {
+    toast.error('Ошибка загрузки профиля')
   }
 })
 

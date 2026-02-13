@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
-
-import type { User } from '~/shared/types'
+import type { User } from '@shared/types'
 
 export const useUserStore = defineStore('user', () => {
   const user = ref<User | null>(null)
@@ -34,7 +33,6 @@ export const useUserStore = defineStore('user', () => {
     user.value = newUser
     // Removed invalid .options mutation
 
-
     if (newUser) {
       const { id, email, name, avatar, role, createdAt, updatedAt } = newUser
       userCookie.value = JSON.stringify({ id, email, name, avatar, role, createdAt, updatedAt })
@@ -65,19 +63,22 @@ export const useUserStore = defineStore('user', () => {
 
         if (data && typeof data === 'object') {
           const d = data as Record<string, unknown>
-          const sanitized: User = {
-            id: String(d.id),
-            email: String(d.email),
-            name: d.name ? String(d.name) : undefined,
-            avatar: d.avatar ? String(d.avatar) : undefined,
-            role: (d.role as User['role']) || 'STUDENT',
-            createdAt: String(d.createdAt || new Date().toISOString()),
-            updatedAt: String(d.updatedAt || new Date().toISOString()),
+          // Strict validation before assignment
+          if (typeof d.id === 'string' || typeof d.id === 'number') {
+            const sanitzedUser: User = {
+              id: String(d.id),
+              email: String(d.email || ''),
+              name: d.name ? String(d.name) : undefined,
+              avatar: d.avatar ? String(d.avatar) : undefined,
+              role: (d.role as User['role']) || 'STUDENT',
+              createdAt: String(d.createdAt || new Date().toISOString()),
+              updatedAt: String(d.updatedAt || new Date().toISOString()),
+            }
+            user.value = sanitzedUser
           }
-          user.value = sanitized
         }
-      } catch (e) {
-        console.error('[UserStore] Failed to initialize from cookie:', e)
+      } catch {
+        // Silent fail on invalid cookie data to prevent console noise
         clearUser()
       }
     }

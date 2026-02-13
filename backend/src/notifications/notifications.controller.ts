@@ -4,16 +4,24 @@ import { map, Observable } from 'rxjs'
 import { AuthenticatedRequest } from '../shared/interfaces/request.interface'
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+import { Logger } from '@nestjs/common'
 
 @ApiTags('notifications')
 @Controller('notifications')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class NotificationsController {
-  constructor(private readonly notificationsService: NotificationsService) {}
+  private readonly logger = new Logger(NotificationsController.name)
+  constructor(private readonly notificationsService: NotificationsService) { }
 
   @Sse('sse')
-  sse(@Req() req: AuthenticatedRequest): Observable<{ data: NotificationPayload }> {
+  sse(@Req() req: AuthenticatedRequest, @Query('token') token?: string): Observable<{ data: NotificationPayload }> {
+    this.logger.log(`[SSE] Connection attempt for user: ${req.user?.id || 'unknown'}, token present: ${!!token}`)
+
+    if (!req.user) {
+      this.logger.error('[SSE] Unauthorized connection attempt - no user in request')
+    }
+
     return this.notificationsService
       .subscribe(req.user.id)
       .pipe(map((notification) => ({ data: notification })))

@@ -93,8 +93,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-import { useNotificationStore } from '~/shared/stores/notifications'
-import type { Notification } from '~/shared/stores/notifications'
+import { useNotificationStore } from '@shared/stores/notifications'
+import type { Notification } from '@shared/stores/notifications'
 
 const store = useNotificationStore()
 const isOpen = ref(false)

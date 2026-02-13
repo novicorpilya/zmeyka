@@ -47,17 +47,17 @@
 import { ref, watch, computed } from 'vue'
 
 definePageMeta({
-  layout: 'app',
+  layout: 'main',
   middleware: ['auth'],
 })
 
-import { useTeacherStore } from '~/entities/teacher/model/store'
-import { useUserStore } from '~/entities/user/model/store'
-import AnalyticsActivityFeed from '~/widgets/analytics/ui/AnalyticsActivityFeed.vue'
-import StudentSkillGrid from '~/widgets/analytics/ui/StudentSkillGrid.vue'
-import TeacherCohortHeatmap from '~/widgets/analytics/ui/TeacherCohortHeatmap.vue'
-import TeacherGlobalStats from '~/widgets/analytics/ui/TeacherGlobalStats.vue'
-import TeacherReviewCenter from '~/widgets/analytics/ui/TeacherReviewCenter.vue'
+import { useTeacherStore } from '@entities/teacher/model/store'
+import { useUserStore } from '@entities/user/model/store'
+import AnalyticsActivityFeed from '@widgets/analytics/ui/AnalyticsActivityFeed.vue'
+import StudentSkillGrid from '@widgets/analytics/ui/StudentSkillGrid.vue'
+import TeacherCohortHeatmap from '@widgets/analytics/ui/TeacherCohortHeatmap.vue'
+import TeacherGlobalStats from '@widgets/analytics/ui/TeacherGlobalStats.vue'
+import TeacherReviewCenter from '@widgets/analytics/ui/TeacherReviewCenter.vue'
 
 const userStore = useUserStore()
 const teacherStore = useTeacherStore()

@@ -64,20 +64,19 @@ let AuthController = class AuthController {
         return this.authService.resetPassword(dto.token, dto.newPassword);
     }
     setCookies(res, accessToken, refreshToken, remember = true) {
-        const commonOptions = {
+        const maxAge = remember ? 7 * 24 * 60 * 60 * 1000 : undefined;
+        const baseOptions = {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
             path: '/',
+            maxAge,
         };
-        if (remember) {
-            commonOptions.maxAge = 7 * 24 * 60 * 60 * 1000;
-        }
         res.cookie('refresh_token', refreshToken, {
-            ...commonOptions,
+            ...baseOptions,
             httpOnly: true,
         });
         res.cookie('access_token', accessToken, {
-            ...commonOptions,
+            ...baseOptions,
             httpOnly: false,
         });
     }

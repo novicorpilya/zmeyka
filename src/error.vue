@@ -150,9 +150,7 @@ const handleGoBack = () => {
 }
 
 // Log error for debugging
-onMounted(() => {
-  console.error('[Error Page]', props.error)
-})
+// Error handling logic only
 </script>
 
 <style scoped>

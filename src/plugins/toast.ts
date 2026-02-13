@@ -1,4 +1,4 @@
-import { useToast } from '~/shared/composables/useToast'
+import { useToast } from '@shared/composables/useToast'
 
 export default defineNuxtPlugin(() => {
   const toast = useToast()

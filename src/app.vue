@@ -14,11 +14,11 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-import { useUserStore } from '~/entities/user/model/store'
-import ErrorBoundary from '~/shared/ui/ErrorBoundary.vue'
-import TheCommandPalette from '~/shared/ui/TheCommandPalette.vue'
-import TheModals from '~/shared/ui/TheModals.vue'
-import TheToasts from '~/shared/ui/TheToasts.vue'
+import { useUserStore } from '@entities/user/model/store'
+import ErrorBoundary from '@shared/ui/ErrorBoundary.vue'
+import TheCommandPalette from '@shared/ui/TheCommandPalette.vue'
+import TheModals from '@shared/ui/TheModals.vue'
+import TheToasts from '@shared/ui/TheToasts.vue'
 
 // GSAP setup
 if (import.meta.client) {

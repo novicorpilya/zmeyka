@@ -131,24 +131,24 @@
 import confetti from 'canvas-confetti'
 import { ref, onMounted, watch } from 'vue'
 
-definePageMeta({ layout: 'app', middleware: ['auth'] })
+definePageMeta({ layout: 'main', middleware: ['auth'] })
 
-import type { Lesson, Module } from '~/entities/course/model/types'
-import { useCourse } from '~/entities/course/model/useCourse'
-import CourseSidebar from '~/features/course/ui/CourseSidebar.vue'
-import EnrollmentPrompt from '~/features/course/ui/EnrollmentPrompt.vue'
-import LessonMaterials from '~/features/course/ui/LessonMaterials.vue'
-import LessonPlayer from '~/features/course/ui/LessonPlayer.vue'
-import LessonPractice from '~/features/course/ui/LessonPractice.vue'
-import LessonTabsContainer from '~/features/course/ui/LessonTabsContainer.vue'
-import { useHomeworkFlow } from '~/features/homeworks/model/useHomeworkFlow'
-import HomeworkDiscussion from '~/features/homeworks/ui/HomeworkDiscussion.vue'
-import { useToast } from '~/shared/composables/useToast'
-import AppButton from '~/shared/ui/AppButton.vue'
-import AppEmptyState from '~/shared/ui/AppEmptyState.vue'
-import AppHeading from '~/shared/ui/AppHeading.vue'
-import ErrorBoundary from '~/shared/ui/ErrorBoundary.vue'
-import { formatFileUrl } from '~/shared/utils/url'
+import type { Lesson, Module } from '@entities/course/model/types'
+import { useCourse } from '@entities/course/model/useCourse'
+import CourseSidebar from '@features/course/ui/CourseSidebar.vue'
+import EnrollmentPrompt from '@features/course/ui/EnrollmentPrompt.vue'
+import LessonMaterials from '@features/course/ui/LessonMaterials.vue'
+import LessonPlayer from '@features/course/ui/LessonPlayer.vue'
+import LessonPractice from '@features/course/ui/LessonPractice.vue'
+import LessonTabsContainer from '@features/course/ui/LessonTabsContainer.vue'
+import { useHomeworkFlow } from '@features/homeworks/model/useHomeworkFlow'
+import HomeworkDiscussion from '@features/homeworks/ui/HomeworkDiscussion.vue'
+import { useToast } from '@shared/composables/useToast'
+import AppButton from '@shared/ui/AppButton.vue'
+import AppEmptyState from '@shared/ui/AppEmptyState.vue'
+import AppHeading from '@shared/ui/AppHeading.vue'
+import ErrorBoundary from '@shared/ui/ErrorBoundary.vue'
+import { formatFileUrl } from '@shared/utils/url'
 
 const route = useRoute()
 const toast = useToast()

@@ -22,15 +22,15 @@
             <span
               class="inline-block px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-100/50 text-emerald-600 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]"
             >
-              Community Voice
+              community
             </span>
             <h2
               class="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter leading-[0.95]"
             >
-              Любимый продукт <br />
+              Что говорят <br />
               <span
                 class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-emerald-400 to-cyan-500"
-                >будущих инженеров</span
+                >наши студенты</span
               >
             </h2>
           </div>
@@ -181,28 +181,28 @@ const marquee2 = ref<HTMLElement | null>(null)
 
 const testimonials = [
   {
-    name: 'Артем Волков',
+    name: 'Алексей Иванов',
+    role: 'Студент 8 класса',
+    text: 'Раньше программирование казалось чем-то невозможным. В "Змейке" я за месяц написал своего первого чат-бота для Telegram. ИИ-наставник реально помогает не бросать, когда что-то не получается.',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alexey',
+  },
+  {
+    name: 'Марина Сергеевна',
+    role: 'Родитель',
+    text: 'Искала сыну досуг с пользой. Платформа очень затянула его: вместо игр в телефоне он теперь соревнуется с ИИ в написании кода. Вижу прогресс каждую неделю!',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Marina',
+  },
+  {
+    name: 'Игорь К.',
     role: 'Студент 10 класса',
-    text: 'Думал, что программирование — это скучные формулы. Змейка показала, что это конструктор. Мой бот на Python теперь помогает мне с домашкой по физике!',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Artem',
+    text: 'Самое крутое — это мгновенная проверка. Тебе не надо ждать учителя, ты сразу видишь ошибку и понимаешь, как её исправить. Прошел базовый Python и уже делаю свой сайт.',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Igor',
   },
   {
-    name: 'Елена Соколова',
-    role: 'Junior Data Analyst',
-    text: 'Переучилась из бухгалтера за 4 месяца. ИИ-наставник в Змейке терпеливо объяснял мои ошибки в 11 вечера, когда живой учитель уже спит. Это киллер-фича!',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Elena',
-  },
-  {
-    name: 'Дмитрий К.',
-    role: 'Middle Backend Dev @ Startup',
-    text: 'Использую платформу, чтобы подтянуть основы алгоритмов. Обратная связь от ИИ по code style — это уровень хорошего техлида.',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dmitry',
-  },
-  {
-    name: 'Маша И.',
-    role: 'Любопытный новичок',
-    text: 'Прошла бесплатный пробный период и влюбилась. Все эти ачивки, XP и змейка, которая растет вместе с моими знаниями — лучший мотиватор не бросать.',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Masha',
+    name: 'Ольга П.',
+    role: 'Родитель',
+    text: 'Очень понятный интерфейс и интересные задачи. Дочь в восторге от игровой формы. Для нас важно, что обучение проходит в безопасности и под контролем умной системы.',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Olga',
   },
 ]
 

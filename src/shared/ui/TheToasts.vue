@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { useToast, type ToastType } from '~/shared/composables/useToast'
+import { useToast, type ToastType } from '@shared/composables/useToast'
 
 const { toasts, remove } = useToast()
 

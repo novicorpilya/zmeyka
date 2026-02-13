@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import logoImage from '~/assets/logo.png'
-import { useAuthApi } from '~/features/auth/api'
+import logoImage from '@shared/assets/logo.png'
+import { useAuthApi } from '@features/auth/api'
 
 const { forgotPassword } = useAuthApi()
 

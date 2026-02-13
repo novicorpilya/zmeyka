@@ -24,30 +24,30 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '@entities/user/model/store'
 import { computed } from 'vue'
 
-import ContactSection from '~/widgets/landing/ContactSection.vue'
-import FaqSection from '~/widgets/landing/FaqSection.vue'
-import FeaturesSection from '~/widgets/landing/FeaturesSection.vue'
-import InteractiveSandbox from '~/widgets/landing/InteractiveSandbox.vue'
-import PricingSection from '~/widgets/landing/PricingSection.vue'
-import ProcessSection from '~/widgets/landing/ProcessSection.vue'
-import TestimonialsSection from '~/widgets/landing/TestimonialsSection.vue'
-import UltraCtaSection from '~/widgets/landing/UltraCtaSection.vue'
-import UltraHeroSection from '~/widgets/landing/UltraHeroSection.vue'
+import { useUserStore } from '@entities/user/model/store'
+import ContactSection from '@widgets/landing/ContactSection.vue'
+import FaqSection from '@widgets/landing/FaqSection.vue'
+import FeaturesSection from '@widgets/landing/FeaturesSection.vue'
+import InteractiveSandbox from '@widgets/landing/InteractiveSandbox.vue'
+import PricingSection from '@widgets/landing/PricingSection.vue'
+import ProcessSection from '@widgets/landing/ProcessSection.vue'
+import TestimonialsSection from '@widgets/landing/TestimonialsSection.vue'
+import UltraCtaSection from '@widgets/landing/UltraCtaSection.vue'
+import UltraHeroSection from '@widgets/landing/UltraHeroSection.vue'
 
 const userStore = useUserStore()
 const startRoute = computed(() => (userStore.isAuthenticated ? '/dashboard' : '/register'))
 
 // Modern SEO Meta management
 useSeoMeta({
-  title: 'Змейка — Твой интерактивный ИИ-наставник в мире IT',
+  title: 'Змейка — Онлайн-обучение программированию на Python для школьников 10-16 лет',
   description:
-    'Освой Python и основы IT с помощью самого доброго в мире ИИ-наставника. Мгновенная проверка кода, геймификация и личный диплом.',
-  ogTitle: 'Змейка — Учись кодить играя',
+    'Интерактивная платформа для изучения Python с персональным ИИ-наставником. Геймификация, мгновенная проверка кода и поддержка менторов на каждом этапе.',
+  ogTitle: 'Змейка — Программирование для школьников с ИИ',
   ogDescription:
-    'Интерактивная платформа с ИИ-проверкой домашних заданий. Начни бесплатно прямо сейчас!',
+    'Научим ребенка кодить на Python через практику и игры. Попробуйте первый модуль бесплатно!',
   ogUrl: 'https://zmeyka.ru',
   ogImage: 'https://zmeyka.ru/og-image.png',
   ogType: 'website',

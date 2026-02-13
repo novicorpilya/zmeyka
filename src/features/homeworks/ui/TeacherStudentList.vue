@@ -47,9 +47,9 @@
 </template>
 
 <script setup lang="ts">
-import AppButton from '~/shared/ui/AppButton.vue'
-import AppCard from '~/shared/ui/AppCard.vue'
-import AppEmptyState from '~/shared/ui/AppEmptyState.vue'
+import AppButton from '@shared/ui/AppButton.vue'
+import AppCard from '@shared/ui/AppCard.vue'
+import AppEmptyState from '@shared/ui/AppEmptyState.vue'
 
 interface Student {
   id: string

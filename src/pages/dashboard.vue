@@ -26,12 +26,12 @@
 </template>
 
 <script setup lang="ts">
+import { useDashboardStore } from '@entities/dashboard/model/store'
+import { useTeacherStore } from '@entities/teacher/model/store'
+import { useUserStore } from '@entities/user/model/store'
+
 import StudentDashboard from './dashboard/ui/StudentDashboard.vue'
 import TeacherDashboard from './dashboard/ui/TeacherDashboard.vue'
-
-import { useDashboardStore } from '~/entities/dashboard/model/store'
-import { useTeacherStore } from '~/entities/teacher/model/store'
-import { useUserStore } from '~/entities/user/model/store'
 
 const userStore = useUserStore()
 const studentStore = useDashboardStore()
@@ -67,7 +67,7 @@ useAsyncData(
 )
 
 definePageMeta({
-  layout: 'app',
+  layout: 'main',
   middleware: ['auth'],
 })
 </script>

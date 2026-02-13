@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 
-import { useCourseApi } from '../api'
+import { usePaymentApi } from '@entities/payment/api'
+import type { Course, Lesson, Module } from '@shared/types'
 
-import { usePaymentApi } from '~/entities/payment/api'
-import type { Course, Lesson, Module } from '~/shared/types'
+import { useCourseApi } from '../api'
 
 export const useCourse = () => {
   const { getCourse } = useCourseApi()
@@ -35,7 +35,6 @@ export const useCourse = () => {
     } catch (err: unknown) {
       const apiErr = err as { message?: string }
       error.value = apiErr.message || 'Failed to load course'
-      console.error('useCourse Error:', err)
     } finally {
       if (!silent) isPending.value = false
     }
@@ -62,8 +61,7 @@ export const useCourse = () => {
       }
 
       return false
-    } catch (err: unknown) {
-      console.error('Enrollment failed:', err)
+    } catch {
       return false
     } finally {
       isEnrolling.value = false

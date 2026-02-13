@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 
-import { useBuilderApi } from '~/features/course-builder/api'
-import { useModal } from '~/shared/composables/useModal'
-import { useToast } from '~/shared/composables/useToast'
-import type { Lesson } from '~/shared/types'
+import { useBuilderApi } from '@features/course-builder/api'
+import { useModal } from '@shared/composables/useModal'
+import { useToast } from '@shared/composables/useToast'
+import type { Lesson } from '@shared/types'
 
 /**
  * Composable for file and video upload operations in the course builder.
@@ -44,8 +44,8 @@ export const useBuilderUpload = (
     if (filename) {
       try {
         await builderApi.deleteVideo(filename)
-      } catch (err) {
-        if (import.meta.dev) console.error('Failed to delete physical file:', err)
+      } catch {
+        // failed delete physical file
       }
     }
 

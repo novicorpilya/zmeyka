@@ -112,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Question } from '~/shared/types'
+import type { Question } from '@shared/types'
 
 defineProps<{
   questions: Question[]

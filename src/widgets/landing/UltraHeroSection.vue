@@ -4,6 +4,11 @@
   >
     <!-- Sophisticated Background -->
     <div class="absolute inset-0 pointer-events-none overflow-hidden">
+      <!-- Noise Texture for "Designed" feel -->
+      <div
+        class="absolute inset-0 opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"
+      ></div>
+
       <div
         class="absolute -top-[10%] -left-[5%] w-[60%] h-[60%] bg-emerald-500/5 rounded-full blur-[120px] animate-pulse"
       ></div>
@@ -22,7 +27,7 @@
     >
       <div class="space-y-8 md:space-y-12 text-center lg:text-left lg:pt-8">
         <div
-          class="hero-badge inline-flex items-center gap-3 px-4 md:px-5 py-2 whitespace-nowrap bg-emerald-50/80 backdrop-blur-md rounded-full border border-emerald-100 shadow-sm transition-all hover:border-emerald-200 cursor-default opacity-0 -translate-y-4 mx-auto lg:mx-0"
+          class="hero-badge inline-flex items-center gap-3 px-4 md:px-5 py-2 whitespace-nowrap bg-emerald-50/80 backdrop-blur-md rounded-full border border-emerald-100 shadow-sm transition-all hover:border-emerald-200 cursor-default opacity-0 -translate-y-4 mx-auto lg:mx-0 font-display"
         >
           <span class="flex h-2 w-2 relative">
             <span
@@ -32,98 +37,69 @@
           </span>
           <span
             class="text-[9px] md:text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]"
-            >Нейро-ассистент в сети</span
+            >Для школьников 10–16 лет</span
           >
         </div>
 
         <h1
-          class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-slate-900 leading-[0.95] tracking-tight perspective-1000"
+          class="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-slate-900 leading-[0.95] tracking-tight perspective-1000"
+          aria-label="Научим ребенка программировать на Python с ИИ-наставником"
         >
           <span class="hero-word block overflow-hidden">
-            <span class="inline-block opacity-0 translate-y-full">Скрести</span>
+            <span class="inline-block opacity-0 translate-y-full">Научим</span>
           </span>
           <span class="hero-word block overflow-hidden">
             <span
               class="inline-block opacity-0 translate-y-full text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-600 drop-shadow-sm"
-              >свой код</span
+              >кодить</span
             >
           </span>
           <span class="hero-word block overflow-hidden">
-            <span class="inline-block opacity-0 translate-y-full">с успехом</span>
+            <span class="inline-block opacity-0 translate-y-full">вашего ребенка</span>
           </span>
         </h1>
 
         <p
           class="hero-description text-base md:text-xl lg:text-2xl 2xl:text-3xl text-slate-500 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed opacity-0 translate-y-8"
         >
-          Освой программирование через игру.
+          Онлайн-платформа, где школьники осваивают Python через
           <span class="text-slate-900 font-black border-b-4 border-emerald-500/20"
-            >Никакой воды.</span
+            >реальные задачи</span
           >
-          Только практика и мгновенная помощь от ИИ.
+          с поддержкой ИИ-наставника и элементами RPG-игры.
         </p>
 
         <div
-          class="hero-cta flex flex-col sm:flex-row gap-4 md:gap-6 justify-center lg:justify-start pt-4 opacity-0 translate-y-8"
+          class="hero-cta flex flex-wrap items-center justify-center lg:justify-start gap-6 md:gap-8 pt-4 opacity-0 translate-y-8"
         >
           <NuxtLink
-            :to="userStore.isAuthenticated ? '/dashboard' : '/register'"
-            class="relative group btn-bouncy w-full sm:w-auto"
+            to="/register"
+            class="btn-magnetic w-full sm:w-auto px-8 md:px-12 py-4 md:py-6 bg-emerald-500 rounded-xl md:rounded-2xl font-black text-white text-lg md:text-2xl hover:bg-emerald-400 transition-all shadow-2xl shadow-emerald-500/20 text-center shimmer-button"
           >
-            <div
-              class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-300"
-            ></div>
-            <button
-              class="relative w-full bg-slate-900 px-8 md:px-10 py-4 md:py-5 rounded-2xl font-black text-white text-base md:text-lg hover:bg-black transition-all shadow-xl min-w-[200px] shimmer-button"
-            >
-              <ClientOnly>
-                {{ userStore.isAuthenticated ? 'В Личный кабинет' : 'Начать бесплатно' }}
-                <template #fallback>Начать бесплатно</template>
-              </ClientOnly>
-            </button>
+            Начать бесплатно
           </NuxtLink>
 
-          <button
-            @click="scrollToSection('process')"
-            class="px-8 md:px-10 py-4 md:py-5 rounded-2xl font-black text-slate-500 text-base md:text-lg hover:text-slate-900 flex items-center justify-center gap-3 group transition-all"
-          >
-            Узнать больше
-            <span class="group-hover:translate-x-1 transition-transform">→</span>
-          </button>
-        </div>
-
-        <!-- Social Proof -->
-        <div
-          class="hero-proof flex flex-wrap items-center justify-center lg:justify-start gap-8 md:gap-12 pt-10 opacity-0 translate-y-8"
-        >
-          <div class="flex items-center gap-4">
-            <div class="flex -space-x-2 md:-space-x-3">
+          <div class="flex flex-col items-center lg:items-start">
+            <div class="flex -space-x-3 mb-2">
               <div
                 v-for="i in 3"
                 :key="i"
-                class="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 md:border-4 border-white bg-slate-100 overflow-hidden shadow-sm"
+                class="w-8 h-8 rounded-full border-2 border-white bg-slate-100"
               >
-                <img :src="`https://i.pravatar.cc/100?u=${i + 10}`" alt="user" />
+                <img
+                  :src="`https://i.pravatar.cc/100?u=${i + 10}`"
+                  class="w-full h-full object-cover rounded-full"
+                />
               </div>
-            </div>
-            <div>
-              <div class="text-xs md:text-sm font-black text-slate-900">1,200+</div>
               <div
-                class="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none"
+                class="w-8 h-8 rounded-full border-2 border-white bg-emerald-500 flex items-center justify-center text-[10px] font-bold text-white"
               >
-                Учеников онлайн
+                +1k
               </div>
             </div>
-          </div>
-          <div class="h-8 w-px bg-slate-100 hidden sm:block"></div>
-          <div class="flex items-center gap-3">
-            <div class="flex text-emerald-500 text-base md:text-lg">★★★★★</div>
-            <div
-              class="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none"
-            >
-              Лучший <br />
-              ИИ-курс 2026
-            </div>
+            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">
+              Уже учатся с нами
+            </p>
           </div>
         </div>
       </div>
@@ -189,29 +165,12 @@
 import { gsap } from 'gsap'
 import { ref, onMounted, onUnmounted } from 'vue'
 
-import beginnerSnakeImage from '~/assets/beginnerSnake.png'
-import { useUserStore } from '~/entities/user/model/store'
+import beginnerSnakeImage from '@shared/assets/beginnerSnake.png'
+import { useUserStore } from '@entities/user/model/store'
 
-const userStore = useUserStore()
+// const userStore = useUserStore()
 const isMounted = ref(false)
-
-interface Props {
-  startRoute: string
-}
-
-defineProps<Props>()
-
 let heroMouseMove: ((e: MouseEvent) => void) | null = null
-
-const scrollToSection = (id: string) => {
-  const el = document.getElementById(id)
-  if (el) {
-    const navHeight = 100
-    const elementPosition = el.getBoundingClientRect().top
-    const offsetPosition = elementPosition + window.pageYOffset - navHeight
-    window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
-  }
-}
 
 const isTouchDevice = () => {
   if (typeof window === 'undefined') return false
@@ -228,7 +187,6 @@ onMounted(() => {
   tl.to('.hero-visual', { x: 0, opacity: 1, duration: 1.2 }, 0.3)
   tl.to('.hero-description', { y: 0, opacity: 1 }, 0.5)
   tl.to('.hero-cta', { y: 0, opacity: 1 }, 0.6)
-  tl.to('.hero-proof', { y: 0, opacity: 1 }, 0.8)
 
   if (!isTouchDevice()) {
     const words = document.querySelectorAll('.hero-word span')

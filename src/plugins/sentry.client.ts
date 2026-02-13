@@ -9,12 +9,8 @@
 export default defineNuxtPlugin(() => {
   // Sentry is auto-initialized by @sentry/nuxt module
   // This plugin is for any custom configuration
-
   // Only log in development
-  if (import.meta.dev) {
-    console.log('[Sentry] Plugin loaded (disabled in dev mode)')
-  }
-
+  // Only log in development (log removed)
   // You can add custom tags, context, or breadcrumbs here
   // Example:
   // Sentry.setTag('app.version', runtimeConfig.public.appVersion)

@@ -285,12 +285,12 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 
-import { useTeacherApi } from '~/entities/teacher/api'
-import type { TeacherProfile } from '~/entities/teacher/model/types'
-import { useToast } from '~/shared/composables/useToast'
+import { useTeacherApi } from '@entities/teacher/api'
+import type { TeacherProfile } from '@entities/teacher/model/types'
+import { useToast } from '@shared/composables/useToast'
 
 definePageMeta({
-  layout: 'app',
+  layout: 'main',
   middleware: ['auth'],
 })
 

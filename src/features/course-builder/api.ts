@@ -1,5 +1,5 @@
-import { useApi } from '~/shared/api'
-import type { Course, Module, Lesson, Quiz, Question } from '~/shared/types'
+import { useApi } from '@shared/api'
+import type { Course, Module, Lesson, Quiz, Question } from '@shared/types'
 
 export const useBuilderApi = () => {
   const api = useApi()

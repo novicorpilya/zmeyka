@@ -6,23 +6,23 @@
       >
         <div class="max-w-2xl reveal-text">
           <span
-            class="inline-block px-3 md:px-4 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] mb-4 md:mb-6"
-            >Capabilities</span
+            class="inline-block px-3 md:px-4 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] mb-4 md:mb-6"
+            >для детей и родителей</span
           >
           <h2
             class="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[0.9] tracking-tighter"
           >
-            Инструменты <br class="hidden md:block" />
+            Больше чем <br class="hidden md:block" />
             <span
               class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-600"
-              >нового поколения</span
+              >просто курсы</span
             >
           </h2>
         </div>
         <p
           class="text-slate-500 font-medium text-base md:text-lg max-w-xs mx-auto md:mx-0 md:text-right"
         >
-          Мы объединили вычислительную мощь ИИ и психологию обучения.
+          Мы превращаем экранное время в инвестицию во внутреннее развитие вашего ребенка.
         </p>
       </header>
 
@@ -45,11 +45,11 @@
                 🧠
               </div>
               <h3 class="text-xl md:text-3xl font-black text-slate-900 mb-2 md:mb-4">
-                Нейросетевой разбор кода
+                Развитие логики и мышления
               </h3>
               <p class="text-slate-500 font-medium text-sm md:text-lg max-w-sm">
-                Наша модель обучалась на миллионах строк кода, чтобы находить не только
-                синтаксические ошибки, но и проблемы в логике и архитектуре.
+                Программирование учит ребенка структурировать мысли и находить решения для сложных
+                задач. ИИ-наставник помогает не просто писать код, а думать как инженер.
               </p>
             </div>
 
@@ -65,19 +65,19 @@
               <div class="font-mono text-xs text-white/70 space-y-1">
                 <div class="flex gap-4">
                   <span class="text-emerald-400">def</span>
-                  <span class="text-blue-400">optimize_snake</span>():
+                  <span class="text-blue-400">think_clearly</span>():
                 </div>
-                <div class="pl-4 text-emerald-400/50"># Analyzing complexity...</div>
+                <div class="pl-4 text-emerald-400/50"># Logic building...</div>
                 <div class="pl-4">
                   <span class="text-purple-400">return</span>
-                  <span class="text-yellow-400">"Success"</span>
+                  <span class="text-yellow-400">"Solved"</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 3D Card 2: Gamification -->
+        <!-- 3D Card 2: Tracking -->
         <div class="feature-card-wrapper md:col-span-4 md:row-span-1">
           <div
             class="feature-card group h-full bg-slate-900 rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 border border-slate-800 flex flex-col justify-between overflow-hidden relative"
@@ -86,20 +86,20 @@
               <div
                 class="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl flex items-center justify-center text-xl md:text-2xl mb-4 md:mb-6"
               >
-                🎮
+                📈
               </div>
-              <h4 class="text-lg md:text-xl font-black text-white">RPG Система</h4>
+              <h4 class="text-lg md:text-xl font-black text-white">Прозрачный прогресс</h4>
               <p class="text-slate-400 text-xs md:text-sm mt-2">
-                Прокачивай навыки как в любимой игре.
+                Родители могут видеть успеваемость и достижения ребенка в реальном времени.
               </p>
             </div>
             <div class="h-1 bg-white/10 rounded-full overflow-hidden">
-              <div class="h-full bg-emerald-500 w-[65%] animate-shimmer"></div>
+              <div class="h-full bg-emerald-500 w-[85%] animate-shimmer"></div>
             </div>
           </div>
         </div>
 
-        <!-- 3D Card 3: Mobile -->
+        <!-- 3D Card 3: Safety/Privacy -->
         <div class="feature-card-wrapper md:col-span-4 md:row-span-1">
           <div
             class="feature-card group h-full bg-emerald-500 rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 flex flex-col justify-between overflow-hidden relative"
@@ -108,11 +108,11 @@
               <div
                 class="text-3xl md:text-4xl mb-4 md:mb-6 group-hover:rotate-12 transition-transform"
               >
-                📱
+                🛡️
               </div>
-              <h4 class="text-lg md:text-xl font-black">Всегда с собой</h4>
+              <h4 class="text-lg md:text-xl font-black">Безопасная среда</h4>
               <p class="text-white/80 text-xs md:text-sm mt-2">
-                Обучение адаптировано под любой экран.
+                Никакой рекламы и лишнего контента. Полная концентрация на обучении.
               </p>
             </div>
             <div
@@ -128,11 +128,11 @@
           >
             <div class="space-y-2 md:space-y-4 text-center md:text-left w-full md:w-auto">
               <h3 class="text-xl md:text-2xl font-black text-slate-900">
-                Комьюнити единомышленников
+                Мотивирующее сообщество студентов
               </h3>
               <p class="text-slate-500 font-medium text-sm md:text-base max-w-md mx-auto md:mx-0">
-                Ты никогда не останешься один. Тысячи студентов помогают друг другу в закрытом
-                Discord.
+                Ребенок попадает в круг целеустремленных сверстников, где можно делиться кодом и
+                учиться друг у друга.
               </p>
             </div>
             <div class="hidden md:flex -space-x-4">

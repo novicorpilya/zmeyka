@@ -141,8 +141,8 @@
 </template>
 
 <script setup lang="ts">
-import { useCourseApi } from '~/entities/course/api'
-import type { Course } from '~/shared/types'
+import { useCourseApi } from '@entities/course/api'
+import type { Course } from '@shared/types'
 const { createCourse } = useCourseApi()
 const router = useRouter()
 

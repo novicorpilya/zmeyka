@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Module, Lesson } from '~/shared/types'
+import type { Module, Lesson } from '@shared/types'
 
 defineProps<{
   modules: Module[]

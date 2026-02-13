@@ -230,11 +230,11 @@
 </template>
 
 <script setup lang="ts">
-import { useCourseApi } from '~/entities/course/api'
-import { useTeacherApi } from '~/entities/teacher/api'
+import { useCourseApi } from '@entities/course/api'
+import { useTeacherApi } from '@entities/teacher/api'
 
 definePageMeta({
-  layout: 'app',
+  layout: 'main',
 })
 
 const route = useRoute()

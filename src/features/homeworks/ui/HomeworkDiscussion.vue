@@ -136,10 +136,10 @@
 import type { Ref } from 'vue'
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 
-import { useHomeworksApi } from '~/entities/homework/api'
-import { useUserStore } from '~/entities/user/model/store'
-import { useToast } from '~/shared/composables/useToast'
-import type { Homework, Socket } from '~/shared/types'
+import { useHomeworksApi } from '@entities/homework/api'
+import { useUserStore } from '@entities/user/model/store'
+import { useToast } from '@shared/composables/useToast'
+import type { Homework, Socket } from '@shared/types'
 
 const props = defineProps<{
   homework: Homework

@@ -1,8 +1,8 @@
 import { ref } from 'vue'
 
-import { useBuilderApi } from '~/features/course-builder/api'
-import { useToast } from '~/shared/composables/useToast'
-import type { Quiz, Question } from '~/shared/types'
+import { useBuilderApi } from '@features/course-builder/api'
+import { useToast } from '@shared/composables/useToast'
+import type { Quiz, Question } from '@shared/types'
 
 /**
  * Composable for quiz CRUD and AI generation in the course builder.

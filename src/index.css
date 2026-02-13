@@ -1,0 +1,253 @@
+@import "tailwindcss";
+
+@theme {
+  /* 
+   * Brand Colors - OKLCH with HEX fallbacks
+   */
+
+  /* Primary Green */
+  --color-brand-green: #10b981;
+  --color-brand-green: oklch(65% 0.15 160);
+  --color-brand-green-hover: #059669;
+  --color-brand-green-hover: oklch(60% 0.15 160);
+
+  /* Primary Blue */
+  --color-brand-blue: #3b82f6;
+  --color-brand-blue: oklch(65% 0.18 245);
+  --color-brand-blue-hover: #2563eb;
+  --color-brand-blue-hover: oklch(60% 0.18 245);
+
+  /* Accent Colors */
+  --color-brand-yellow: #fbbf24;
+  --color-brand-yellow: oklch(75% 0.18 85);
+  --color-brand-orange: #f97316;
+  --color-brand-orange: oklch(65% 0.22 35);
+
+  --color-brand-blue-shadow: #1e40af;
+  --color-brand-green-shadow: #166534;
+  --color-brand-orange-shadow: #9a3412;
+
+  --breakpoint-xs: 320px;
+
+  /* Typography - Distinctive & Friendly */
+  --font-sans: "Nunito", sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-mono: "Fira Code", monospace;
+
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-3xl: 3rem;
+
+  /* Shadows - Bold & Cartoonish */
+  --shadow-premium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  --shadow-cartoon: 0 8px 0 0 #cbd5e1;
+  --shadow-cartoon-hover: 0 4px 0 0 #cbd5e1;
+
+  --shadow-cartoon-brand: 0 8px 0 0 var(--color-brand-green-hover);
+}
+
+:root {
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-family: var(--font-sans);
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  background-color: #f8fafc;
+  color: #0f172a;
+  /* slate-900 */
+  cursor: auto;
+}
+
+/* NO global transitions on '*' - strictly for hover states */
+button,
+a {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Animations */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+::selection {
+  background: rgba(16, 185, 129, 0.2);
+  color: #064E3B;
+}
+
+.btn-bouncy:active {
+  transform: scale(0.95);
+}
+
+html {
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}
+
+/* Page Transitions */
+.page-enter-active,
+.page-leave-active,
+.layout-enter-active,
+.layout-leave-active {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-enter-from,
+.page-leave-to,
+.layout-enter-from,
+.layout-leave-to {
+  opacity: 0;
+  filter: blur(4px);
+  transform: translateY(4px);
+}
+
+/* ===== Shared Utility Classes ===== */
+
+/* Cartoon Shadows */
+.shadow-cartoon {
+  box-shadow: 0 8px 0 0 var(--color-slate-100);
+}
+
+@media (min-width: 768px) {
+  .shadow-cartoon {
+    box-shadow: 0 10px 0 0 var(--color-slate-100);
+  }
+}
+
+.shadow-cartoon-sm {
+  box-shadow: 0 4px 0 0 var(--color-slate-800);
+}
+
+.shadow-cartoon-blue {
+  box-shadow: 0 8px 0 0 var(--color-brand-blue-shadow);
+}
+
+.shadow-cartoon-green {
+  box-shadow: 0 8px 0 0 var(--color-brand-green-shadow);
+}
+
+.shadow-cartoon-orange {
+  box-shadow: 0 8px 0 0 var(--color-brand-orange-shadow);
+}
+
+.shadow-card-premium {
+  box-shadow:
+    0 10px 50px -12px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 1);
+}
+
+/* Shimmer Effect for Premium Buttons */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+.shimmer-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 100%);
+  animation: shimmer 3s infinite;
+  pointer-events: none;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 20px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mesh Gradient */
+.mesh-gradient {
+  background-color: #f8fafc;
+  background-image:
+    radial-gradient(at 0% 0%, hsla(217, 100%, 95%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(180, 100%, 95%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(217, 100%, 95%, 1) 0, transparent 50%);
+  filter: blur(10px);
+}
+
+/* Fade Transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Pulse Slow */
+@keyframes pulse-slow {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1.25);
+  }
+
+  50% {
+    opacity: 0.15;
+    transform: scale(1.5);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

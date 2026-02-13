@@ -205,8 +205,8 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch } from 'vue'
 
-import { useHomeworksApi } from '~/entities/homework/api'
-import type { Homework } from '~/shared/types'
+import { useHomeworksApi } from '@entities/homework/api'
+import type { Homework } from '@shared/types'
 
 const homeworksApi = useHomeworksApi()
 
@@ -250,8 +250,8 @@ const fetchReviews = async () => {
     loading.value = true
     const data = await homeworksApi.getPending()
     pendingReviews.value = data
-  } catch (err) {
-    console.error('Failed to fetch reviews', err)
+  } catch {
+    // Silent fail
   } finally {
     loading.value = false
   }
@@ -271,8 +271,8 @@ const submitReview = async (status: 'COMPLETED' | 'REJECTED') => {
 
     pendingReviews.value = pendingReviews.value.filter((h) => h.id !== selectedHomework.value?.id)
     selectedHomework.value = null
-  } catch (err) {
-    console.error('Failed to submit review', err)
+  } catch {
+    // Silent fail or show toast
   } finally {
     submitting.value = false
   }

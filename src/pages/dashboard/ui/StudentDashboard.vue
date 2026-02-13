@@ -42,14 +42,14 @@
 </template>
 
 <script setup lang="ts">
-import { useDashboardStore } from '~/entities/dashboard/model/store'
-import { useUserStore } from '~/entities/user/model/store'
-import CertificateDownload from '~/features/certificate/ui/CertificateDownload.vue'
-import StudentActiveCourses from '~/widgets/student-dashboard/ui/StudentActiveCourses.vue'
-import StudentRecentActivity from '~/widgets/student-dashboard/ui/StudentRecentActivity.vue'
-import StudentRecentHomeworks from '~/widgets/student-dashboard/ui/StudentRecentHomeworks.vue'
-import StudentStatsGrid from '~/widgets/student-dashboard/ui/StudentStatsGrid.vue'
-import StudentWelcomeCard from '~/widgets/student-dashboard/ui/StudentWelcomeCard.vue'
+import { useDashboardStore } from '@entities/dashboard/model/store'
+import { useUserStore } from '@entities/user/model/store'
+import CertificateDownload from '@features/certificate/ui/CertificateDownload.vue'
+import StudentActiveCourses from '@widgets/student-dashboard/ui/StudentActiveCourses.vue'
+import StudentRecentActivity from '@widgets/student-dashboard/ui/StudentRecentActivity.vue'
+import StudentRecentHomeworks from '@widgets/student-dashboard/ui/StudentRecentHomeworks.vue'
+import StudentStatsGrid from '@widgets/student-dashboard/ui/StudentStatsGrid.vue'
+import StudentWelcomeCard from '@widgets/student-dashboard/ui/StudentWelcomeCard.vue'
 
 const userStore = useUserStore()
 const dashboardStore = useDashboardStore()

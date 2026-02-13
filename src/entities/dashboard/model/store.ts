@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 
-import { useDashboardApi } from '~/entities/dashboard/api'
-import { useHomeworksApi } from '~/entities/homework/api'
-import type { DashboardSummary, Homework } from '~/shared/types'
+import { useDashboardApi } from '@entities/dashboard/api'
+import { useHomeworksApi } from '@entities/homework/api'
+import type { DashboardSummary, Homework } from '@shared/types'
 
 export const useDashboardStore = defineStore('dashboard', {
   state: () => ({
@@ -35,7 +35,6 @@ export const useDashboardStore = defineStore('dashboard', {
 
         this.isInitialized = true
       } catch (err: unknown) {
-        console.error('Dashboard fetch error:', err)
         const apiErr = err as { data?: { message?: string }; message?: string }
         this.error = apiErr.data?.message || apiErr.message || 'Ошибка загрузки дашборда'
       } finally {
@@ -47,8 +46,8 @@ export const useDashboardStore = defineStore('dashboard', {
       try {
         const { getUserHomeworks } = useHomeworksApi()
         this.homeworks = await getUserHomeworks()
-      } catch (err) {
-        console.error('Homeworks fetch error:', err)
+      } catch {
+        // Silent
       }
     },
   },

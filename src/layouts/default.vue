@@ -435,8 +435,8 @@
 import { gsap } from 'gsap'
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 
-import logoImage from '~/assets/logo.png'
-import { useUserStore } from '~/entities/user/model/store'
+import logoImage from '@shared/assets/logo.png'
+import { useUserStore } from '@entities/user/model/store'
 
 const userStore = useUserStore()
 const isMounted = ref(false)

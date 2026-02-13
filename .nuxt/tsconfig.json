@@ -97,9 +97,6 @@
       "#server/*": [
         "../src/server/*"
       ],
-      "@app": [
-        "~/app"
-      ],
       "@pages": [
         "~/pages"
       ],
@@ -115,9 +112,6 @@
       "@shared": [
         "~/shared"
       ],
-      "@services": [
-        "~/services"
-      ],
       "#app": [
         "../node_modules/nuxt/dist/app"
       ],
@@ -126,6 +120,9 @@
       ],
       "vue-demi": [
         "../node_modules/nuxt/dist/app/compat/vue-demi"
+      ],
+      "@opentelemetry/resources": [
+        "../node_modules/@opentelemetry/resources/build/src/index"
       ],
       "#vue-router": [
         "../node_modules/vue-router"
@@ -137,7 +134,7 @@
         "./imports"
       ],
       "#app-manifest": [
-        "./manifest/meta/b480afa0-d4db-41f2-a40c-ed9904bf7d26.json"
+        "./manifest/meta/dev.json"
       ],
       "#components": [
         "./components"
@@ -197,6 +194,6 @@
     "../node_modules/@nuxt/telemetry/node_modules",
     "../node_modules/runtime/server",
     "../node_modules/dist/runtime/server",
-    "../.output"
+    "dev"
   ]
 }

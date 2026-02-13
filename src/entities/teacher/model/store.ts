@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 
-import { useTeacherApi } from '~/entities/teacher/api'
-import type { TeacherDashboardSummary, Cohort, AnalyticsItem } from '~/shared/types'
+import { useTeacherApi } from '@entities/teacher/api'
+import type { TeacherDashboardSummary, Cohort, AnalyticsItem } from '@shared/types'
 
 export const useTeacherStore = defineStore('teacher', {
   state: () => ({
@@ -49,8 +49,8 @@ export const useTeacherStore = defineStore('teacher', {
       const { getCohorts } = useTeacherApi()
       try {
         this.cohorts = await getCohorts()
-      } catch (err) {
-        console.error('Failed to fetch cohorts', err)
+      } catch {
+        // Silent fail or handle UI error state
       }
     },
 
@@ -58,8 +58,8 @@ export const useTeacherStore = defineStore('teacher', {
       const { getCohortAnalytics } = useTeacherApi()
       try {
         this.activeCohortAnalytics = await getCohortAnalytics(cohortId)
-      } catch (err) {
-        console.error('Failed to fetch cohort analytics', err)
+      } catch {
+        // Silent fail
       }
     },
   },

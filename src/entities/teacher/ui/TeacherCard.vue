@@ -68,8 +68,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import { useTeacherApi } from '~/entities/teacher/api'
-import type { User } from '~/shared/types'
+import { useTeacherApi } from '@entities/teacher/api'
+import type { User } from '@shared/types'
 
 const props = defineProps<{
   teacher?: User | null

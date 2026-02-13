@@ -30,12 +30,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken(),
+        ExtractJwt.fromUrlQueryParameter('token'),
+        ExtractJwt.fromUrlQueryParameter('accessToken'),
+        ExtractJwt.fromUrlQueryParameter('access_token'),
         (req: Request): string | null => {
-          let token = null
           if (req && req.cookies) {
-            token = req.cookies['access_token']
+            return req.cookies['access_token'] || req.cookies['accessToken'] || null
           }
-          return token
+          return null
         },
       ]),
       ignoreExpiration: false,

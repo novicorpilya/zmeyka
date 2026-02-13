@@ -238,11 +238,11 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
 
-import { useHomeworksApi } from '~/entities/homework/api'
-import { useUserStore } from '~/entities/user/model/store'
-import HomeworkDiscussion from '~/features/homeworks/ui/HomeworkDiscussion.vue'
-import { useToast } from '~/shared/composables/useToast'
-import type { Homework } from '~/shared/types'
+import { useHomeworksApi } from '@entities/homework/api'
+import { useUserStore } from '@entities/user/model/store'
+import HomeworkDiscussion from '@features/homeworks/ui/HomeworkDiscussion.vue'
+import { useToast } from '@shared/composables/useToast'
+import type { Homework } from '@shared/types'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -300,7 +300,7 @@ const saveGrades = async () => {
 
 onMounted(loadHomework)
 
-definePageMeta({ layout: 'app', middleware: ['auth'] })
+definePageMeta({ layout: 'main', middleware: ['auth'] })
 </script>
 
 <style scoped>

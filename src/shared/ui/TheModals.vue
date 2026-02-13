@@ -99,7 +99,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
-import { useModal, type ModalState } from '~/shared/composables/useModal'
+import { useModal, type ModalState } from '@shared/composables/useModal'
 
 const { modals, close } = useModal()
 const inputValue = ref('')

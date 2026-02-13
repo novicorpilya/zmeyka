@@ -25,13 +25,11 @@ export default defineNuxtConfig({
     ],
 
     alias: {
-        '@app': '~/app',
         '@pages': '~/pages',
         '@widgets': '~/widgets',
         '@features': '~/features',
         '@entities': '~/entities',
-        '@shared': '~/shared',
-        '@services': '~/services'
+        '@shared': '~/shared'
     },
 
     // Tailwind 4 integration via Vite
@@ -41,12 +39,13 @@ export default defineNuxtConfig({
         ],
     },
 
-    css: ['~/app/index.css'],
+    css: ['~/index.css'],
 
     app: {
         pageTransition: { name: 'page', mode: 'out-in' },
         layoutTransition: { name: 'layout', mode: 'out-in' },
         head: {
+            title: 'Змейка — Твой интерактивный ИИ-наставник в мире IT',
             script: [
                 {
                     src: 'https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js',
@@ -58,6 +57,11 @@ export default defineNuxtConfig({
                     defer: true,
                     crossorigin: 'anonymous'
                 }
+            ],
+            link: [
+                { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+                { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+                { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;700;900&display=swap' }
             ],
             meta: [
                 { name: 'description', content: 'Освой Python и основы IT с помощью самого доброго в мире ИИ-наставника.' },

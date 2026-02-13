@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TeacherDashboardSummary } from '~/entities/teacher/model/types'
+import type { TeacherDashboardSummary } from '@entities/teacher/model/types'
 
 defineProps<{
   homeworks: TeacherDashboardSummary['recentHomeworks']

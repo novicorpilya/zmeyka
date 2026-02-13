@@ -109,10 +109,7 @@ interface ErrorPayload {
 
 const isDev = import.meta.dev
 
-const handleError = (error: ErrorPayload) => {
-  // Log error for debugging
-  console.error('[ErrorBoundary] Caught error:', error)
-
+const handleError = (_error: ErrorPayload) => {
   // In production, we could send to Sentry here
   if (!isDev && typeof window !== 'undefined') {
     // Sentry.captureException(error)
