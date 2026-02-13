@@ -295,13 +295,13 @@
           </div>
 
           <div class="lg:col-span-2 space-y-6">
-            <h4 class="text-white font-black uppercase text-xs tracking-[0.2em]">Помощь</h4>
+            <h4 class="text-white font-black uppercase text-xs tracking-[0.2em]">Узнать больше</h4>
             <ul class="space-y-4">
               <li
                 v-for="link in [
+                  { id: 'testimonials', text: 'Отзывы' },
                   { id: 'faq', text: 'FAQ' },
-                  { id: 'contact', text: 'Поддержка' },
-                  { id: 'status', text: 'Статус сетей' },
+                  { id: 'contact', text: 'Контакты' },
                 ]"
                 :key="link.id"
               >
